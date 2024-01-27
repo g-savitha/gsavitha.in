@@ -1,3 +1,3 @@
 ## gsavitha.in
 
-This portfolio is currently in WIP.
+This website is under construction.
