@@ -1,5 +1,6 @@
 ---
 import Button from '../components/Button.astro';
+const pageTitle = "Home"
 ---
 <html lang="en">
 	<head>
@@ -7,13 +8,13 @@ import Button from '../components/Button.astro';
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro + TailwindCSS</title>
+		<title>{pageTitle}</title>
 	</head>
 
 	<body>
 		<div class="grid place-items-center h-screen content-center">
 			<Button>Tailwind Button in Astro!</Button>
-			<a href="/markdown-page" class="p-4 underline">Markdown is also supported...</a>
+			<a href="/posts/markdown-page" class="p-4 underline">Markdown is also supported...</a>
 		</div>
 	</body>
 </html>
