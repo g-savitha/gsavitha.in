@@ -2,12 +2,20 @@
   "name": "gsavitha.in",
   "type": "module",
   "version": "0.0.1",
+  "description": "Savitha's personal website",
+  "author": "Savitha",
+  "license": "MIT",
+  "private": "true",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro check && astro build",
     "preview": "astro preview",
     "astro": "astro"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/g-savitha/gsavitha.in"
   },
   "dependencies": {
     "@astrojs/mdx": "^2.1.0",
