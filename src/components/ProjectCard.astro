@@ -1,0 +1,93 @@
+---
+import type { Project } from '../utils/projects';
+
+interface Props {
+	project: Project;
+}
+
+const { project } = Astro.props;
+
+const linkClass =
+	'inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-lg border border-zinc-700/80 text-zinc-300 hover:text-primary hover:border-primary/40 hover:bg-zinc-800/60 transition-colors';
+---
+
+<article
+	class:list={[
+		'relative flex flex-col rounded-xl border bg-zinc-800/30 p-4 sm:p-5',
+		project.highlight
+			? 'border-primary/30 shadow-[0_0_0_1px_rgba(96,165,250,0.08)]'
+			: 'border-zinc-700/60',
+	]}
+>
+	{
+		project.stars > 0 && (
+			<div class="absolute top-4 right-4">
+				<a
+					href={`${project.githubUrl}/stargazers`}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-primary transition-colors font-mono"
+				>
+					<span>{project.stars.toLocaleString()}</span>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						class="w-4 h-4 fill-current"
+						viewBox="0 0 24 24"
+						aria-hidden="true"
+					>
+						<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+					</svg>
+				</a>
+			</div>
+		)
+	}
+
+	<time class="block text-sm text-zinc-500 font-mono mb-1">{project.date}</time>
+
+	<a
+		href={project.githubUrl}
+		target="_blank"
+		rel="noopener noreferrer"
+		class="text-lg sm:text-xl font-semibold text-zinc-100 hover:text-primary transition-colors pr-16"
+	>
+		{project.name}
+	</a>
+
+	{
+		project.tagline && (
+			<p class="text-[0.95rem] text-zinc-400 leading-relaxed mt-2 mb-4 flex-1">
+				{project.tagline}
+			</p>
+		)
+	}
+
+	<div class="flex flex-wrap items-center gap-2 mt-auto pt-1">
+		{
+			project.writeup && (
+				<a href={project.writeup} class={linkClass}>
+					Article
+				</a>
+			)
+		}
+		{
+			project.demoUrl && (
+				<a
+					href={project.demoUrl}
+					target="_blank"
+					rel="noopener noreferrer"
+					class={linkClass}
+				>
+					Demo
+				</a>
+			)
+		}
+		<a
+			href={project.githubUrl}
+			target="_blank"
+			rel="noopener noreferrer"
+			class={linkClass}
+		>
+			Source
+		</a>
+	</div>
+</article>

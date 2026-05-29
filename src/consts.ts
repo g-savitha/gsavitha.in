@@ -8,6 +8,7 @@ export const USER_FULL_NAME = 'G. Savitha';
 
 export const NAV_LINKS = [
   { href: '/blog', label: 'Blog', icon: 'PenTool' },
+  { href: '/projects', label: 'Projects', icon: 'FolderGit2' },
   { href: '/papers', label: 'Notes', icon: 'BookOpen' },
   { href: '/certifications', label: 'Certifications', icon: 'Award' },
   { href: '/goodies', label: 'Goodies', icon: 'Sparkles' },

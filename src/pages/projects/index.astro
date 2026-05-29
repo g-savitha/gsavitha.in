@@ -1,0 +1,43 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { SITE_TITLE } from '../../consts';
+import { getProjects } from '../../utils/projects';
+
+const GITHUB_USERNAME = 'g-savitha';
+const projects = await getProjects(GITHUB_USERNAME);
+
+const title = 'Projects';
+const description =
+	'A hand-picked collection of open-source projects I am proud of — apps, tools, experiments, and this website.';
+const githubUrl = `https://github.com/${GITHUB_USERNAME}`;
+---
+
+<PageLayout title={`${title} | ${SITE_TITLE}`} description={description}>
+	<div class="mb-12 border-b border-zinc-800/80 pb-8">
+		<h1
+			class="text-4xl sm:text-[2.75rem] font-bold tracking-tight text-white mb-4"
+		>
+			{title}
+		</h1>
+		<p class="text-lg text-zinc-400 max-w-2xl">
+			{description}
+		</p>
+	</div>
+
+	<div class="grid gap-4 sm:gap-5 md:grid-cols-2 xl:grid-cols-3">
+		{projects.map((project) => <ProjectCard project={project} />)}
+	</div>
+
+	<p class="mt-12 pt-8 border-t border-zinc-800/80 text-zinc-400 text-center">
+		Curious about the rest?
+		<a
+			href={githubUrl}
+			target="_blank"
+			rel="noopener noreferrer"
+			class="text-primary hover:text-primary-hover font-medium ml-1"
+		>
+			Browse all my projects on GitHub →
+		</a>
+	</p>
+</PageLayout>
