@@ -30,6 +30,10 @@
     color-scheme: dark;
     --theme-color: #60a5fa;
     --theme-color-hover: #93c5fd;
+    --ease-lift: cubic-bezier(0.25, 0.1, 0.25, 1);
+    --ease-lift-spring: cubic-bezier(0.32, 0.72, 0, 1);
+    --hover-lift-bg: rgba(255, 255, 255, 0.05);
+    --hover-lift-border: rgba(255, 255, 255, 0.12);
   }
 
   body {
@@ -46,8 +50,27 @@
     @apply font-outfit text-zinc-100 font-semibold tracking-tight;
   }
 
-  a {
-    @apply font-outfit text-zinc-200 hover:text-white transition-colors duration-200 hover:no-underline;
+  a:where(
+      :not(.hover-lift):not(.hover-lift-surface):not(.hover-lift-pill):not(.hover-lift-accent):not(.no-hover-lift):not([class*='flex'])
+    ) {
+    @apply font-outfit text-zinc-200 hover:text-white hover:no-underline;
+    display: inline-block;
+    border-radius: 0.25rem;
+    padding: 0.1em 0.25em;
+    margin: -0.1em -0.25em;
+    transition:
+      background-color 0.35s var(--ease-lift),
+      border-color 0.35s var(--ease-lift),
+      box-shadow 0.35s var(--ease-lift),
+      transform 0.35s var(--ease-lift-spring),
+      color 0.25s ease;
+  }
+
+  a:where(
+      :not(.hover-lift):not(.hover-lift-surface):not(.hover-lift-pill):not(.hover-lift-accent):not(.no-hover-lift):not([class*='flex'])
+    ):hover {
+    background-color: var(--hover-lift-bg);
+    transform: translateY(-1px);
   }
 
   /* Enable ligatures for code blocks globally */
@@ -71,5 +94,97 @@
 @layer utilities {
   .prose {
     @apply prose-invert prose-zinc max-w-none prose-headings:font-outfit prose-a:font-outfit prose-a:font-medium prose-a:text-primary prose-a:underline prose-a:underline-offset-4 prose-a:decoration-primary/40 hover:prose-a:no-underline hover:prose-a:text-primary-hover prose-headings:text-zinc-100 prose-code:text-zinc-200 prose-pre:bg-zinc-900/80 prose-pre:border prose-pre:border-zinc-800;
+  }
+
+  /* Inline and text links — lighter lift than block targets */
+  .hover-lift-link {
+    display: inline-block;
+    border-radius: 0.25rem;
+    padding: 0.1em 0.25em;
+    margin: -0.1em -0.25em;
+    transition:
+      background-color 0.35s var(--ease-lift),
+      border-color 0.35s var(--ease-lift),
+      box-shadow 0.35s var(--ease-lift),
+      transform 0.35s var(--ease-lift-spring),
+      color 0.25s ease;
+  }
+
+  .hover-lift-link:hover {
+    background-color: var(--hover-lift-bg);
+    transform: translateY(-1px);
+  }
+
+  /* Subtle lift for list rows, nav items, and other clickable blocks */
+  .hover-lift {
+    transition:
+      background-color 0.35s var(--ease-lift),
+      border-color 0.35s var(--ease-lift),
+      box-shadow 0.35s var(--ease-lift),
+      transform 0.35s var(--ease-lift-spring),
+      color 0.25s ease;
+  }
+
+  .hover-lift:hover {
+    background-color: var(--hover-lift-bg);
+    transform: translateY(-2px);
+  }
+
+  /* Bordered surfaces: cards, figures, CTA buttons */
+  .hover-lift-surface {
+    transition:
+      background-color 0.35s var(--ease-lift),
+      border-color 0.35s var(--ease-lift),
+      box-shadow 0.35s var(--ease-lift),
+      transform 0.35s var(--ease-lift-spring),
+      color 0.25s ease;
+  }
+
+  .hover-lift-surface:hover {
+    background-color: var(--hover-lift-bg);
+    border-color: var(--hover-lift-border);
+    transform: translateY(-2px);
+  }
+
+  /* Theme-accent glow for highlighted surfaces (e.g. featured project cards) */
+  .hover-lift-accent {
+    border-color: color-mix(in srgb, var(--theme-color) 45%, transparent);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--theme-color) 15%, transparent),
+      0 0 48px -14px color-mix(in srgb, var(--theme-color) 55%, transparent),
+      0 24px 48px -24px rgba(0, 0, 0, 0.6);
+  }
+
+  .hover-lift-accent:hover {
+    border-color: color-mix(in srgb, var(--theme-color) 60%, transparent);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--theme-color) 22%, transparent),
+      0 0 56px -10px color-mix(in srgb, var(--theme-color) 65%, transparent),
+      0 28px 56px -20px rgba(0, 0, 0, 0.55);
+  }
+
+  /* Theme-accent glow on hover only (e.g. testimonial cards) */
+  .hover-lift-accent-hover:hover {
+    border-color: color-mix(in srgb, var(--theme-color) 60%, transparent);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--theme-color) 22%, transparent),
+      0 0 56px -10px color-mix(in srgb, var(--theme-color) 65%, transparent),
+      0 28px 56px -20px rgba(0, 0, 0, 0.55);
+  }
+
+  /* Pill action buttons */
+  .hover-lift-pill {
+    transition:
+      color 0.25s ease,
+      border-color 0.35s var(--ease-lift),
+      background-color 0.35s var(--ease-lift),
+      transform 0.35s var(--ease-lift-spring);
+  }
+
+  .hover-lift-pill:hover {
+    color: var(--theme-color);
+    border-color: color-mix(in srgb, var(--theme-color) 50%, transparent);
+    background-color: rgba(255, 255, 255, 0.07);
+    transform: translateY(-1px);
   }
 }

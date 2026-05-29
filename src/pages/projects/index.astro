@@ -25,9 +25,11 @@ const githubUrl = `https://github.com/${GITHUB_USERNAME}`;
 		</p>
 	</div>
 
-	<div class="grid gap-4 sm:gap-5 md:grid-cols-2 xl:grid-cols-3">
-		{projects.map((project) => <ProjectCard project={project} />)}
-	</div>
+	<section class="projects-showcase" aria-label="Project cards">
+		<div class="projects-showcase__grid">
+			{projects.map((project) => <ProjectCard project={project} />)}
+		</div>
+	</section>
 
 	<p class="mt-12 pt-8 border-t border-zinc-800/80 text-zinc-400 text-center">
 		Curious about the rest?
@@ -41,3 +43,57 @@ const githubUrl = `https://github.com/${GITHUB_USERNAME}`;
 		</a>
 	</p>
 </PageLayout>
+
+<style>
+	.projects-showcase {
+		position: relative;
+		margin: 0 -0.5rem;
+		padding: 1.5rem 0.5rem 2rem;
+		border-radius: 1.5rem;
+	}
+
+	.projects-showcase::before {
+		content: '';
+		position: absolute;
+		inset: -1rem -0.5rem;
+		border-radius: 1.75rem;
+		background:
+			radial-gradient(
+				ellipse 70% 45% at 50% 0%,
+				color-mix(in srgb, var(--theme-color) 12%, transparent),
+				transparent 65%
+			),
+			radial-gradient(
+				ellipse 40% 30% at 100% 50%,
+				color-mix(in srgb, var(--theme-color) 6%, transparent),
+				transparent 55%
+			);
+		pointer-events: none;
+		z-index: 0;
+	}
+
+	.projects-showcase__grid {
+		position: relative;
+		z-index: 1;
+		display: grid;
+		gap: 1rem;
+	}
+
+	@media (min-width: 640px) {
+		.projects-showcase__grid {
+			gap: 1.25rem;
+		}
+	}
+
+	@media (min-width: 768px) {
+		.projects-showcase__grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (min-width: 1280px) {
+		.projects-showcase__grid {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+	}
+</style>

@@ -32,7 +32,7 @@ const categories = Object.entries(categoriesCount).sort((a, b) => a[0].localeCom
             {categories.map(([category, count]) => (
                 <a 
                     href={`/categories/${category}`}
-                    class="flex items-center rounded-lg overflow-hidden group border border-zinc-800/80 hover:border-zinc-700 transition-colors"
+                    class="flex items-center rounded-xl overflow-hidden group border border-zinc-800/80 hover-lift-surface"
                 >
                     <span class="px-3.5 py-1.5 bg-zinc-800/40 text-[1rem] font-medium text-primary group-hover:bg-zinc-800/80 transition-colors">
                         {category}
@@ -58,7 +58,7 @@ const categories = Object.entries(categoriesCount).sort((a, b) => a[0].localeCom
             {tags.map(tag => (
                 <a 
                     href={`/tags/${tag}`}
-                    class="px-4 py-2 bg-transparent hover:bg-zinc-800/40 border border-zinc-700/80 hover:border-zinc-600 rounded-xl text-zinc-300 hover:text-white transition-colors text-[0.9rem] font-medium"
+                    class="px-4 py-2 bg-transparent border border-zinc-700/80 rounded-xl text-zinc-300 hover:text-white text-[0.9rem] font-medium hover-lift-pill"
                 >
                     {tag}
                 </a>

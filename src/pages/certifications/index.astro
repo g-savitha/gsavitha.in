@@ -33,7 +33,7 @@ const certifications = (await getCollection('certifications')).sort(
                         href={cert.data.url || '#'}
                         target={cert.data.url ? '_blank' : '_self'}
                         rel={cert.data.url ? 'noopener noreferrer' : ''}
-                        class="flex items-center gap-4 py-5 px-3 -mx-3 rounded-xl hover:bg-zinc-800/40 transition-colors duration-200"
+                        class="flex items-center gap-4 py-5 px-3 -mx-3 rounded-xl hover-lift"
                     >
                         {/* Logo badge */}
                         <div class="w-14 h-14 shrink-0 rounded-xl bg-zinc-800 border border-zinc-700/60 overflow-hidden flex items-center justify-center">

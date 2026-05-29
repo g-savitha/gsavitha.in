@@ -50,7 +50,7 @@ const papers = (await getCollection('papers'))
             <div class="flex flex-wrap gap-4">
                 <a
                     href="/about"
-                    class="px-5 py-2.5 flex items-center gap-2.5 bg-zinc-800/40 hover:bg-zinc-800 border border-zinc-700/80 rounded-xl text-[0.95rem] font-medium text-zinc-200 hover:text-white transition-all shadow-sm group"
+                    class="px-5 py-2.5 flex items-center gap-2.5 bg-zinc-800/40 border border-zinc-700/80 rounded-xl text-[0.95rem] font-medium text-zinc-200 hover:text-white shadow-sm hover-lift-surface group"
                 >
                     <User
                         class="w-4 h-4 text-zinc-400 group-hover:text-primary transition-colors"
@@ -58,7 +58,7 @@ const papers = (await getCollection('papers'))
                 </a>
                 <!-- <a
                     href="/rss.xml"
-                    class="px-5 py-2.5 flex items-center gap-2.5 bg-zinc-800/40 hover:bg-zinc-800 border border-zinc-700/80 rounded-xl text-[0.95rem] font-medium text-zinc-200 hover:text-white transition-all shadow-sm group"
+                    class="px-5 py-2.5 flex items-center gap-2.5 bg-zinc-800/40 border border-zinc-700/80 rounded-xl text-[0.95rem] font-medium text-zinc-200 hover:text-white shadow-sm hover-lift-surface group"
                 >
                     <Mail
                         class="w-4 h-4 text-zinc-400 group-hover:text-primary transition-colors"
@@ -99,7 +99,7 @@ const papers = (await getCollection('papers'))
     <!-- Blog Section -->
     <section class="mb-20">
         <div class="mb-8">
-            <a href="/blog" class="inline-flex items-center gap-3 group/title">
+            <a href="/blog" class="inline-flex items-center gap-3 group/title rounded-xl px-2 py-1 -mx-2 hover-lift">
                 <h2
                     class="text-3xl font-bold font-outfit text-white mb-2 flex items-center gap-3 group-hover/title:text-primary transition-colors"
                 >
@@ -117,7 +117,7 @@ const papers = (await getCollection('papers'))
                     <li class="border-b border-zinc-800/80 last:border-0">
                         <a
                             href={`/blog/${post.id}`}
-                            class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 py-3 -mx-3 px-3 rounded-lg hover:bg-zinc-800/60 transition-colors group"
+                            class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 py-3 -mx-3 px-3 rounded-xl hover-lift group"
                         >
                             <span class="text-zinc-400 group-hover:text-zinc-200 text-sm font-mono shrink-0 w-32 transition-colors">
                                 <FormattedDate date={post.data.date} />
@@ -151,7 +151,7 @@ const papers = (await getCollection('papers'))
         <div class="mb-8">
             <a
                 href="/papers"
-                class="inline-flex items-center gap-3 group/title"
+                class="inline-flex items-center gap-3 group/title rounded-xl px-2 py-1 -mx-2 hover-lift"
             >
                 <h2
                     class="text-3xl font-bold font-outfit text-white mb-2 flex items-center gap-3 group-hover/title:text-primary transition-colors"
@@ -172,7 +172,7 @@ const papers = (await getCollection('papers'))
                             href={paper.data.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 py-3 -mx-3 px-3 rounded-lg hover:bg-zinc-800/60 transition-colors group"
+                            class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 py-3 -mx-3 px-3 rounded-xl hover-lift group"
                         >
                             <span class="text-zinc-400 group-hover:text-zinc-200 text-sm font-mono shrink-0 w-32 transition-colors">
                                 {paper.data.date ? (

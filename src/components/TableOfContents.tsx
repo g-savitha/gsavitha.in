@@ -62,7 +62,7 @@ function TableOfContentsInner({ headings, isMobile = false }: Props) {
             <a
               href={`#${heading.slug}`}
               onClick={() => isMobile && setOpen(false)}
-              className={`block transition-colors line-clamp-2 leading-snug rounded-sm py-0.5 px-1 -ml-1 ${isActive ? 'text-primary bg-primary/10' : 'hover:text-primary/90'}`}
+              className={`block line-clamp-2 leading-snug rounded-lg py-1 px-2 -ml-1 hover-lift ${isActive ? 'text-primary bg-primary/10' : 'hover:text-primary/90'}`}
             >
               {heading.text}
             </a>

@@ -15,6 +15,10 @@ export const NAV_LINKS = [
   { href: '/about', label: 'About Me', icon: 'User' },
 ] as const;
 
+/** Public LinkedIn recommendations tab — source for About page testimonials */
+export const LINKEDIN_RECOMMENDATIONS_URL =
+  'https://www.linkedin.com/in/g-savitha/details/recommendations/';
+
 export const SOCIAL_LINKS = [
   { href: 'https://github.com/g-savitha', label: 'GitHub', icon: 'Github' },
   { href: 'https://www.linkedin.com/in/g-savitha/', label: 'LinkedIn', icon: 'Linkedin' },

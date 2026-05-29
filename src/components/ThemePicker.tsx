@@ -52,7 +52,7 @@ function ThemePickerInner() {
     <div className="relative" ref={dropdownRef}>
         <button 
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center justify-center w-7 h-7 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 rounded-full cursor-pointer"
+          className="flex items-center justify-center w-7 h-7 focus:outline-none focus:ring-2 focus:ring-primary/50 rounded-full cursor-pointer hover-lift"
           aria-label="Theme picker"
           aria-haspopup="true"
           aria-expanded={isOpen}

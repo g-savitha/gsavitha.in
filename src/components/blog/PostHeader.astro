@@ -14,7 +14,7 @@ const { title, date, updatedDate, tags = [] } = Astro.props;
 <div class="mb-12 border-b border-zinc-800/80 pb-10 not-prose">
     <a
         href="/blog"
-        class="inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-primary transition-colors mb-6"
+        class="inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-primary mb-6 rounded-lg px-2 py-1 -mx-2 hover-lift"
     >
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -55,7 +55,7 @@ const { title, date, updatedDate, tags = [] } = Astro.props;
                 {tags.map((tag: string) => (
                     <a
                         href={`/tags/${tag}`}
-                        class="px-3 py-1 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-md text-[0.85rem] text-zinc-300 font-medium transition-colors"
+                        class="px-3 py-1 bg-zinc-900/50 border border-zinc-800 rounded-full text-[0.85rem] text-zinc-300 font-medium hover-lift-pill"
                     >
                         {tag}
                     </a>

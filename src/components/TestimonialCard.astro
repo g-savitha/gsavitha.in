@@ -1,0 +1,129 @@
+---
+import { Linkedin } from 'lucide-astro';
+import { LINKEDIN_RECOMMENDATIONS_URL } from '../consts';
+
+export interface Testimonial {
+	name: string;
+	role: string;
+	company: string;
+	text: string;
+}
+
+interface Props {
+	testimonial: Testimonial;
+}
+
+const { testimonial } = Astro.props;
+const { name, role, company, text } = testimonial;
+---
+
+<figure class="testimonial-card hover-lift-surface hover-lift-accent-hover group">
+	<a
+		href={LINKEDIN_RECOMMENDATIONS_URL}
+		target="_blank"
+		rel="noopener noreferrer"
+		class="testimonial-card__linkedin no-hover-lift"
+		aria-label={`View ${name}'s recommendation on LinkedIn`}
+		title="View on LinkedIn recommendations"
+	>
+		<Linkedin class="testimonial-card__linkedin-icon" aria-hidden="true" />
+	</a>
+
+	<blockquote class="testimonial-card__quote">
+		&ldquo;{text}&rdquo;
+	</blockquote>
+
+	<figcaption class="testimonial-card__caption">
+		<span class="testimonial-card__name">{name}</span>
+		<span class="testimonial-card__sep" aria-hidden="true">·</span>
+		<span class="testimonial-card__role">{role}</span>
+		<span class="testimonial-card__sep" aria-hidden="true">·</span>
+		<span class="testimonial-card__company">{company}</span>
+	</figcaption>
+</figure>
+
+<style>
+	.testimonial-card {
+		position: relative;
+		margin: 0.5rem 0.5rem 0 0;
+		padding: 1.5rem;
+		border-radius: 0.75rem;
+		border: 1px solid rgb(39 39 42);
+		background: rgba(24, 24, 27, 0.4);
+	}
+
+	.testimonial-card__linkedin {
+		position: absolute;
+		top: -0.5rem;
+		right: -0.5rem;
+		z-index: 10;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 2rem;
+		height: 2rem;
+		border-radius: 0.5rem;
+		background: rgb(24 24 27);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		color: var(--theme-color);
+		box-shadow:
+			0 4px 14px rgba(0, 0, 0, 0.45),
+			0 0 0 1px rgba(255, 255, 255, 0.04);
+		transition:
+			box-shadow 0.3s var(--ease-lift),
+			transform 0.3s var(--ease-lift-spring);
+	}
+
+	.testimonial-card__linkedin:hover {
+		transform: translateY(-1px);
+		box-shadow:
+			0 6px 18px rgba(0, 0, 0, 0.5),
+			0 0 20px -4px color-mix(in srgb, var(--theme-color) 40%, transparent);
+	}
+
+	.testimonial-card__linkedin-icon {
+		width: 1rem;
+		height: 1rem;
+		stroke: currentColor;
+		fill: none;
+	}
+
+	.testimonial-card__quote {
+		margin: 0 0 1rem;
+		padding-right: 1.5rem;
+		font-size: 0.875rem;
+		line-height: 1.625;
+		color: rgb(228 228 231);
+		transition: color 0.3s ease;
+	}
+
+	.testimonial-card:hover .testimonial-card__quote {
+		color: rgb(244 244 245);
+	}
+
+	.testimonial-card__caption {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.25rem 0.5rem;
+		font-size: 0.75rem;
+		font-family: var(--font-mono);
+	}
+
+	.testimonial-card__name {
+		font-weight: 600;
+		color: rgb(255 255 255);
+	}
+
+	.testimonial-card__sep {
+		color: rgb(161 161 170);
+	}
+
+	.testimonial-card__role {
+		color: rgb(228 228 231);
+	}
+
+	.testimonial-card__company {
+		color: var(--theme-color);
+	}
+</style>

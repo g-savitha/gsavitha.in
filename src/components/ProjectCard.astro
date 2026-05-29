@@ -6,32 +6,27 @@ interface Props {
 }
 
 const { project } = Astro.props;
-
-const linkClass =
-	'inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-lg border border-zinc-700/80 text-zinc-300 hover:text-primary hover:border-primary/40 hover:bg-zinc-800/60 transition-colors';
 ---
 
 <article
 	class:list={[
-		'relative flex flex-col rounded-xl border bg-zinc-800/30 p-4 sm:p-5',
-		project.highlight
-			? 'border-primary/30 shadow-[0_0_0_1px_rgba(96,165,250,0.08)]'
-			: 'border-zinc-700/60',
+		'project-card hover-lift-surface',
+		project.highlight && 'hover-lift-accent',
 	]}
 >
 	{
 		project.stars > 0 && (
-			<div class="absolute top-4 right-4">
+			<div class="project-card__stars">
 				<a
 					href={`${project.githubUrl}/stargazers`}
 					target="_blank"
 					rel="noopener noreferrer"
-					class="inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-primary transition-colors font-mono"
+					class="project-card__stars-link no-hover-lift"
 				>
 					<span>{project.stars.toLocaleString()}</span>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
-						class="w-4 h-4 fill-current"
+						class="project-card__star-icon"
 						viewBox="0 0 24 24"
 						aria-hidden="true"
 					>
@@ -42,31 +37,27 @@ const linkClass =
 		)
 	}
 
-	<time class="block text-sm text-zinc-500 font-mono mb-1">{project.date}</time>
+	<time class="project-card__date">{project.date}</time>
 
 	<a
 		href={project.githubUrl}
 		target="_blank"
 		rel="noopener noreferrer"
-		class="text-lg sm:text-xl font-semibold text-zinc-100 hover:text-primary transition-colors pr-16"
+		class="project-card__title no-hover-lift"
 	>
 		{project.name}
 	</a>
 
 	{
 		project.tagline && (
-			<p class="text-[0.95rem] text-zinc-400 leading-relaxed mt-2 mb-4 flex-1">
-				{project.tagline}
-			</p>
+			<p class="project-card__tagline">{project.tagline}</p>
 		)
 	}
 
-	<div class="flex flex-wrap items-center gap-2 mt-auto pt-1">
+	<div class="project-card__actions">
 		{
 			project.writeup && (
-				<a href={project.writeup} class={linkClass}>
-					Article
-				</a>
+				<a href={project.writeup} class="project-card__btn hover-lift-pill">Article</a>
 			)
 		}
 		{
@@ -75,7 +66,7 @@ const linkClass =
 					href={project.demoUrl}
 					target="_blank"
 					rel="noopener noreferrer"
-					class={linkClass}
+					class="project-card__btn hover-lift-pill"
 				>
 					Demo
 				</a>
@@ -85,9 +76,118 @@ const linkClass =
 			href={project.githubUrl}
 			target="_blank"
 			rel="noopener noreferrer"
-			class={linkClass}
+			class="project-card__btn hover-lift-pill"
 		>
 			Source
 		</a>
 	</div>
 </article>
+
+<style>
+	.project-card {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		padding: 1.25rem 1.25rem;
+		border-radius: 1.25rem;
+		background: rgba(255, 255, 255, 0.03);
+		border: 1px solid rgba(255, 255, 255, 0.08);
+		backdrop-filter: saturate(160%) blur(12px);
+		-webkit-backdrop-filter: saturate(160%) blur(12px);
+	}
+
+	@media (min-width: 640px) {
+		.project-card {
+			padding: 1.35rem 1.5rem;
+			border-radius: 1.375rem;
+		}
+	}
+
+	.project-card__stars {
+		position: absolute;
+		top: 1.25rem;
+		right: 1.25rem;
+	}
+
+	.project-card__stars-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.375rem;
+		font-size: 0.875rem;
+		font-family: var(--font-mono);
+		color: #a1a1a6;
+		text-decoration: none;
+		transition: color 0.25s ease;
+	}
+
+	.project-card__stars-link:hover {
+		color: var(--theme-color);
+	}
+
+	.project-card__star-icon {
+		width: 1rem;
+		height: 1rem;
+		fill: currentColor;
+	}
+
+	.project-card__date {
+		display: block;
+		margin-bottom: 0.25rem;
+		font-size: 0.875rem;
+		font-family: var(--font-mono);
+		color: #86868b;
+		letter-spacing: 0.02em;
+	}
+
+	.project-card__title {
+		display: block;
+		padding-right: 4rem;
+		font-size: 1.125rem;
+		font-weight: 600;
+		line-height: 1.3;
+		letter-spacing: -0.02em;
+		color: #f5f5f7;
+		text-decoration: none;
+		transition: color 0.25s ease;
+	}
+
+	@media (min-width: 640px) {
+		.project-card__title {
+			font-size: 1.25rem;
+		}
+	}
+
+	.project-card__title:hover {
+		color: var(--theme-color);
+	}
+
+	.project-card__tagline {
+		margin: 0.5rem 0 1rem;
+		flex: 1;
+		font-size: 0.95rem;
+		line-height: 1.55;
+		color: #a1a1a6;
+	}
+
+	.project-card__actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem;
+		margin-top: auto;
+		padding-top: 0.25rem;
+	}
+
+	.project-card__btn {
+		display: inline-flex;
+		align-items: center;
+		padding: 0.375rem 0.875rem;
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: #d2d2d7;
+		text-decoration: none;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 9999px;
+		background: rgba(255, 255, 255, 0.04);
+	}
+</style>

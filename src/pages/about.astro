@@ -1,5 +1,6 @@
 ---
 import PageLayout from '../layouts/PageLayout.astro';
+import TestimonialCard from '../components/TestimonialCard.astro';
 
 const jobs = [
   {
@@ -286,23 +287,8 @@ const tools = [
     <p class="text-zinc-300 text-sm mb-10">
       A few words from people I've had the pleasure of working with.
     </p>
-    <div class="flex flex-col gap-8">
-      {
-        endorsements.map((e) => (
-          <figure class="border border-zinc-800 rounded-xl p-6 bg-zinc-900/40 hover:border-primary/50 hover:bg-zinc-900/60 transition-all duration-300 group">
-            <blockquote class="text-zinc-200 text-sm leading-relaxed mb-4 group-hover:text-white transition-colors">
-              &ldquo;{e.text}&rdquo;
-            </blockquote>
-            <figcaption class="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-xs font-mono">
-              <span class="text-white font-semibold">{e.name}</span>
-              <span class="text-zinc-400">·</span>
-              <span class="text-zinc-200">{e.role}</span>
-              <span class="text-zinc-400">·</span>
-              <span class="text-primary">{e.company}</span>
-            </figcaption>
-          </figure>
-        ))
-      }
+    <div class="flex flex-col gap-8 pr-2 pt-2">
+      {endorsements.map((e) => <TestimonialCard testimonial={e} />)}
     </div>
   </div>
 </PageLayout>
