@@ -4,6 +4,7 @@ import { Image } from 'astro:assets';
 import PageLayout from '../../layouts/PageLayout.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import { SITE_TITLE } from '../../consts';
+import { getCertificationLogo } from '../../utils/certificationLogos';
 
 const certifications = (await getCollection('certifications')).sort(
     (a, b) => (b.data.date?.valueOf() || 0) - (a.data.date?.valueOf() || 0),
@@ -36,24 +37,23 @@ const certifications = (await getCollection('certifications')).sort(
                         class="flex items-center gap-4 py-5 px-3 -mx-3 rounded-xl hover-lift"
                     >
                         {/* Logo badge */}
-                        <div class="w-14 h-14 shrink-0 rounded-xl bg-zinc-800 border border-zinc-700/60 overflow-hidden flex items-center justify-center">
-                            {cert.data.thumbnail ? (
-                                <Image
-                                    src={cert.data.thumbnail}
-                                    alt={cert.data.issuer}
-                                    class="w-full h-full object-cover"
-                                />
-                            ) : cert.data.thumbnailUrl ? (
-                                <img
-                                    src={cert.data.thumbnailUrl}
-                                    alt={cert.data.issuer}
-                                    class="w-full h-full object-cover"
-                                />
-                            ) : (
-                                <span class="text-zinc-300 text-lg font-bold">
-                                    {cert.data.issuer.charAt(0)}
-                                </span>
-                            )}
+                        <div class="w-14 h-14 shrink-0 rounded-xl bg-zinc-800 border border-zinc-700/60 overflow-hidden flex items-center justify-center p-2">
+                            {(() => {
+                                const logo =
+                                    cert.data.thumbnail ??
+                                    getCertificationLogo(cert.data.issuer);
+                                return logo ? (
+                                    <Image
+                                        src={logo}
+                                        alt={cert.data.issuer}
+                                        class="w-full h-full object-contain"
+                                    />
+                                ) : (
+                                    <span class="text-zinc-300 text-lg font-bold">
+                                        {cert.data.issuer.charAt(0)}
+                                    </span>
+                                );
+                            })()}
                         </div>
 
                         {/* Content */}
