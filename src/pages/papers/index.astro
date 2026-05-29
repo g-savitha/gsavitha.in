@@ -1,72 +1,32 @@
 ---
 import { getCollection } from 'astro:content';
 import PageLayout from '../../layouts/PageLayout.astro';
-import FormattedDate from '../../components/FormattedDate.astro';
+import SearchableList from '../../components/SearchableList';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 
 const papers = (await getCollection('papers')).sort(
     (a, b) => (b.data.date?.valueOf() || 0) - (a.data.date?.valueOf() || 0),
 );
+
+const items = papers.map((paper) => ({
+    title: paper.data.title,
+    href: paper.data.url ?? '#',
+    date: paper.data.date?.toISOString(),
+    tags: paper.data.tags,
+    categories: paper.data.categories,
+    external: true,
+}));
 ---
 
 <PageLayout
     title={`Notes & Papers | ${SITE_TITLE}`}
     description={SITE_DESCRIPTION}
 >
-    <div class="mb-12 border-b border-zinc-800/80 pb-8">
-        <h1
-            class="text-4xl sm:text-[2.75rem] font-bold tracking-tight text-white mb-4"
-        >
-            Notes
-        </h1>
-        <p class="text-lg text-zinc-400 max-w-2xl">
+    <SearchableList client:load title="Notes" items={items} itemLabel="papers">
+        <p class="text-lg text-zinc-400 max-w-2xl mb-6">
             Every week I go down a new technical rabbit hole. This is a
             collection of the most amusing and fascinating concepts I've
             researched.
         </p>
-    </div>
-
-    <ul class="flex flex-col">
-        {
-            papers.map((paper) => (
-                <li class="border-b border-zinc-800/80 last:border-0">
-                    <a
-                        href={paper.data.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 py-3 -mx-3 px-3 rounded-lg hover:bg-zinc-800/60 transition-colors group"
-                    >
-                        <span class="text-zinc-400 group-hover:text-zinc-200 text-[0.95rem] font-mono shrink-0 w-32 mt-1 sm:mt-0 transition-colors">
-                            {paper.data.date ? (
-                                <FormattedDate date={paper.data.date} />
-                            ) : (
-                                'Recent'
-                            )}
-                        </span>
-                        <div class="flex-1">
-                            <span class="text-primary group-hover:text-primary-hover font-medium transition-colors text-xl mb-2 block">
-                                {paper.data.title}
-                            </span>
-                        </div>
-                        <div class="hidden sm:flex text-zinc-500 opacity-0 group-hover:opacity-100 transition-all duration-300 shrink-0 transform translate-x-[-10px] group-hover:translate-x-0 items-center justify-center">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="w-4 h-4"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                                <polyline points="15 3 21 3 21 9" />
-                                <line x1="10" y1="14" x2="21" y2="3" />
-                            </svg>
-                        </div>
-                    </a>
-                </li>
-            ))
-        }
-    </ul>
+    </SearchableList>
 </PageLayout>
