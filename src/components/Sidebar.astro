@@ -41,7 +41,7 @@ const NavIcons = Icons as any;
 		<div class="h-px bg-zinc-800/50 mx-4"></div>
 
 		<div class="px-1">
-			<p class="text-[0.95rem] text-zinc-400 leading-relaxed pr-2">
+			<p class="text-base text-zinc-400 leading-relaxed pr-2">
 				I'm <a href="/"><span class="text-primary font-medium">Savitha</span></a
 				>, a passionate and curious developer from India. Welcome to my digital
 				garden 🌱.
@@ -52,7 +52,7 @@ const NavIcons = Icons as any;
 
 		<!-- Main Navigation -->
 		<nav>
-			<ul class="space-y-2 font-medium text-[0.95rem] text-zinc-300">
+			<ul class="space-y-2 font-medium text-base text-zinc-300">
 				{NAV_LINKS.map((link) => {
 					const Icon = NavIcons[link.icon];
 					const active = isActive(link.href);
@@ -77,8 +77,8 @@ const NavIcons = Icons as any;
 
 		<!-- Social Links -->
 		<div class="px-1">
-			<h3 class="text-sm font-bold text-zinc-100 mb-4">Stay Connected</h3>
-			<ul class="space-y-2 text-[0.95rem] text-zinc-400">
+			<h3 class="text-base font-bold text-zinc-100 mb-4">Stay Connected</h3>
+			<ul class="space-y-2 text-base text-zinc-400">
 				{SOCIAL_LINKS.map((link) => {
 					const Icon = NavIcons[link.icon];
 					return (
@@ -159,7 +159,7 @@ const NavIcons = Icons as any;
 		return (
 			<a
 				href={link.href}
-				class={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium hover-lift group ${isActive(link.href) ? 'text-primary bg-zinc-800/30' : 'text-zinc-300 hover:text-primary'}`}
+				class={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-base font-medium hover-lift group ${isActive(link.href) ? 'text-primary bg-zinc-800/30' : 'text-zinc-300 hover:text-primary'}`}
 			>
 				{Icon && <Icon class="w-4 h-4 text-zinc-500 group-hover:text-primary transition-colors shrink-0" />}
 				{link.label}

@@ -263,27 +263,27 @@ Bringing it all together:
 
 ```mermaid
 graph TB
-    subgraph Client Layer
+    subgraph clientLayer [Client Layer]
         User:::success
     end
 
-    subgraph Server Layer
+    subgraph serverLayer [Server Layer]
         API[API Server - Stateless]:::primary
         ContextBuilder[Context Builder]:::warning
         SentimentEngine[Sentiment Engine]:::danger
     end
 
-    subgraph Cache Layer
+    subgraph cacheLayer [Cache Layer]
         Redis[(Redis - Short-Term Memory)]:::info
     end
 
-    subgraph Persistence Layer
+    subgraph persistenceLayer [Persistence Layer]
         FactsDB[(Facts DB - Long-Term Memory)]:::secondary
         SummaryDB[(Summary Store)]:::secondary
         PostgreSQL[(PostgreSQL - Full History)]:::secondary
     end
 
-    subgraph External
+    subgraph externalLayer [External]
         LLM[LLM API - OpenAI / Anthropic]:::accent
         Web[Web Search / RAG]:::accent
     end

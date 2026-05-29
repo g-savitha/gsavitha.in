@@ -54,7 +54,7 @@ function TableOfContentsInner({ headings, isMobile = false }: Props) {
   }, [toc]);
 
   const list = (
-    <ul className="space-y-[0.65rem] text-[0.9rem] font-medium text-zinc-400 border-l-[3px] border-zinc-800/60 transition-colors">
+    <ul className="space-y-[0.65rem] text-base font-medium font-outfit text-zinc-400 border-l-[3px] border-zinc-800/60 transition-colors">
       {toc.map((heading) => {
         const isActive = activeId === heading.slug;
         return (
@@ -77,7 +77,7 @@ function TableOfContentsInner({ headings, isMobile = false }: Props) {
       <nav>
         <button
           onClick={() => setOpen((v) => !v)}
-          className={`w-full flex items-center justify-between text-left text-[0.95rem] font-bold py-1 focus:outline-none transition-colors font-outfit ${open ? 'text-primary' : 'text-white hover:text-primary'}`}
+          className={`w-full flex items-center justify-between text-left text-base font-bold py-1 focus:outline-none transition-colors font-outfit ${open ? 'text-primary' : 'text-white hover:text-primary'}`}
           aria-expanded={open}
         >
           <span>What&apos;s on this page</span>
@@ -96,7 +96,7 @@ function TableOfContentsInner({ headings, isMobile = false }: Props) {
 
   return (
     <nav>
-      <h3 className="text-[1.05rem] font-bold text-white mb-4 tracking-tight">Table of Contents</h3>
+      <h3 className="text-lg font-bold font-outfit text-white mb-4 tracking-tight">Table of Contents</h3>
       {list}
     </nav>
   );

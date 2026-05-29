@@ -14,7 +14,7 @@ const { title, date, updatedDate, tags = [] } = Astro.props;
 <div class="mb-12 border-b border-zinc-800/80 pb-10 not-prose">
     <a
         href="/blog"
-        class="inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-primary mb-6 rounded-lg px-2 py-1 -mx-2 hover-lift"
+        class="inline-flex items-center gap-1 text-base text-zinc-500 hover:text-primary mb-6 rounded-lg px-2 py-1 -mx-2 hover-lift"
     >
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -37,7 +37,7 @@ const { title, date, updatedDate, tags = [] } = Astro.props;
     </h1>
 
     <div
-        class="flex flex-wrap items-center gap-4 text-[0.95rem] text-zinc-400 font-medium mb-6"
+        class="flex flex-wrap items-center gap-4 text-base text-zinc-400 font-medium mb-6"
     >
         <FormattedDate date={date} />
         {
@@ -55,7 +55,7 @@ const { title, date, updatedDate, tags = [] } = Astro.props;
                 {tags.map((tag: string) => (
                     <a
                         href={`/tags/${tag}`}
-                        class="px-3 py-1 bg-zinc-900/50 border border-zinc-800 rounded-full text-[0.85rem] text-zinc-300 font-medium hover-lift-pill"
+                        class="px-3 py-1 bg-zinc-900/50 border border-zinc-800 rounded-full text-base text-zinc-300 font-medium hover-lift-pill"
                     >
                         {tag}
                     </a>

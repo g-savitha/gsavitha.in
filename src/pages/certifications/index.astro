@@ -61,10 +61,10 @@ const certifications = (await getCollection('certifications')).sort(
                             <h3 class="text-base font-semibold text-zinc-100 group-hover:text-primary transition-colors leading-snug">
                                 {cert.data.title}
                             </h3>
-                            <p class="text-sm text-zinc-300 mt-0.5">
+                            <p class="text-base text-zinc-300 mt-0.5">
                                 {cert.data.issuer}
                             </p>
-                            <p class="text-xs text-zinc-400 mt-1 font-mono">
+                            <p class="text-[0.875rem] text-zinc-400 mt-1 font-mono">
                                 {cert.data.date ? (
                                     <FormattedDate date={cert.data.date} />
                                 ) : (

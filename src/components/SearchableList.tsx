@@ -120,7 +120,7 @@ export default function SearchableList({
 						onChange={(e) => setTerm(e.target.value)}
 						placeholder={`Search ${items.length} ${itemLabel} by title, tag, or category...`}
 						autoComplete="off"
-						className="block w-full pl-10 pr-3 py-2.5 border border-zinc-700/80 rounded-xl leading-5 bg-zinc-900/50 text-zinc-300 placeholder-zinc-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all sm:text-[0.95rem]"
+						className="block w-full pl-10 pr-3 py-2.5 border border-zinc-700/80 rounded-xl leading-5 bg-zinc-900/50 text-zinc-300 placeholder-zinc-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all sm:text-base"
 					/>
 				</div>
 			</div>
@@ -135,9 +135,9 @@ export default function SearchableList({
 							href={item.href}
 							target={item.external ? '_blank' : undefined}
 							rel={item.external ? 'noopener noreferrer' : undefined}
-							className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 py-3 -mx-3 px-3 rounded-xl hover-lift group"
+							className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 py-3 -mx-3 px-3 rounded-xl hover-lift group font-outfit"
 						>
-							<span className="text-zinc-400 group-hover:text-zinc-200 text-[0.95rem] font-mono shrink-0 w-32 mt-1 sm:mt-0 transition-colors">
+							<span className="text-zinc-400 group-hover:text-zinc-200 text-base shrink-0 w-32 mt-1 sm:mt-0 transition-colors">
 								{item.date ? (
 									<time dateTime={item.date}>{formatDate(item.date)}</time>
 								) : (
@@ -145,11 +145,11 @@ export default function SearchableList({
 								)}
 							</span>
 							<div className="flex-1">
-								<span className="text-primary group-hover:text-primary-hover font-medium transition-colors text-xl mb-2 block">
+								<span className="text-primary group-hover:text-primary-hover font-medium font-outfit transition-colors text-xl mb-2 block">
 									{highlightTitle(item.title, term.trim())}
 								</span>
 								{item.description && (
-									<p className="text-zinc-400 group-hover:text-zinc-300 text-[0.95rem] line-clamp-2 leading-relaxed max-w-2xl transition-colors">
+									<p className="text-zinc-400 group-hover:text-zinc-300 text-base line-clamp-2 leading-relaxed max-w-2xl transition-colors">
 										{item.description}
 									</p>
 								)}

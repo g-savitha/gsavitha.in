@@ -335,13 +335,13 @@ Cache warming is the practice of proactively populating the cache before traffic
 
 ```mermaid
 flowchart LR
-    subgraph Before Traffic Arrives
+    subgraph beforeTraffic [Before Traffic Arrives]
         W[Warm-up Script] -->|Fetch top products| DB[(Database)]
         DB --> W
         W -->|Pre-populate| C[Cache Layer]
     end
 
-    subgraph After Launch
+    subgraph afterLaunch [After Launch]
         U[User Requests] --> C
         C -->|Hit — fast| R[Response]
         C -.->|Miss — rare| DB

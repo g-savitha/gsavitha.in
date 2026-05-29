@@ -23,9 +23,16 @@
   --font-mono: 'Dank Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --font-outfit: 'Outfit', system-ui, -apple-system, sans-serif;
   --font-sacramento: 'Sacramento', cursive;
+  /* 1rem = 16px root scale — all type sizes in rem */
+  --text-base: 1rem;
+  --text-base--line-height: 1.5rem;
 }
 
 @layer base {
+  html {
+    font-size: 100%;
+  }
+
   :root {
     color-scheme: dark;
     --theme-color: #60a5fa;
@@ -37,8 +44,10 @@
   }
 
   body {
-    @apply bg-zinc-900 text-zinc-300 antialiased selection:bg-zinc-700/50 selection:text-zinc-100;
+    @apply bg-zinc-900 text-zinc-300 text-base antialiased selection:bg-zinc-700/50 selection:text-zinc-100;
     font-family: 'Overlock', system-ui, -apple-system, sans-serif;
+    font-size: 1rem;
+    line-height: 1.5;
   }
 
   h1,
@@ -80,6 +89,20 @@
     font-variant-ligatures: normal;
   }
 
+  /* Mermaid — isolate from prose typography; Dank Mono only */
+  .prose .mermaid,
+  .mermaid {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-block: 1.5rem;
+  }
+
+  .prose .mermaid svg {
+    max-width: 100%;
+    height: auto;
+  }
+
   /* Target shiki comments specifically to enforce italics,
      using the github-dark comment color (#8b949e) and dark+ (#6A9955) */
   .prose pre span[style*="#8b949e" i],
@@ -93,7 +116,8 @@
 
 @layer utilities {
   .prose {
-    @apply prose-invert prose-zinc max-w-none prose-headings:font-outfit prose-a:font-outfit prose-a:font-medium prose-a:text-primary prose-a:underline prose-a:underline-offset-4 prose-a:decoration-primary/40 hover:prose-a:no-underline hover:prose-a:text-primary-hover prose-headings:text-zinc-100 prose-code:text-zinc-200 prose-pre:bg-zinc-900/80 prose-pre:border prose-pre:border-zinc-800;
+    @apply prose-base prose-invert prose-zinc max-w-none prose-headings:font-outfit prose-a:font-outfit prose-a:font-medium prose-a:text-primary prose-a:underline prose-a:underline-offset-4 prose-a:decoration-primary/40 hover:prose-a:no-underline hover:prose-a:text-primary-hover prose-headings:text-zinc-100 prose-p:text-base prose-li:text-base prose-code:text-zinc-200 prose-pre:bg-zinc-900/80 prose-pre:border prose-pre:border-zinc-800;
+    font-size: 1rem;
   }
 
   /* Inline and text links — lighter lift than block targets */
