@@ -83,7 +83,9 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add src/data/audioManifest.json
           git commit -m "chore: update generated blog audio metadata"
-          git push
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
       - name: Build with Astro
         run: bun run build
         working-directory: ${{ env.BUILD_PATH }}
