@@ -5,12 +5,15 @@ import TableOfContents from '../components/TableOfContents.tsx';
 import PostHeader from '../components/blog/PostHeader.astro';
 import RelatedPosts from '../components/blog/RelatedPosts.astro';
 import PostNavigation from '../components/blog/PostNavigation.astro';
+import AudioPlayer from '../components/blog/AudioPlayer';
+import { getPostAudio } from '../utils/audio';
 
 type Props = CollectionEntry<'blog'>['data'] & {
     headings?: any[];
     prevPost?: CollectionEntry<'blog'> | null;
     nextPost?: CollectionEntry<'blog'> | null;
     recentPosts?: CollectionEntry<'blog'>[];
+    slug: string;
 };
 
 const {
@@ -24,7 +27,9 @@ const {
     prevPost = null,
     nextPost = null,
     recentPosts = [],
+    slug,
 } = Astro.props;
+const audioSources = getPostAudio(slug);
 ---
 
 <PageLayout title={title} description={description} image={heroImage}>
@@ -40,6 +45,12 @@ const {
                 updatedDate={updatedDate}
                 tags={tags}
             />
+
+            {
+                audioSources.length > 0 && (
+                    <AudioPlayer client:load slug={slug} title={title} sources={audioSources} />
+                )
+            }
 
 			<!-- Mobile inline TOC (collapsible) -->
 			{

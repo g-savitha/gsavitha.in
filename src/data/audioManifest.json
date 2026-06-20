@@ -1,0 +1,15 @@
+{
+  "footer": {
+    "en": {
+      "url": "/audio/blog/footer/en.mp3",
+      "label": "English",
+      "language": "en",
+      "duration": 88.98,
+      "bytes": 712320,
+      "hash": "65e42688eb9b1db984d6d744aa673ae2376c0e24bcbd7c04552957d789982db6",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T08:58:46.788Z"
+    }
+  }
+}

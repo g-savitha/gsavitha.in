@@ -7,10 +7,13 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "bun run audio:check && astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "new": "node scripts/new.js"
+    "new": "node scripts/new.js",
+    "audio:extract": "node scripts/audio/extract.mjs",
+    "audio:check": "node scripts/audio/check.mjs",
+    "audio:generate": "node scripts/audio/generate.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",
@@ -24,12 +27,19 @@
     "@types/react-dom": "^19.2.3",
     "astro": "^6.0.6",
     "clsx": "^2.1.1",
+    "kokoro-js": "^1.2.1",
+    "lamejs": "^1.2.1",
     "lucide-astro": "^0.556.0",
     "mermaid": "^11.13.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
+    "remark-frontmatter": "^5.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
     "sharp": "^0.34.3",
     "tailwindcss": "^4.2.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "unified": "^11.0.5",
+    "yaml": "^2.9.0"
   }
 }

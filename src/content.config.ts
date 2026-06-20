@@ -17,6 +17,13 @@ const blog = defineCollection({
 			draft: z.boolean().optional(),
 			updatedDate: z.coerce.date().optional(),
 			heroImage: z.optional(image()),
+			audio: z.union([
+				z.boolean(),
+				z.object({
+					enabled: z.boolean().optional(),
+					voice: z.string().optional(),
+				}),
+			]).optional(),
 		}),
 });
 

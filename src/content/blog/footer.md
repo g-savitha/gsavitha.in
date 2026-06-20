@@ -3,6 +3,9 @@ title: "Fixing Your Footer Position with Flexbox"
 url: "/posts/footer-flexbox"
 date: 2023-03-27T14:09:27+05:30
 draft: false
+audio:
+  enabled: true
+  voice: af_heart
 hideToc: false
 enableToc: false
 pinned: false
@@ -15,6 +18,9 @@ categories:
 ---
 If you want to fix the position of your footer at the center bottom of your webpage using flexbox layout, you can use the following code:
 
+<!-- audio-summary:
+This HTML establishes a page with a header, a main content area, and a footer.
+-->
 ```html
 <body>
   <header class="header">
@@ -28,6 +34,9 @@ If you want to fix the position of your footer at the center bottom of your webp
   </footer>
 </body>
 ```
+<!-- audio-summary:
+This CSS makes the page a full-height flex column. The main area grows to fill available space, while automatic top margin keeps the footer at the bottom and centers its contents.
+-->
 ```css
 html, body {
   height: 100%;
@@ -54,4 +63,3 @@ To achieve this, there are a few things to keep in mind:
 3. Use `margin-top: auto` on the `.footer` element to push it to the bottom of the body element and take up any remaining vertical space.
 
 By using percentage-based height on the `html` and `body` elements, and flex property on the .main class, the layout can adapt to different screen sizes and resolutions while maintaining a consistent vertical arrangement of header, main content area, and footer. This approach is particularly useful for creating responsive web designs that work well on mobile devices, tablets, and desktops.
-

@@ -35,6 +35,6 @@ const related = getRelatedPosts(post, filteredPosts, 5);
 const recentPosts = related.length > 0 ? related : getRecentPosts(filteredPosts, post.id, 5);
 ---
 
-<BlogPost {...post.data} headings={headings} prevPost={prevPost} nextPost={nextPost} recentPosts={recentPosts}>
+<BlogPost {...post.data} slug={post.id} headings={headings} prevPost={prevPost} nextPost={nextPost} recentPosts={recentPosts}>
 	<Content />
 </BlogPost>
