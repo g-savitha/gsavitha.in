@@ -1,4 +1,4 @@
-import { spawn } from 'node:child_process';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { access, readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { DEFAULT_VOICE, generationSettings } from './lib/config.mjs';
@@ -49,33 +49,28 @@ async function fileExists(filePath) {
   }
 }
 
-function runAws(argumentsList) {
-  return new Promise((resolve, reject) => {
-    const child = spawn('aws', argumentsList, {
-      env: {
-        ...process.env,
-        AWS_ACCESS_KEY_ID: process.env.R2_ACCESS_KEY_ID,
-        AWS_SECRET_ACCESS_KEY: process.env.R2_SECRET_ACCESS_KEY,
-        AWS_DEFAULT_REGION: 'auto',
-      },
-      stdio: 'inherit',
-    });
+const s3 = new S3Client({
+  region: 'auto',
+  endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+  credentials: {
+    accessKeyId: process.env.R2_ACCESS_KEY_ID,
+    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+  },
+});
 
-    child.once('error', (error) => reject(
-      error.code === 'ENOENT'
-        ? new Error('The AWS CLI is required to upload audio to R2.')
-        : error,
-    ));
-    child.once('exit', (code) => {
-      if (code === 0) resolve();
-      else reject(new Error(`AWS CLI exited with code ${code}.`));
-    });
-  });
+async function uploadToR2(storageKey, filePath) {
+  const body = await readFile(filePath);
+  await s3.send(new PutObjectCommand({
+    Bucket: process.env.R2_BUCKET,
+    Key: storageKey,
+    Body: body,
+    ContentType: 'audio/mpeg',
+    CacheControl: 'public, max-age=31536000, immutable',
+  }));
 }
 
 const generated = await readJson(GENERATED_INDEX_PATH);
 const manifest = await readJson(MANIFEST_PATH);
-const endpoint = `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
 const blogFiles = new Map(
   (await readdir(BLOG_DIRECTORY))
     .filter((file) => /\.(md|mdx)$/i.test(file))
@@ -111,14 +106,7 @@ for (const [slug, languages] of Object.entries(generated)) {
 
   console.log(`Uploading ${slug} to R2…`);
   try {
-    await runAws([
-      's3', 'cp', entry.outputPath,
-      `s3://${process.env.R2_BUCKET}/${entry.storageKey}`,
-      '--endpoint-url', endpoint,
-      '--content-type', 'audio/mpeg',
-      '--cache-control', 'public, max-age=31536000, immutable',
-      '--only-show-errors',
-    ]);
+    await uploadToR2(entry.storageKey, entry.outputPath);
   } catch (error) {
     console.error(`Upload failed for ${slug}: ${error.message}`);
     failed = true;
