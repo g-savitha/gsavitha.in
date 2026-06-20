@@ -3,6 +3,10 @@ title: "Efficient Event handling in React"
 url: "/posts/efficient-event-handling-react"
 date: 2023-06-17T22:33:33+05:30
 draft: false
+audio:
+  enabled: true
+  voice: af_heart
+  codeSummaryMode: contextual
 hideToc: false
 enableToc: false
 pinned: false

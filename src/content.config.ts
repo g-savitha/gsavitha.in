@@ -22,6 +22,7 @@ const blog = defineCollection({
 				z.object({
 					enabled: z.boolean().optional(),
 					voice: z.string().optional(),
+					codeSummaryMode: z.enum(['required', 'contextual', 'skip']).optional(),
 				}),
 			]).optional(),
 		}),

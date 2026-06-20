@@ -2,6 +2,10 @@
 title: "Explaining Kafka like you're 5"
 date: 2026-03-30T18:15:34.270Z
 draft: false
+audio:
+  enabled: true
+  voice: af_heart
+  codeSummaryMode: contextual
 heroImage: ../../assets/kafka_producer_consumer_flow.png
 tags: ["system design", "distributed systems", "message queues", "kafka", "producer-consumer", "scaling"]
 categories: ["system design", "distributed systems", "architecture", "backend"]

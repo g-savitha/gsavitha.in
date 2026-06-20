@@ -2,6 +2,10 @@
 title: "Beyond the Context Window: How AI Tools Like Cursor Actually Remember You"
 date: 2026-04-12T15:26:38.777Z
 draft: false
+audio:
+  enabled: true
+  voice: af_heart
+  codeSummaryMode: contextual
 heroImage: "../../assets/context-window-hero.png"
 tags: [system-design, ai, llm, agent, memory]
 categories: [ai, system-design]

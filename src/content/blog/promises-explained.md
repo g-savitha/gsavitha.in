@@ -3,6 +3,10 @@ title: "Promises Explained"
 url: "/posts/promises"
 date: 2021-05-12T05:30:10+05:30
 draft: false
+audio:
+  enabled: true
+  voice: af_heart
+  codeSummaryMode: contextual
 hideToc: false
 enableToc: true
 enableTocContent: true

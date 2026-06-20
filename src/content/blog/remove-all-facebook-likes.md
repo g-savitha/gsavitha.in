@@ -3,6 +3,10 @@ title: "Remove All Your Facebook Likes"
 url : "/posts/fb-likes"
 date: 2021-04-08T21:50:19+05:30
 draft: false
+audio:
+  enabled: true
+  voice: af_heart
+  codeSummaryMode: contextual
 tags: [gist, javascript, security, scripts]
 categories: [misc]
 ---

@@ -3,6 +3,10 @@ title: "Fluid Grids"
 url: "/posts/fluid-grids"
 date: 2023-04-01T23:01:00+05:30
 draft: false
+audio:
+  enabled: true
+  voice: af_heart
+  codeSummaryMode: contextual
 hideToc: false
 enableToc: false
 pinned: false

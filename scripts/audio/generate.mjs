@@ -1,4 +1,4 @@
-import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
+import { access, mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import vm from 'node:vm';
 import { KokoroTTS } from 'kokoro-js';
@@ -7,15 +7,18 @@ import {
   extractNarration,
   narrationHash,
 } from './lib/narration.mjs';
-
-const MODEL = 'onnx-community/Kokoro-82M-v1.0-ONNX';
-const DTYPE = 'q8';
-const DEFAULT_VOICE = 'af_heart';
-const GENERATION_SPEED = 1;
-const SAMPLE_RATE = 24_000;
-const MP3_BITRATE = 64;
+import {
+  DEFAULT_VOICE,
+  DTYPE,
+  GENERATION_SPEED,
+  generationSettings,
+  MODEL,
+  MP3_BITRATE,
+  SAMPLE_RATE,
+} from './lib/config.mjs';
 const MANIFEST_PATH = path.join(process.cwd(), 'src/data/audioManifest.json');
-const PUBLIC_AUDIO_ROOT = path.join(process.cwd(), 'public/audio/blog');
+const GENERATED_INDEX_PATH = path.join(process.cwd(), '.cache/audio-generated.json');
+const GENERATED_AUDIO_ROOT = path.join(process.cwd(), '.cache/audio-output');
 
 const lameContext = {};
 vm.createContext(lameContext);
@@ -57,6 +60,27 @@ function splitLongText(text, maximumLength = 420) {
         current = word;
       } else {
         current = wordCandidate;
+      }
+    }
+  }
+
+  if (current) chunks.push(current);
+  return chunks;
+}
+
+function buildSpeechChunks(segments, maximumLength = 420) {
+  const chunks = [];
+  let current = '';
+
+  for (const segment of segments) {
+    const punctuated = /[.!?]$/.test(segment.text) ? segment.text : `${segment.text}.`;
+    for (const part of splitLongText(punctuated, maximumLength)) {
+      const candidate = `${current} ${part}`.trim();
+      if (candidate.length <= maximumLength) {
+        current = candidate;
+      } else {
+        if (current) chunks.push(current);
+        current = part;
       }
     }
   }
@@ -114,6 +138,29 @@ async function loadManifest() {
   }
 }
 
+async function loadGeneratedIndex() {
+  try {
+    return JSON.parse(await readFile(GENERATED_INDEX_PATH, 'utf8'));
+  } catch (error) {
+    if (error.code === 'ENOENT') return {};
+    throw error;
+  }
+}
+
+async function fileExists(filePath) {
+  try {
+    await access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function saveGeneratedIndex(index) {
+  await mkdir(path.dirname(GENERATED_INDEX_PATH), { recursive: true });
+  await writeFile(GENERATED_INDEX_PATH, `${JSON.stringify(index, null, 2)}\n`);
+}
+
 const files = (await readdir(BLOG_DIRECTORY))
   .filter((file) => /\.(md|mdx)$/i.test(file))
   .filter((file) => !requestedSlug || file.replace(/\.(md|mdx)$/i, '') === requestedSlug);
@@ -125,10 +172,24 @@ if (requestedSlug && files.length === 0) {
 
 const jobs = [];
 const manifest = await loadManifest();
+const generated = await loadGeneratedIndex();
+const availableSlugs = new Set(files.map((file) => file.replace(/\.(md|mdx)$/i, '')));
+if (!requestedSlug) {
+  for (const slug of Object.keys(generated)) {
+    if (!availableSlugs.has(slug)) delete generated[slug];
+  }
+}
+await saveGeneratedIndex(generated);
 
 for (const file of files) {
   const narration = await extractNarration(path.join(BLOG_DIRECTORY, file));
-  if (!narration.audio.enabled) continue;
+  if (!narration.audio.enabled) {
+    if (generated[narration.slug]) {
+      delete generated[narration.slug];
+      await saveGeneratedIndex(generated);
+    }
+    continue;
+  }
 
   if (narration.missingCodeSummaries.length > 0) {
     for (const block of narration.missingCodeSummaries) {
@@ -141,11 +202,23 @@ for (const file of files) {
   }
 
   const voice = narration.audio.voice ?? DEFAULT_VOICE;
-  const settings = { model: MODEL, dtype: DTYPE, voice, speed: GENERATION_SPEED, bitrate: MP3_BITRATE };
+  const settings = generationSettings(voice);
   const hash = narrationHash(narration, settings);
+  let staged = generated[narration.slug]?.en;
+
+  if (staged && staged.hash !== hash) {
+    delete generated[narration.slug];
+    await saveGeneratedIndex(generated);
+    staged = null;
+  }
 
   if (!force && manifest[narration.slug]?.en?.hash === hash) {
     console.log(`Unchanged: ${narration.slug}`);
+    continue;
+  }
+
+  if (!force && staged?.hash === hash && await fileExists(staged.outputPath)) {
+    console.log(`Already generated, awaiting upload: ${narration.slug}`);
     continue;
   }
 
@@ -178,7 +251,7 @@ process.stdout.write('\n');
 for (const job of jobs) {
   console.log(`Generating ${job.narration.slug}…`);
   const audioParts = [];
-  const chunks = job.narration.segments.flatMap((segment) => splitLongText(segment.text));
+  const chunks = buildSpeechChunks(job.narration.segments);
 
   for (let index = 0; index < chunks.length; index += 1) {
     process.stdout.write(`\r  Segment ${index + 1}/${chunks.length}`);
@@ -196,15 +269,17 @@ for (const job of jobs) {
   console.log('  Encoding MP3…');
   const mp3 = encodeMp3(samples);
   console.log(`  Encoded ${(mp3.length / 1024).toFixed(0)} KB`);
-  const directory = path.join(PUBLIC_AUDIO_ROOT, job.narration.slug);
-  const outputPath = path.join(directory, 'en.mp3');
+  const storageKey = `audio/blog/${job.narration.slug}/${job.hash}/en.mp3`;
+  const outputPath = path.join(GENERATED_AUDIO_ROOT, storageKey);
+  const directory = path.dirname(outputPath);
   await mkdir(directory, { recursive: true });
   await writeFile(outputPath, mp3);
 
-  manifest[job.narration.slug] = {
-    ...(manifest[job.narration.slug] ?? {}),
+  generated[job.narration.slug] = {
+    ...(generated[job.narration.slug] ?? {}),
     en: {
-      url: `/audio/blog/${job.narration.slug}/en.mp3`,
+      storageKey,
+      outputPath,
       label: 'English',
       language: 'en',
       duration: Number((samples.length / SAMPLE_RATE).toFixed(2)),
@@ -215,9 +290,9 @@ for (const job of jobs) {
       generatedAt: new Date().toISOString(),
     },
   };
+  await saveGeneratedIndex(generated);
 
-  console.log(`Wrote ${path.relative(process.cwd(), outputPath)}`);
+  console.log(`Staged ${path.relative(process.cwd(), outputPath)}`);
 }
 
-await writeFile(MANIFEST_PATH, `${JSON.stringify(manifest, null, 2)}\n`);
-console.log(`Updated ${path.relative(process.cwd(), MANIFEST_PATH)}`);
+console.log(`Updated ${path.relative(process.cwd(), GENERATED_INDEX_PATH)}`);

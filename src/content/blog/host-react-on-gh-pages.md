@@ -3,6 +3,10 @@ title: "Hosting react projects on GH Pages"
 url : "/posts/hosting-react-on-ghp"
 date: 2020-09-11T12:31:59+05:30
 draft: false
+audio:
+  enabled: true
+  voice: af_heart
+  codeSummaryMode: contextual
 featured: false # feature a post in homepage
 tableofcontents: true # whether to generate ToC
 tags: [ci-cd, ghpages, react]

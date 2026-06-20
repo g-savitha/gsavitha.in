@@ -3,6 +3,10 @@ title: "The Thundering Herd Problem"
 url: "/posts/thundering-herd"
 date: 2026-03-03T22:20:24+05:30
 draft: false
+audio:
+  enabled: true
+  voice: af_heart
+  codeSummaryMode: contextual
 hideToc: false
 enableToc: true
 pinned: false

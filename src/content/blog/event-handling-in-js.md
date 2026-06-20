@@ -3,6 +3,10 @@ title: "Event Handling in JS"
 url : "/posts/event-handling-js"
 date: 2020-09-26T15:18:15+05:30
 draft: false
+audio:
+  enabled: true
+  voice: af_heart
+  codeSummaryMode: contextual
 tags: ["javascript", "DOM", "es6", "events"]
 categories: ["frontend"]
 sources: ["https://www.udemy.com/course/modern-javascript/"]

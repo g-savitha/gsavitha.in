@@ -3,6 +3,10 @@ title: 'JS Hard Parts Demystified: Introduction'
 url: "/posts/jshp-intro"
 date: 2023-03-23T12:39:37+05:30
 draft: false
+audio:
+  enabled: true
+  voice: af_heart
+  codeSummaryMode: contextual
 hideToc: true
 enableToc: false
 pinned: false

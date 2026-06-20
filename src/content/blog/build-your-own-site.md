@@ -3,6 +3,10 @@ title: "Build your own website in 10 min! with hugo "
 url : "/posts/build-your-own-site"
 date: 2020-08-23T14:58:40+05:30
 draft: false
+audio:
+  enabled: true
+  voice: af_heart
+  codeSummaryMode: contextual
 meta:
   image: # url to image. Important for blog listing and seo
   description: # overrides .Summary

@@ -3,6 +3,10 @@ title: "Unpacking the useState hook"
 url: "/posts/the-usestate-hook"
 date: 2023-06-18T09:47:20+05:30
 draft: false
+audio:
+  enabled: true
+  voice: af_heart
+  codeSummaryMode: contextual
 hideToc: false
 enableToc: true
 pinned: true

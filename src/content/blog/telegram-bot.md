@@ -3,6 +3,10 @@ title: "How I built an expenses tracker bot on telegram"
 url: "/posts/telegram-bot"
 date: 2023-06-09T18:28:23+05:30
 draft: false
+audio:
+  enabled: true
+  voice: af_heart
+  codeSummaryMode: contextual
 hideToc: false
 enableToc: true
 pinned: false

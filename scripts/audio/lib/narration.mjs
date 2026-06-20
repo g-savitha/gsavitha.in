@@ -66,12 +66,40 @@ function normalizedAudioConfig(value) {
   return {
     enabled: value.enabled !== false,
     voice: value.voice,
+    codeSummaryMode: value.codeSummaryMode ?? 'required',
   };
 }
 
-function extractSegments(tree, title) {
+function codeLabel(language) {
+  const labels = {
+    bash: 'shell',
+    css: 'CSS',
+    html: 'HTML',
+    js: 'JavaScript',
+    javascript: 'JavaScript',
+    jsx: 'JSX',
+    json: 'JSON',
+    mermaid: 'diagram',
+    sh: 'shell',
+    sql: 'SQL',
+    ts: 'TypeScript',
+    tsx: 'TSX',
+    yaml: 'YAML',
+    yml: 'YAML',
+  };
+  return labels[language] ?? (language ? `${language} code` : 'code');
+}
+
+function contextualCodeSummary(language, heading) {
+  const label = codeLabel(language);
+  if (language === 'mermaid') return `This diagram illustrates ${heading}.`;
+  return `This ${label} example illustrates ${heading}.`;
+}
+
+function extractSegments(tree, title, audio) {
   const segments = [];
   const missingCodeSummaries = [];
+  let currentHeading = title;
 
   const addSegment = (type, text) => {
     const cleaned = cleanText(text);
@@ -90,16 +118,15 @@ function extractSegments(tree, title) {
       }
 
       if (node.type === 'code') {
-        // Mermaid is a visual diagram, not executable source code.
-        if (node.lang !== 'mermaid') {
-          if (pendingCodeSummary) {
-            addSegment('code-summary', pendingCodeSummary);
-          } else {
-            missingCodeSummaries.push({
-              language: node.lang ?? 'text',
-              line: node.position?.start?.line ?? null,
-            });
-          }
+        if (pendingCodeSummary) {
+          addSegment('code-summary', pendingCodeSummary);
+        } else if (audio.codeSummaryMode === 'contextual') {
+          addSegment('code-summary', contextualCodeSummary(node.lang, currentHeading));
+        } else if (audio.codeSummaryMode !== 'skip' && node.lang !== 'mermaid') {
+          missingCodeSummaries.push({
+            language: node.lang ?? 'text',
+            line: node.position?.start?.line ?? null,
+          });
         }
         pendingCodeSummary = null;
         continue;
@@ -110,7 +137,8 @@ function extractSegments(tree, title) {
 
       switch (node.type) {
         case 'heading':
-          addSegment('heading', inlineText(node));
+          currentHeading = cleanText(inlineText(node)) || currentHeading;
+          addSegment('heading', currentHeading);
           break;
         case 'paragraph':
           addSegment('prose', inlineText(node));
@@ -145,6 +173,7 @@ export async function extractNarration(filePath) {
   const { segments, missingCodeSummaries } = extractSegments(
     tree,
     frontmatter.title ?? slug,
+    audio,
   );
 
   return {

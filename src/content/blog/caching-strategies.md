@@ -3,6 +3,10 @@ title: "Caching Strategies to Prevent the Thundering Herd"
 url: "/posts/caching-strategies"
 date: 2026-03-08T22:53:49+05:30
 draft: false
+audio:
+  enabled: true
+  voice: af_heart
+  codeSummaryMode: contextual
 hideToc: false
 enableToc: true
 pinned: false

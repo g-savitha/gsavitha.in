@@ -3,6 +3,10 @@ title: "Why can't we return multiple JSX elements"
 url: "/posts/return-multiple-jsx-elements"
 date: 2023-06-13T18:33:33+05:30
 draft: false
+audio:
+  enabled: true
+  voice: af_heart
+  codeSummaryMode: contextual
 hideToc: false
 enableToc: false
 pinned: false

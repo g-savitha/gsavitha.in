@@ -3,6 +3,10 @@ title: "How to write base cases"
 url : "/posts/recursion-base-cases"
 date: 2021-02-20T15:46:57+05:30
 draft: false
+audio:
+  enabled: true
+  voice: af_heart
+  codeSummaryMode: contextual
 hideToc: false
 enableToc: true
 enableTocContent: true

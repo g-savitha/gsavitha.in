@@ -3,6 +3,10 @@ title: "What is Micro Frontends?"
 url : "/posts/mfe"
 date: 2021-03-26T14:45:17+05:30
 draft: false
+audio:
+  enabled: true
+  voice: af_heart
+  codeSummaryMode: contextual
 hideToc: false
 enableToc: true
 enableTocContent: true

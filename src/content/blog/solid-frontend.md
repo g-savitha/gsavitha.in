@@ -2,6 +2,10 @@
 title: "🎯 SOLID Principles in Frontend!"
 date: 2025-11-12T19:15:55+05:30
 draft: false
+audio:
+  enabled: true
+  voice: af_heart
+  codeSummaryMode: contextual
 hideToc: false
 enableToc: true
 pinned: false

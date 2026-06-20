@@ -3,6 +3,10 @@ title: 'Execution Context Demystified'
 url: "/posts/jshp-execution-context"
 date: 2023-03-25T14:14:58+05:30
 draft: false
+audio:
+  enabled: true
+  voice: af_heart
+  codeSummaryMode: contextual
 hideToc: false
 enableToc: true
 enableTocContent: true

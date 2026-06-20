@@ -3,6 +3,10 @@ title: "Syncing Git Fork with Original Repository"
 url: "/posts/sync-git-fork-with-original-repo"
 date: 2020-09-11T11:30:29+05:30
 draft: false
+audio:
+  enabled: true
+  voice: af_heart
+  codeSummaryMode: contextual
 featured: false # feature a post in homepage
 tableofcontents: true # whether to generate ToC
 tags: [git, tools, ci-cd, snippets]

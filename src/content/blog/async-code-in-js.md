@@ -3,6 +3,10 @@ title: "Asynchronous Code in Javascript"
 url: "/posts/async-js"
 date: 2021-05-12T12:09:58+05:30
 draft: false
+audio:
+  enabled: true
+  voice: af_heart
+  codeSummaryMode: contextual
 hideToc: false
 enableToc: true
 enableTocContent: true

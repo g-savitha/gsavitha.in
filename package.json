@@ -13,7 +13,9 @@
     "new": "node scripts/new.js",
     "audio:extract": "node scripts/audio/extract.mjs",
     "audio:check": "node scripts/audio/check.mjs",
-    "audio:generate": "node scripts/audio/generate.mjs"
+    "audio:generate": "node scripts/audio/generate.mjs",
+    "audio:upload": "node scripts/audio/upload-r2.mjs",
+    "audio:enable-published": "node scripts/audio/enable-published.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",

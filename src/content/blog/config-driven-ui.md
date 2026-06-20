@@ -3,6 +3,10 @@ title: "Config-Driven UI 📝"
 url: "/posts/config-driven-ui"
 date: 2025-11-03T13:28:18+05:30
 draft: false
+audio:
+  enabled: true
+  voice: af_heart
+  codeSummaryMode: contextual
 hideToc: false
 enableToc: true
 pinned: false

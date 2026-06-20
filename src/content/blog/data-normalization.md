@@ -3,6 +3,10 @@ title: "Data Normalization in State Management"
 url: "/posts/data-normalization"
 date: 2025-12-13T07:44:26+05:30
 draft: false
+audio:
+  enabled: true
+  voice: af_heart
+  codeSummaryMode: contextual
 hideToc: false
 enableToc: true
 pinned: false

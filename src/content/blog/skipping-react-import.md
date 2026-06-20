@@ -3,6 +3,10 @@ title: "Can we skip the react import?"
 url: "/posts/skip-react-imports"
 date: 2023-06-10T18:32:03+05:30
 draft: false
+audio:
+  enabled: true
+  voice: af_heart
+  codeSummaryMode: contextual
 hideToc: false
 enableToc: false
 pinned: false
