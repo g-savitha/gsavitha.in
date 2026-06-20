@@ -47,15 +47,22 @@ jobs:
       - name: Remove stale audio metadata
         run: bun run audio:check --prune-stale
         working-directory: ${{ env.BUILD_PATH }}
-      - name: Cache Kokoro model
+      - name: Cache Kokoro model and audio artifacts
         if: env.R2_ACCOUNT_ID != '' && env.R2_BUCKET != '' && env.AUDIO_PUBLIC_BASE_URL != ''
         uses: actions/cache@v4
         with:
+          # audio-results + audio-output persist worker checkpoints so a crashed
+          # run only re-dispatches the slugs that didn't finish on the next run.
           path: |
             ~/.cache/huggingface
             node_modules/@huggingface/transformers/.cache
-          key: kokoro-q8-v1-${{ runner.os }}
-      - name: Generate missing English audio
+            .cache/audio-segments
+            .cache/audio-results
+            .cache/audio-output
+          key: audio-v1-${{ runner.os }}-${{ hashFiles('scripts/audio/lib/config.mjs') }}
+          restore-keys: |
+            audio-v1-${{ runner.os }}-
+      - name: Generate missing audio
         if: env.R2_ACCOUNT_ID != '' && env.R2_BUCKET != '' && env.AUDIO_PUBLIC_BASE_URL != ''
         continue-on-error: true
         run: bun run audio:generate

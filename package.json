@@ -16,7 +16,7 @@
     "audio:generate": "node scripts/audio/generate.mjs",
     "audio:upload": "node scripts/audio/upload-r2.mjs",
     "audio:enable-published": "node scripts/audio/enable-published.mjs",
-    "test:audio": "node --test scripts/audio/lib/narration.test.mjs"
+    "test:audio": "node --test scripts/audio/lib/narration.test.mjs scripts/audio/lib/cache.test.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",

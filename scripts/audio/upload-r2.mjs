@@ -1,11 +1,12 @@
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { access, readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import { DEFAULT_VOICE, generationSettings } from './lib/config.mjs';
 import {
   BLOG_DIRECTORY,
   extractNarration,
   narrationHash,
+  resolveVoices,
+  voiceGenerationSettings,
 } from './lib/narration.mjs';
 
 const MANIFEST_PATH = path.join(process.cwd(), 'src/data/audioManifest.json');
@@ -49,6 +50,7 @@ async function fileExists(filePath) {
   }
 }
 
+
 const s3 = new S3Client({
   region: 'auto',
   endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
@@ -80,50 +82,60 @@ let uploaded = 0;
 let failed = false;
 
 for (const [slug, languages] of Object.entries(generated)) {
-  const entry = languages.en;
-  if (!entry || manifest[slug]?.en?.hash === entry.hash) continue;
   const blogFile = blogFiles.get(slug);
-  if (!blogFile) {
-    console.warn(`Skipping ${slug}: the source post no longer exists.`);
-    failed = true;
-    continue;
-  }
+  let voiceByLanguage = null;
 
-  const narration = await extractNarration(blogFile);
-  const voice = narration.audio.voice ?? DEFAULT_VOICE;
-  const expectedHash = narrationHash(narration, generationSettings(voice));
-  if (!narration.audio.enabled || entry.hash !== expectedHash) {
-    console.warn(`Skipping ${slug}: staged audio does not match the current narration.`);
-    failed = true;
-    continue;
-  }
+  for (const [language, entry] of Object.entries(languages)) {
+    if (!entry || manifest[slug]?.[language]?.hash === entry.hash) continue;
 
-  if (!await fileExists(entry.outputPath)) {
-    console.warn(`Skipping ${slug}: generated MP3 is missing.`);
-    failed = true;
-    continue;
-  }
+    if (!blogFile) {
+      console.warn(`Skipping ${slug}/${language}: source post no longer exists.`);
+      failed = true;
+      continue;
+    }
 
-  console.log(`Uploading ${slug} to R2…`);
-  try {
-    await uploadToR2(entry.storageKey, entry.outputPath);
-  } catch (error) {
-    console.error(`Upload failed for ${slug}: ${error.message}`);
-    failed = true;
-    continue;
-  }
+    const narration = await extractNarration(blogFile);
+    voiceByLanguage ??= new Map(resolveVoices(narration).map((voice) => [voice.language, voice]));
+    const voiceConfig = voiceByLanguage.get(language);
+    if (!voiceConfig) {
+      console.warn(`Skipping ${slug}/${language}: language is no longer configured.`);
+      continue;
+    }
 
-  const { outputPath, storageKey, ...metadata } = entry;
-  manifest[slug] = {
-    ...(manifest[slug] ?? {}),
-    en: {
-      ...metadata,
-      url: `${publicBaseUrl}/${storageKey}`,
-    },
-  };
-  await writeFile(MANIFEST_PATH, `${JSON.stringify(manifest, null, 2)}\n`);
-  uploaded += 1;
-  console.log(`Published ${publicBaseUrl}/${storageKey}`);
+    const expectedHash = narrationHash(narration, voiceGenerationSettings(voiceConfig));
+    if (!narration.audio.enabled || entry.hash !== expectedHash) {
+      console.warn(`Skipping ${slug}/${language}: staged audio does not match current narration.`);
+      failed = true;
+      continue;
+    }
+
+    if (!await fileExists(entry.outputPath)) {
+      console.warn(`Skipping ${slug}/${language}: generated MP3 is missing.`);
+      failed = true;
+      continue;
+    }
+
+    console.log(`Uploading ${slug} [${language}] to R2…`);
+    try {
+      await uploadToR2(entry.storageKey, entry.outputPath);
+    } catch (error) {
+      console.error(`Upload failed for ${slug}/${language}: ${error.message}`);
+      failed = true;
+      continue;
+    }
+
+    const { outputPath, storageKey, ...metadata } = entry;
+    manifest[slug] = {
+      ...(manifest[slug] ?? {}),
+      [language]: {
+        ...metadata,
+        url: `${publicBaseUrl}/${storageKey}`,
+      },
+    };
+    await writeFile(MANIFEST_PATH, `${JSON.stringify(manifest, null, 2)}\n`);
+    uploaded += 1;
+    console.log(`Published ${publicBaseUrl}/${storageKey}`);
+  }
 }
 
 console.log(uploaded > 0 ? `Uploaded ${uploaded} audio file(s).` : 'No audio needs uploading.');

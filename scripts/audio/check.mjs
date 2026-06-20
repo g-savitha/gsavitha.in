@@ -4,17 +4,18 @@ import {
   BLOG_DIRECTORY,
   extractNarration,
   narrationHash,
+  resolveVoices,
+  voiceGenerationSettings,
 } from './lib/narration.mjs';
-import { DEFAULT_VOICE, generationSettings } from './lib/config.mjs';
+
 const strict = process.argv.includes('--strict');
 const pruneStale = process.argv.includes('--prune-stale');
 const manifestPath = path.join(process.cwd(), 'src/data/audioManifest.json');
-const manifest = JSON.parse(
-  await readFile(manifestPath, 'utf8'),
-);
+const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
 
 let failed = false;
 let pruned = false;
+
 const files = (await readdir(BLOG_DIRECTORY)).filter((file) => /\.(md|mdx)$/i.test(file));
 
 for (const file of files) {
@@ -26,37 +27,66 @@ for (const file of files) {
     failed = true;
   }
 
-  const voice = narration.audio.voice ?? DEFAULT_VOICE;
-  const hash = narrationHash(narration, generationSettings(voice));
-  const entry = manifest[narration.slug]?.en;
+  const voices = resolveVoices(narration);
+  const configuredLanguages = new Set(voices.map((voice) => voice.language));
+  const manifestLanguages = Object.keys(manifest[narration.slug] ?? {});
 
-  if (!entry || entry.hash !== hash) {
-    const message = `Audio is missing or stale for ${narration.slug}. Run: bun run audio:generate --slug=${narration.slug}`;
-    if (entry && pruneStale) {
-      delete manifest[narration.slug].en;
-      if (Object.keys(manifest[narration.slug]).length === 0) delete manifest[narration.slug];
+  for (const language of manifestLanguages) {
+    if (configuredLanguages.has(language)) continue;
+
+    const message = `Audio is configured for removed language ${narration.slug} [${language}].`;
+    if (pruneStale) {
+      delete manifest[narration.slug][language];
+      if (Object.keys(manifest[narration.slug]).length === 0) {
+        delete manifest[narration.slug];
+      }
       pruned = true;
-      console.warn(`Removed stale audio metadata for ${narration.slug}.`);
-    }
-    if (strict) {
+      console.warn(`Removed stale audio metadata for ${narration.slug} [${language}].`);
+    } else if (strict) {
       console.error(message);
       failed = true;
     } else {
       console.warn(`Warning: ${message}`);
     }
-    continue;
   }
 
-  if (entry.url.startsWith('/')) {
-    try {
-      await access(path.join(process.cwd(), 'public', entry.url.replace(/^\//, '')));
-    } catch {
-      console.error(`Audio file is missing for ${narration.slug}: ${entry.url}`);
+  for (const voiceConfig of voices) {
+    const { language } = voiceConfig;
+    const hash = narrationHash(narration, voiceGenerationSettings(voiceConfig));
+    const entry = manifest[narration.slug]?.[language];
+
+    if (!entry || entry.hash !== hash) {
+      const message = `Audio is missing or stale for ${narration.slug} [${language}]. Run: bun run audio:generate --slug=${narration.slug}`;
+
+      if (entry && pruneStale) {
+        delete manifest[narration.slug][language];
+        if (Object.keys(manifest[narration.slug]).length === 0) {
+          delete manifest[narration.slug];
+        }
+        pruned = true;
+        console.warn(`Removed stale audio metadata for ${narration.slug} [${language}].`);
+      }
+
+      if (strict) {
+        console.error(message);
+        failed = true;
+      } else {
+        console.warn(`Warning: ${message}`);
+      }
+      continue;
+    }
+
+    if (entry.url.startsWith('/')) {
+      try {
+        await access(path.join(process.cwd(), 'public', entry.url.replace(/^\//, '')));
+      } catch {
+        console.error(`Audio file is missing for ${narration.slug} [${language}]: ${entry.url}`);
+        failed = true;
+      }
+    } else if (!entry.url.startsWith('https://')) {
+      console.error(`Audio URL must be root-relative or HTTPS for ${narration.slug} [${language}]: ${entry.url}`);
       failed = true;
     }
-  } else if (!entry.url.startsWith('https://')) {
-    console.error(`Audio URL must be root-relative or HTTPS for ${narration.slug}: ${entry.url}`);
-    failed = true;
   }
 }
 

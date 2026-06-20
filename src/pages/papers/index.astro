@@ -18,11 +18,13 @@ const items = papers.map((paper) => ({
 }));
 ---
 
-<PageLayout
-    title={`Notes & Papers | ${SITE_TITLE}`}
-    description={SITE_DESCRIPTION}
->
-    <SearchableList client:load title="Notes" items={items} itemLabel="papers">
+<PageLayout title={`Papershelf | ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
+    <SearchableList
+        client:load
+        title="Papershelf"
+        items={items}
+        itemLabel="papers"
+    >
         <p class="text-lg text-zinc-400 max-w-2xl mb-6">
             Every week I go down a new technical rabbit hole. This is a
             collection of the most amusing and fascinating concepts I've

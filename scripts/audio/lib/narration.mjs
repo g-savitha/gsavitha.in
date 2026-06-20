@@ -6,6 +6,7 @@ import remarkGfm from 'remark-gfm';
 import remarkParse from 'remark-parse';
 import { unified } from 'unified';
 import { parse as parseYaml } from 'yaml';
+import { DEFAULT_VOICE, generationSettings } from './config.mjs';
 
 export const NARRATION_SCHEMA_VERSION = 2;
 export const BLOG_DIRECTORY = path.join(process.cwd(), 'src/content/blog');
@@ -63,9 +64,20 @@ function frontmatterFromTree(tree) {
 function normalizedAudioConfig(value) {
   if (value === true) return { enabled: true };
   if (!value || value === false) return { enabled: false };
+
+  // voices[] overrides single voice field when present
+  const voices = Array.isArray(value.voices)
+    ? value.voices.map((v) => ({
+        voice: v.voice ?? null,
+        language: v.language ?? 'en',
+        label: v.label ?? 'English',
+      }))
+    : null;
+
   return {
     enabled: value.enabled !== false,
-    voice: value.voice,
+    voice: value.voice ?? null,
+    voices,
     codeSummaryMode: value.codeSummaryMode ?? 'required',
   };
 }
@@ -326,6 +338,25 @@ export async function extractNarration(filePath) {
     segments,
     missingCodeSummaries,
     text: segments.map((segment) => segment.text).join('\n\n'),
+  };
+}
+
+export function resolveVoices(narration) {
+  if (Array.isArray(narration.audio.voices) && narration.audio.voices.length > 0) {
+    return narration.audio.voices.map((v) => ({
+      voice: v.voice ?? DEFAULT_VOICE,
+      language: v.language ?? 'en',
+      label: v.label ?? 'English',
+    }));
+  }
+  return [{ voice: narration.audio.voice ?? DEFAULT_VOICE, language: 'en', label: 'English' }];
+}
+
+export function voiceGenerationSettings(voiceConfig) {
+  return {
+    ...generationSettings(voiceConfig.voice),
+    language: voiceConfig.language,
+    label: voiceConfig.label,
   };
 }
 
