@@ -7,7 +7,7 @@ import remarkParse from 'remark-parse';
 import { unified } from 'unified';
 import { parse as parseYaml } from 'yaml';
 
-export const NARRATION_SCHEMA_VERSION = 1;
+export const NARRATION_SCHEMA_VERSION = 2;
 export const BLOG_DIRECTORY = path.join(process.cwd(), 'src/content/blog');
 
 const processor = unified()
@@ -90,10 +90,152 @@ function codeLabel(language) {
   return labels[language] ?? (language ? `${language} code` : 'code');
 }
 
-function contextualCodeSummary(language, heading) {
+const GENERIC_IDENTIFIERS = new Set([
+  'arr', 'cb', 'data', 'el', 'elem', 'err', 'error', 'fn', 'i', 'item', 'items', 'j', 'k',
+  'n', 'obj', 'req', 'res', 'result', 'val', 'value', 'x', 'y',
+]);
+
+function capitalizeFirst(text) {
+  if (!text) return text;
+  return `${text.charAt(0).toUpperCase()}${text.slice(1)}`;
+}
+
+function joinNatural(items) {
+  if (items.length === 0) return '';
+  if (items.length === 1) return items[0];
+  if (items.length === 2) return `${items[0]} and ${items[1]}`;
+  return `${items.slice(0, -1).join(', ')}, and ${items.at(-1)}`;
+}
+
+function extractLeadingComment(code) {
+  const trimmed = code.trim();
+  const blockMatch = trimmed.match(/^\/\*\*?\s*([\s\S]*?)\*\/\s*/);
+  if (blockMatch) {
+    const comment = cleanText(blockMatch[1].replace(/^\*\s?/gm, ''));
+    if (comment.length >= 8) return capitalizeFirst(comment);
+  }
+
+  const lineComments = [...trimmed.matchAll(/^\s*\/\/\s*(.+)$/gm)]
+    .map((match) => cleanText(match[1]))
+    .filter((comment) => {
+      if (comment.length < 8) return false;
+      if (/^expected output:/i.test(comment)) return false;
+      if (/^console\.log/i.test(comment)) return false;
+      return true;
+    });
+
+  if (lineComments.length >= 1) return capitalizeFirst(lineComments[0]);
+  return null;
+}
+
+function stripComments(code) {
+  return code
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/^\s*\/\/.*$/gm, '');
+}
+
+function extractDefinedNames(code, language) {
+  const lang = (language ?? '').toLowerCase();
+  if (!['js', 'javascript', 'jsx', 'ts', 'typescript', 'tsx'].includes(lang)) return [];
+
+  const names = [];
+  const seen = new Set();
+  const addName = (name) => {
+    if (!name || seen.has(name) || GENERIC_IDENTIFIERS.has(name.toLowerCase())) return;
+    seen.add(name);
+    names.push(name);
+  };
+
+  const source = stripComments(code);
+  for (const match of source.matchAll(/^( {0,2})(?:export\s+)?(?:async\s+function|function)\s+(\w+)/gm)) {
+    addName(match[2]);
+  }
+  for (const match of source.matchAll(/^( {0,2})class\s+(\w+)/gm)) {
+    addName(match[2]);
+  }
+  for (const match of source.matchAll(
+    /^( {0,2})(?:export\s+)?(?:const|let|var)\s+(\w+)\s*=\s*(?:async\s*)?(?:function|\(|\w)/gm,
+  )) {
+    addName(match[2]);
+  }
+
+  return names.slice(0, 4);
+}
+
+function extractHtmlSummary(code) {
+  const tags = [...code.matchAll(/<(header|main|footer|nav|section|article|form|table)\b/gi)]
+    .map((match) => match[1].toLowerCase());
+  const uniqueTags = [...new Set(tags)];
+  if (uniqueTags.length >= 2) {
+    return `This HTML example includes ${joinNatural(uniqueTags)} elements.`;
+  }
+  if (uniqueTags.length === 1) {
+    return `This HTML example uses a ${uniqueTags[0]} element.`;
+  }
+  return null;
+}
+
+function extractCssSummary(code) {
+  const selectors = [...code.matchAll(/(?:^|\n)\s*([.#][\w-]+)\s*\{/g)]
+    .map((match) => cleanText(match[1]))
+    .filter((selector) => selector.length > 1)
+    .slice(0, 3);
+  if (selectors.length) {
+    return `This CSS example styles ${joinNatural(selectors)}.`;
+  }
+  return null;
+}
+
+function extractShellSummary(code) {
+  const lines = code.trim().split('\n').map((line) => line.trim()).filter(Boolean);
+  const commands = lines
+    .filter((line) => !line.startsWith('#'))
+    .map((line) => line.replace(/^\$\s*/, '').split(/\s+/)[0])
+    .filter(Boolean)
+    .slice(0, 3);
+  if (commands.length) {
+    return `This shell example runs ${joinNatural(commands.map((command) => `the ${command} command`))}.`;
+  }
+
+  const comment = lines.find((line) => line.startsWith('#'))?.replace(/^#\s*/, '');
+  if (comment && comment.length >= 8) return capitalizeFirst(comment);
+  return null;
+}
+
+function summaryFromDefinedNames(names, language) {
   const label = codeLabel(language);
-  if (language === 'mermaid') return `This diagram illustrates ${heading}.`;
-  return `This ${label} example illustrates ${heading}.`;
+  if (names.length === 1) return `This ${label} example defines ${names[0]}.`;
+  return `This ${label} example defines ${joinNatural(names)}.`;
+}
+
+export function contextualCodeSummary(language, heading, code = '') {
+  const lang = (language ?? '').toLowerCase();
+  const label = codeLabel(language);
+
+  if (lang === 'mermaid') return `This diagram illustrates ${heading}.`;
+
+  const comment = extractLeadingComment(code);
+  if (comment) return comment;
+
+  if (lang === 'html' || lang === 'htm') {
+    const htmlSummary = extractHtmlSummary(code);
+    if (htmlSummary) return htmlSummary;
+  }
+
+  if (lang === 'css') {
+    const cssSummary = extractCssSummary(code);
+    if (cssSummary) return cssSummary;
+  }
+
+  if (['bash', 'sh', 'shell', 'zsh'].includes(lang)) {
+    const shellSummary = extractShellSummary(code);
+    if (shellSummary) return shellSummary;
+  }
+
+  const names = extractDefinedNames(code, language);
+  if (names.length) return summaryFromDefinedNames(names, language);
+
+  return `This ${label} example relates to ${heading}.`;
 }
 
 function extractSegments(tree, title, audio) {
@@ -121,7 +263,7 @@ function extractSegments(tree, title, audio) {
         if (pendingCodeSummary) {
           addSegment('code-summary', pendingCodeSummary);
         } else if (audio.codeSummaryMode === 'contextual') {
-          addSegment('code-summary', contextualCodeSummary(node.lang, currentHeading));
+          addSegment('code-summary', contextualCodeSummary(node.lang, currentHeading, node.value ?? ''));
         } else if (audio.codeSummaryMode !== 'skip' && node.lang !== 'mermaid') {
           missingCodeSummaries.push({
             language: node.lang ?? 'text',

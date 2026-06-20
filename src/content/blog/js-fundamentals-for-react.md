@@ -558,9 +558,9 @@ These operators are also known as `short-circuit evaluation` operators
 
 - Promises are the important concept to understand the asynchronous events in the code. These are also used quite often in React.
 - I recommend you to check these resources.
-  1. [How Asynchronous code works in JS]({{<ref "/posts/15-async-code-in-js.md">}})
-  2. [What are promises and how they work]({{<ref "/posts/14-promises-explained.md">}})
-  3. [Async and Await]({{<ref "/posts/16-async-await.md">}})
+  1. [How Asynchronous code works in JS](./async-code-in-js.md)
+  2. [What are promises and how they work](./promises-explained.md)
+  3. [Async and Await](./async-await.md)
 
 ## Basic DOM APIs
 

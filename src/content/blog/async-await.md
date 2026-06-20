@@ -20,8 +20,8 @@ categories:
 
 Before getting started you need to know..
 
-1. [How Asynchronous code works in JS]({{<ref "/posts/15-async-code-in-js.md">}})
-2. [What are promises and how they work]({{<ref "/posts/14-promises-explained.md">}})
+1. [How Asynchronous code works in JS](./async-code-in-js.md)
+2. [What are promises and how they work](./promises-explained.md)
 
 ## Introduction
 
@@ -37,7 +37,9 @@ function resolveAfter2Seconds() {
     }, 2000);
   });
 }
-
+<!-- audio-summary:
+This async function pauses until the promise resolves, then logs the result.
+-->
 async function asyncCall() {
   console.log("calling");
   const result = await resolveAfter2Seconds();

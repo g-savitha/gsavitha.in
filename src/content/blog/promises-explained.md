@@ -418,7 +418,7 @@ moveXPromise(btn, 100, 000)
   });
 ```
 
-Is there any other better way other than promises? Checkout [Async and Await]({{<ref "/posts/16-async-await.md">}})
+Is there any other better way other than promises? Checkout [Async and Await](./async-await.md)
 
 Until next time :wave:, happy learning :tada: :computer:
 

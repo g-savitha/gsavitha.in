@@ -19,8 +19,8 @@ Hey, there :wave:
 
 Welcome to the 3rd article of the [Epic React Series]({{< ref "/posts/12-epic-react-intro.md">}}) which is based on the workshop [EpicReact.dev](https://epicreact.dev/) by [Kent C. Dodds](https://kentcdodds.com/). If you haven't read the previous article of this series, I recommend you to go read it first before proceeding further.
 
-1. [JS Fundamentals for React]({{<ref "/posts/13-js-fundamentals-for-react.md">}})
-2. [Intro to Raw React APIs]({{<ref "/posts/17-intro-to-raw-react-apis.md">}})
+1. [JS Fundamentals for React](./js-fundamentals-for-react.md)
+2. [Intro to Raw React APIs](./intro-to-raw-react-apis.md)
 
 In the previous article we understood about raw react APIs, especially `React.createElement()` and `ReactDOM.render()`. In this article, lets understand what is JSX and its significance.
 

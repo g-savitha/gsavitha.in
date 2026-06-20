@@ -19,7 +19,7 @@ Hey, there :wave:
 
 Welcome to the 2nd article of the [Epic React Series]({{< ref "/posts/12-epic-react-intro.md">}}) which is based on the workshop [EpicReact.dev](https://epicreact.dev/) by [Kent C. Dodds](https://kentcdodds.com/). If you haven't read previous article of the series, I recommend you to go and read it first before proceeding further.
 
-- [JS Fundamentals required to get started with React]({{<ref "/posts/13-js-fundamentals-for-react.md">}})
+- [JS Fundamentals required to get started with React](./js-fundamentals-for-react.md)
 
 In this post you are going to learn the very basics of react with HTML and javascript using raw React APIs. We wont be using any JSX( we will, in the upcoming posts). Many people tend to skip these concepts as working with raw react APIs is difficult to understand, but it is really important to understand these concepts, as you will see in the upcoming articles.
 
@@ -176,7 +176,7 @@ That's all for now.
 
 ---
 
-So now you saw how difficult it becomes to write the code when you use RAW APIs. In the next [article]({{<ref "/posts/18-understanding-jsx.md">}}) we will understand a simpler way to create elements using JSX (whose syntax looks similar to HTML) and understand how it works behind the scenes.
+So now you saw how difficult it becomes to write the code when you use RAW APIs. In the next [article](./understanding-jsx.md) we will understand a simpler way to create elements using JSX (whose syntax looks similar to HTML) and understand how it works behind the scenes.
 
 Until next time :wave:, Happy learning :tada: :computer:
 
