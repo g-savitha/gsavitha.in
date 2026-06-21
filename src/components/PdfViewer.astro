@@ -2,17 +2,19 @@
 /**
  * PdfViewer component uses PDF.js to render a PDF document with zoom and pan controls.
  */
+export type PdfViewerHeight = 'compact' | 'standard' | 'viewport';
+
 interface Props {
   url: string;
   title?: string;
-  height?: string;
+  height?: PdfViewerHeight;
   downloadFilename?: string;
 }
 
 const {
   url,
   title = 'PDF Viewer',
-  height = 'calc(100vh - 13rem)',
+  height = 'viewport',
   downloadFilename = 'document.pdf',
 } = Astro.props;
 ---
@@ -86,20 +88,9 @@ const {
   </div>
 
   <!-- PDF Canvas Viewer -->
-  <div
-    id="pdf-viewport"
-    class="-mx-4 sm:-mx-6 lg:-mx-12"
-    style={`height: ${height}; min-height: 360px; background: #111113; border-top: 1px solid #27272a; border-bottom: 1px solid #27272a; overflow: hidden; position: relative; cursor: grab; user-select: none;`}
-  >
-    <canvas
-      id="pdf-canvas"
-      style="position: absolute; transform-origin: 0 0; image-rendering: pixelated;"></canvas>
-    <div
-      id="pdf-loading"
-      style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #71717a; font-size: 1rem; font-family: system-ui, sans-serif;"
-    >
-      Loading PDF…
-    </div>
+  <div id="pdf-viewport" class:list={['pdf-viewer__viewport', `pdf-viewer__viewport--${height}`]}>
+    <canvas id="pdf-canvas" class="pdf-viewer__canvas"></canvas>
+    <div id="pdf-loading" class="pdf-viewer__loading">Loading PDF…</div>
   </div>
 
   <p class="text-[0.875rem] text-zinc-600 mt-2 text-center">

@@ -100,10 +100,8 @@ export default function SearchableList({ title, items, itemLabel, children }: Se
 
   return (
     <>
-      <div className="mb-12 border-b border-zinc-800/80 pb-8">
-        <h1 className="text-4xl sm:text-[2.75rem] font-bold tracking-tight text-white mb-4">
-          {title}
-        </h1>
+      <div className="page-header">
+        <h1 className="page-title">{title}</h1>
         {children}
         <div className="relative max-w-sm">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -120,29 +118,23 @@ export default function SearchableList({ title, items, itemLabel, children }: Se
         </div>
       </div>
 
-      <ul className="flex flex-col">
+      <ul className="list-rows">
         {filteredItems.map((item) => (
-          <li key={item.href} className="border-b border-zinc-800/80 last:border-0">
+          <li key={item.href} className="list-row">
             <a
               href={item.href}
               target={item.external ? '_blank' : undefined}
               rel={item.external ? 'noopener noreferrer' : undefined}
-              className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 py-3 -mx-3 px-3 rounded-xl hover-lift group font-outfit"
+              className="list-row__link"
             >
-              <span className="text-zinc-400 group-hover:text-zinc-200 text-base shrink-0 w-32 mt-1 sm:mt-0 transition-colors">
+              <span className="list-row__date list-row__date--offset">
                 {item.date ? <time dateTime={item.date}>{formatDate(item.date)}</time> : 'Recent'}
               </span>
-              <div className="flex-1">
-                <span className="text-primary group-hover:text-primary-hover font-medium font-outfit transition-colors text-xl mb-2 block">
-                  {highlightTitle(item.title, term.trim())}
-                </span>
-                {item.description && (
-                  <p className="text-zinc-400 group-hover:text-zinc-300 text-base line-clamp-2 leading-relaxed max-w-2xl transition-colors">
-                    {item.description}
-                  </p>
-                )}
+              <div className="list-row__body">
+                <span className="list-row__title">{highlightTitle(item.title, term.trim())}</span>
+                {item.description && <p className="list-row__description">{item.description}</p>}
               </div>
-              <div className="hidden sm:flex text-zinc-500 opacity-0 group-hover:opacity-100 transition-all duration-300 shrink-0 transform translate-x-[-10px] group-hover:translate-x-0 items-center justify-center">
+              <div className="list-row__chevron">
                 {item.external ? <ExternalLinkIcon /> : <ChevronIcon />}
               </div>
             </a>

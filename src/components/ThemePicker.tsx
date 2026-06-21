@@ -1,9 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { PaintBucket } from 'lucide-react';
-import { THEMES, type ThemeName } from '../utils/themes';
+import { THEME_NAMES, type ThemeName } from '../utils/themes';
 import ErrorBoundary from './ErrorBoundary';
-
-const themes = THEMES;
 
 function ThemePickerInner() {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,7 +11,7 @@ function ThemePickerInner() {
   useEffect(() => {
     // Initialize theme from localStorage if the user has previously selected one
     const saved = localStorage.getItem('theme-color');
-    if (saved && saved in themes) {
+    if (saved && THEME_NAMES.includes(saved as ThemeName)) {
       setActiveTheme(saved as ThemeName);
     }
 
@@ -41,9 +39,7 @@ function ThemePickerInner() {
    * Sets the theme and updates CSS variables and localStorage.
    */
   const setTheme = (name: ThemeName) => {
-    const theme = themes[name];
-    document.documentElement.style.setProperty('--theme-color', theme.primary);
-    document.documentElement.style.setProperty('--theme-color-hover', theme.hover);
+    document.documentElement.dataset.theme = name;
     localStorage.setItem('theme-color', name);
     setActiveTheme(name);
     setIsOpen(false);
@@ -70,19 +66,16 @@ function ThemePickerInner() {
           aria-label="Theme options"
         >
           <ul className="flex flex-col gap-3 items-center list-none p-0 m-0">
-            {(Object.entries(themes) as [ThemeName, (typeof themes)['blue']][]).map(
-              ([name, theme]) => (
-                <li key={name} role="none">
-                  <button
-                    onClick={() => setTheme(name)}
-                    className={`w-5 h-5 rounded-full transition-transform hover:scale-110 shadow-inner block cursor-pointer ${activeTheme === name ? 'ring-2 ring-white ring-offset-2 ring-offset-[rgb(30,30,33)]' : 'border border-white/5'}`}
-                    style={{ backgroundColor: theme.primary }}
-                    aria-label={`Select ${name} theme`}
-                    role="menuitem"
-                  />
-                </li>
-              ),
-            )}
+            {THEME_NAMES.map((name) => (
+              <li key={name} role="none">
+                <button
+                  onClick={() => setTheme(name)}
+                  className={`theme-swatch theme-swatch--${name} ${activeTheme === name ? 'theme-swatch--active' : ''}`}
+                  aria-label={`Select ${name} theme`}
+                  role="menuitem"
+                />
+              </li>
+            ))}
           </ul>
         </div>
       )}

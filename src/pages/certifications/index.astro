@@ -15,13 +15,9 @@ const certifications = (await getCollection('certifications')).sort(
   title={`Certifications | ${SITE_TITLE}`}
   description="Professional certifications and courses I have completed."
 >
-  <div class="mb-12 border-b border-zinc-800/80 pb-8">
-    <h1 class="text-4xl sm:text-[2.75rem] font-bold tracking-tight text-white mb-4">
-      Certifications
-    </h1>
-    <p class="text-lg text-zinc-400 max-w-2xl">
-      Professional certifications and courses I have completed.
-    </p>
+  <div class="page-header">
+    <h1 class="page-title">Certifications</h1>
+    <p class="page-description">Professional certifications and courses I have completed.</p>
   </div>
 
   <ul class="flex flex-col max-w-2xl mx-auto divide-y divide-zinc-800/80">

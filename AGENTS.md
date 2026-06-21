@@ -24,17 +24,19 @@ repository. Preserve existing behavior unless a change is explicitly requested.
 
 ## Styling: Tailwind and Global CSS
 
-- Tailwind utilities are the default styling approach in `.astro` and React components.
-- `src/styles/global.css` is the single source of truth for design tokens, base styles, and genuinely
-  shared component patterns.
+- Use short, semantic class names in `.astro` and React markup. Keep Tailwind-backed class
+  definitions centralized in `src/styles/global.css` instead of placing long utility lists inline.
+- `src/styles/variables.css` is the single source of truth for colors, motion, surfaces, and other
+  design tokens. Do not duplicate token values in TypeScript or component markup.
+- `src/styles/global.css` owns base styles, reusable patterns, and semantic component classes.
 - Reuse existing tokens, utilities, and shared classes before adding new ones. Extract repeated
   values into CSS custom properties or Tailwind-compatible theme tokens.
-- Do not add CSS Modules, component-scoped `<style>` blocks, CSS-in-JS, or static inline styles.
-- Runtime-calculated values that cannot be expressed with Tailwind may use narrowly scoped CSS
-  custom properties. Document the reason and keep the static styling in Tailwind or global CSS.
-- Prefer readable utility groups. If a long utility sequence is repeated or represents a stable
-  site-wide pattern, extract it once into `global.css` under the appropriate Tailwind layer.
-- Use semantic shared-class names and avoid one-off global selectors tied to a single page.
+- Do not add CSS Modules, component-scoped `<style>` blocks, CSS-in-JS, or `style` attributes. Use
+  semantic classes, state/data attributes, or typed HTML attributes instead. Runtime rendering
+  geometry, such as canvas pan and zoom, may update DOM styles only when class-based CSS cannot
+  express the value; keep every static declaration in the stylesheet.
+- Prefer readable semantic class groups. Define component-specific selectors in `global.css` under
+  the appropriate Tailwind layer and reuse existing classes before adding new ones.
 - Preserve responsive, hover, focus, reduced-motion, and dark-theme behavior during refactors.
 
 ## Components and Reuse

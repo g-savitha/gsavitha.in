@@ -12,7 +12,7 @@ interface Props {
   image?: ImageMetadata;
 }
 
-import { THEMES } from '../utils/themes';
+import { THEME_NAMES } from '../utils/themes';
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
@@ -43,13 +43,12 @@ const { title, description, image = FallbackImage } = Astro.props;
   rel="stylesheet"
 />
 <title>{title}</title>
-<script is:inline define:vars={{ themeDef: THEMES }}>
+<script is:inline define:vars={{ themeNames: THEME_NAMES }}>
   (function () {
     try {
       const saved = localStorage.getItem('theme-color');
-      if (saved && themeDef[saved]) {
-        document.documentElement.style.setProperty('--theme-color', themeDef[saved].primary);
-        document.documentElement.style.setProperty('--theme-color-hover', themeDef[saved].hover);
+      if (saved && themeNames.includes(saved)) {
+        document.documentElement.dataset.theme = saved;
       }
     } catch (e) {}
   })();

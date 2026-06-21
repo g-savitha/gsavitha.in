@@ -1,0 +1,63 @@
+:root {
+  color-scheme: dark;
+
+  /* Theme palette */
+  --theme-pink: #f472b6;
+  --theme-pink-hover: #f9a8d4;
+  --theme-purple: #c084fc;
+  --theme-purple-hover: #d8b4fe;
+  --theme-yellow: #facc15;
+  --theme-yellow-hover: #fde047;
+  --theme-green: #4ade80;
+  --theme-green-hover: #86efac;
+  --theme-blue: #60a5fa;
+  --theme-blue-hover: #93c5fd;
+
+  /* Default theme */
+  --theme-color: var(--theme-blue);
+  --theme-color-hover: var(--theme-blue-hover);
+
+  /* Motion */
+  --ease-lift: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-lift-spring: cubic-bezier(0.32, 0.72, 0, 1);
+  --lift-y-subtle: -1px;
+  --lift-y: -2px;
+
+  /* Surfaces */
+  --lift-bg: rgba(255, 255, 255, 0.05);
+  --lift-bg-pill: rgba(255, 255, 255, 0.07);
+  --lift-border: rgba(255, 255, 255, 0.12);
+
+  /* Shared transitions */
+  --lift-transition:
+    background-color 0.35s var(--ease-lift), border-color 0.35s var(--ease-lift),
+    box-shadow 0.35s var(--ease-lift), transform 0.35s var(--ease-lift-spring), color 0.25s ease;
+  --lift-transition-pill:
+    color 0.25s ease, border-color 0.35s var(--ease-lift), background-color 0.35s var(--ease-lift),
+    transform 0.35s var(--ease-lift-spring);
+}
+
+:root[data-theme='pink'] {
+  --theme-color: var(--theme-pink);
+  --theme-color-hover: var(--theme-pink-hover);
+}
+
+:root[data-theme='purple'] {
+  --theme-color: var(--theme-purple);
+  --theme-color-hover: var(--theme-purple-hover);
+}
+
+:root[data-theme='yellow'] {
+  --theme-color: var(--theme-yellow);
+  --theme-color-hover: var(--theme-yellow-hover);
+}
+
+:root[data-theme='green'] {
+  --theme-color: var(--theme-green);
+  --theme-color-hover: var(--theme-green-hover);
+}
+
+:root[data-theme='blue'] {
+  --theme-color: var(--theme-blue);
+  --theme-color-hover: var(--theme-blue-hover);
+}
