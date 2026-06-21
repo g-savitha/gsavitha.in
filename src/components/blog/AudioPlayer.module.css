@@ -36,6 +36,14 @@
   gap: 0.75rem;
 }
 
+.controlsStart,
+.controlsEnd {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 0 0 auto;
+}
+
 .play {
   display: grid;
   flex: 0 0 auto;
@@ -84,11 +92,12 @@
 @media (max-width: 520px) {
   .controls {
     flex-wrap: wrap;
+    justify-content: space-between;
   }
 
   .progress {
     order: 5;
-    min-width: calc(100% - 1.5rem);
-    margin-left: 0.75rem;
+    flex: 1 1 100%;
+    min-width: 0;
   }
 }

@@ -171,25 +171,28 @@ export default function AudioPlayer({ slug, title, sources }: AudioPlayerProps) 
       </div>
 
       <div className={styles.controls}>
-        <button
-          className={styles.play}
-          type="button"
-          disabled={isUnavailable}
-          aria-label={isPlaying ? 'Pause article' : 'Play article'}
-          onClick={handleTogglePlayback}
-        >
-          {isPlaying ? (
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M6 5h4v14H6zm8 0h4v14h-4z" />
-            </svg>
-          ) : (
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          )}
-        </button>
+        <div className={styles.controlsStart}>
+          <button
+            className={styles.play}
+            type="button"
+            disabled={isUnavailable}
+            aria-label={isPlaying ? 'Pause article' : 'Play article'}
+            onClick={handleTogglePlayback}
+          >
+            {isPlaying ? (
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 5h4v14H6zm8 0h4v14h-4z" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            )}
+          </button>
 
-        <span className={styles.time}>{formatTime(currentTime)}</span>
+          <span className={styles.time}>{formatTime(currentTime)}</span>
+        </div>
+
         <label className="sr-only" htmlFor={`audio-progress-${slug}`}>
           Audio progress
         </label>
@@ -204,39 +207,42 @@ export default function AudioPlayer({ slug, title, sources }: AudioPlayerProps) 
           aria-label="Audio progress"
           onChange={(event) => handleSeek(Number(event.currentTarget.value))}
         />
-        <span className={styles.time}>{formatTime(duration)}</span>
 
-        {sources.length > 1 && (
+        <div className={styles.controlsEnd}>
+          <span className={styles.time}>{formatTime(duration)}</span>
+
+          {sources.length > 1 && (
+            <label className={styles.selectWrap}>
+              <span className="sr-only">Narration language</span>
+              <select
+                value={selectedUrl}
+                aria-label="Narration language"
+                onChange={(event) => handleLanguageChange(event.currentTarget.value)}
+              >
+                {sources.map((source) => (
+                  <option key={source.url} value={source.url}>
+                    {source.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+
           <label className={styles.selectWrap}>
-            <span className="sr-only">Narration language</span>
+            <span className="sr-only">Playback speed</span>
             <select
-              value={selectedUrl}
-              aria-label="Narration language"
-              onChange={(event) => handleLanguageChange(event.currentTarget.value)}
+              value={playbackRate}
+              aria-label="Playback speed"
+              onChange={(event) => handleSpeedChange(Number(event.currentTarget.value))}
             >
-              {sources.map((source) => (
-                <option key={source.url} value={source.url}>
-                  {source.label}
+              {PLAYBACK_SPEEDS.map((speed) => (
+                <option key={speed} value={speed}>
+                  {speed}×
                 </option>
               ))}
             </select>
           </label>
-        )}
-
-        <label className={styles.selectWrap}>
-          <span className="sr-only">Playback speed</span>
-          <select
-            value={playbackRate}
-            aria-label="Playback speed"
-            onChange={(event) => handleSpeedChange(Number(event.currentTarget.value))}
-          >
-            {PLAYBACK_SPEEDS.map((speed) => (
-              <option key={speed} value={speed}>
-                {speed}×
-              </option>
-            ))}
-          </select>
-        </label>
+        </div>
       </div>
     </section>
   );
