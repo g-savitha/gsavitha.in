@@ -80,6 +80,7 @@ jobs:
           restore-keys: |
             audio-v2-${{ runner.os }}-${{ hashFiles('scripts/audio/lib/config.mjs') }}-
             audio-v2-${{ runner.os }}-
+            audio-v1-${{ runner.os }}-
       - name: Generate missing audio
         if: env.R2_ACCOUNT_ID != '' && env.R2_BUCKET != '' && env.AUDIO_PUBLIC_BASE_URL != ''
         continue-on-error: true
@@ -113,7 +114,10 @@ jobs:
           git add src/data/audioManifest.json
           git commit -m "chore: update generated blog audio metadata"
           git fetch origin main
-          git rebase origin/main
+          # --autostash so unrelated working-tree noise (e.g. bun install
+          # rewriting bun.lockb) can't abort the rebase and silently drop the
+          # manifest push. Only the committed manifest is published.
+          git rebase --autostash origin/main
           git push origin HEAD:main
           # Pushing with GITHUB_TOKEN does not trigger the push-based deploy, so
           # kick it off explicitly (workflow_dispatch is allowed for the token).
