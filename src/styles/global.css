@@ -324,37 +324,71 @@
     background-color: var(--theme-blue);
   }
 
-  /* Embedded content */
-  .pdf-viewer__viewport {
-    @apply relative -mx-4 min-h-[360px] cursor-grab select-none overflow-hidden border-y border-zinc-800 bg-[#111113] sm:-mx-6 lg:-mx-12;
+  /* Native PDF document */
+  .pdf-document {
+    @apply mb-4 sm:mb-6;
   }
 
-  .pdf-viewer__viewport--compact {
-    @apply h-96;
+  .pdf-document__back-link {
+    @apply -mx-2 mb-3 flex w-fit items-center gap-1 rounded-lg px-2 py-1 text-base text-zinc-500 hover:text-primary;
   }
 
-  .pdf-viewer__viewport--standard {
-    @apply h-[32rem];
+  .pdf-document__header {
+    @apply mb-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between;
   }
 
-  .pdf-viewer__viewport--viewport {
-    @apply h-[calc(100vh-13rem)];
+  .pdf-document__title {
+    @apply mb-1.5 text-2xl font-bold tracking-tight text-white sm:text-4xl;
   }
 
-  .pdf-viewer__canvas {
-    @apply absolute origin-top-left [image-rendering:pixelated];
+  .pdf-document__description {
+    @apply max-w-xl text-base text-zinc-400;
   }
 
-  .pdf-viewer__loading {
-    @apply absolute inset-0 flex items-center justify-center text-base text-zinc-500;
+  .pdf-document__actions {
+    @apply flex shrink-0 items-center gap-2;
   }
 
-  .eraser-embed {
-    @apply my-8 w-full overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/50 shadow-lg;
+  .pdf-document__action {
+    @apply flex items-center gap-1.5 rounded-lg border border-zinc-700/60 px-3 py-2 text-sm font-medium text-zinc-400 transition-colors hover:border-primary/40 hover:text-primary;
   }
 
-  .eraser-embed__frame {
-    @apply w-full border-0;
+  .pdf-document__action-icon {
+    @apply h-3.5 w-3.5;
+  }
+
+  .pdf-document__viewer-shell {
+    @apply relative;
+  }
+
+  .pdf-document__viewer {
+    @apply h-[calc(100vh-14rem)] min-h-[32rem] w-full rounded-xl border border-zinc-800 bg-zinc-950;
+  }
+
+  .pdf-document__fallback {
+    @apply flex h-full min-h-[32rem] items-center justify-center p-6 text-center text-base text-zinc-400;
+  }
+
+  .pdf-document__touch-fallback {
+    @apply hidden h-[calc(100vh-14rem)] min-h-[32rem] flex-col items-center justify-center gap-4 rounded-xl border border-zinc-800 bg-zinc-950 p-6 text-center;
+  }
+
+  .pdf-document__touch-fallback-message {
+    @apply max-w-md text-base text-zinc-400;
+  }
+
+  .pdf-document__touch-fallback-actions {
+    @apply flex flex-wrap items-center justify-center gap-2;
+  }
+
+  @media (hover: none) and (pointer: coarse) {
+    .pdf-document__viewer--inline {
+      @apply hidden;
+    }
+
+    .pdf-document__touch-fallback {
+      @apply flex;
+    }
   }
 
   /* Projects showcase grid with ambient glow */
