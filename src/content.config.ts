@@ -1,6 +1,7 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { isIconName } from './utils/icons';
 
 const blog = defineCollection({
   // Load Markdown and MDX files in the `src/content/blog/` directory.
@@ -59,7 +60,7 @@ const goodies = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    icon: z.string().optional(),
+    icon: z.string().refine(isIconName, 'Unknown Lucide icon name').optional(),
     href: z.string(),
     date: z.coerce.date().optional(),
   }),

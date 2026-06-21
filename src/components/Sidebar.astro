@@ -5,23 +5,11 @@
  */
 import { SITE_TITLE, NAV_LINKS, SOCIAL_LINKS } from '../consts';
 import ThemePicker from './ThemePicker.tsx';
-import * as Icons from 'lucide-astro';
 import { Menu, X } from 'lucide-astro';
+import NavigationLinks from './NavigationLinks.astro';
+import { ICONS } from '../utils/icons';
 
 const pathname = Astro.url.pathname;
-
-/**
- * Checks if a given path is the currently active one.
- * @param path The path to check against the current URL.
- */
-function isActive(path: string) {
-  if (path === '/' && pathname === '/') return true;
-  if (path !== '/' && pathname.startsWith(path)) return true;
-  return false;
-}
-
-// Map icon names to Lucide components
-const NavIcons = Icons as any;
 ---
 
 <aside
@@ -54,27 +42,7 @@ const NavIcons = Icons as any;
     <!-- Main Navigation -->
     <nav>
       <ul class="space-y-2 font-medium text-base text-zinc-300">
-        {
-          NAV_LINKS.map((link) => {
-            const Icon = NavIcons[link.icon];
-            const active = isActive(link.href);
-            return (
-              <li>
-                <a
-                  href={link.href}
-                  class={`flex items-center gap-3 px-4 py-2.5 -mx-4 rounded-xl hover-lift group ${active ? 'text-primary bg-zinc-800/30' : 'hover:text-primary'}`}
-                >
-                  {Icon && (
-                    <Icon
-                      class={`w-5 h-5 transition-colors ${active ? 'text-primary' : 'text-zinc-500 group-hover:text-primary'}`}
-                    />
-                  )}
-                  {link.label}
-                </a>
-              </li>
-            );
-          })
-        }
+        <NavigationLinks links={NAV_LINKS} pathname={pathname} variant="desktop" />
       </ul>
     </nav>
 
@@ -86,7 +54,7 @@ const NavIcons = Icons as any;
       <ul class="space-y-2 text-base text-zinc-400">
         {
           SOCIAL_LINKS.map((link) => {
-            const Icon = NavIcons[link.icon];
+            const Icon = ICONS[link.icon];
             return (
               <li>
                 <a
@@ -95,9 +63,10 @@ const NavIcons = Icons as any;
                   target={link.href.startsWith('http') ? '_blank' : undefined}
                   rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
                 >
-                  {Icon && (
-                    <Icon class="w-4 h-4 text-zinc-500 group-hover:text-primary transition-colors" />
-                  )}
+                  <Icon
+                    class="w-4 h-4 text-zinc-500 group-hover:text-primary transition-colors"
+                    aria-hidden="true"
+                  />
                   {link.label}
                 </a>
               </li>
@@ -140,22 +109,7 @@ const NavIcons = Icons as any;
   id="mobile-drawer"
   class="lg:hidden hidden border-b border-zinc-800 bg-zinc-900/95 backdrop-blur sticky top-[57px] z-30 px-4 py-3 flex flex-col gap-1"
 >
-  {
-    NAV_LINKS.map((link) => {
-      const Icon = NavIcons[link.icon];
-      return (
-        <a
-          href={link.href}
-          class={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-base font-medium hover-lift group ${isActive(link.href) ? 'text-primary bg-zinc-800/30' : 'text-zinc-300 hover:text-primary'}`}
-        >
-          {Icon && (
-            <Icon class="w-4 h-4 text-zinc-500 group-hover:text-primary transition-colors shrink-0" />
-          )}
-          {link.label}
-        </a>
-      );
-    })
-  }
+  {(<NavigationLinks links={NAV_LINKS} pathname={pathname} variant="mobile" />)}
 </div>
 
 <script>

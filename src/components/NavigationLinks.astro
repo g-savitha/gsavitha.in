@@ -1,0 +1,45 @@
+---
+import type { NavigationLink } from '../consts';
+import { ICONS } from '../utils/icons';
+
+interface Props {
+  links: readonly NavigationLink[];
+  pathname: string;
+  variant: 'desktop' | 'mobile';
+}
+
+const { links, pathname, variant } = Astro.props;
+
+function isActive(href: string) {
+  return href === '/' ? pathname === '/' : pathname.startsWith(href);
+}
+---
+
+{
+  links.map((link) => {
+    const Icon = ICONS[link.icon];
+    const active = isActive(link.href);
+    const anchor = (
+      <a
+        href={link.href}
+        class:list={[
+          'flex items-center rounded-xl font-medium hover-lift group',
+          variant === 'desktop' ? 'gap-3 px-4 py-2.5 -mx-4' : 'gap-3 px-3 py-2.5 text-base',
+          active ? 'text-primary bg-zinc-800/30' : 'text-zinc-300 hover:text-primary',
+        ]}
+      >
+        <Icon
+          class:list={[
+            'shrink-0 transition-colors',
+            variant === 'desktop' ? 'h-5 w-5' : 'h-4 w-4',
+            active ? 'text-primary' : 'text-zinc-500 group-hover:text-primary',
+          ]}
+          aria-hidden="true"
+        />
+        {link.label}
+      </a>
+    );
+
+    return variant === 'desktop' ? <li>{anchor}</li> : anchor;
+  })
+}
