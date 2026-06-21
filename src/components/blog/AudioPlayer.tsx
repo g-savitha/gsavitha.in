@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Pause, Play } from 'lucide-react';
 import type { AudioSource } from '../../utils/audio';
 
 interface AudioPlayerProps {
@@ -178,15 +179,7 @@ export default function AudioPlayer({ slug, title, sources }: AudioPlayerProps) 
             aria-label={isPlaying ? 'Pause article' : 'Play article'}
             onClick={handleTogglePlayback}
           >
-            {isPlaying ? (
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M6 5h4v14H6zm8 0h4v14h-4z" />
-              </svg>
-            ) : (
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            )}
+            {isPlaying ? <Pause aria-hidden="true" /> : <Play aria-hidden="true" />}
           </button>
 
           <span className="audio-player__time">{formatTime(currentTime)}</span>

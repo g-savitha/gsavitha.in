@@ -2,7 +2,6 @@
 import { getCollection } from 'astro:content';
 import PageLayout from '../../layouts/PageLayout.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
-import IconArrow from '../../components/IconArrow.astro';
 import { SITE_TITLE } from '../../consts';
 import { sortByDate } from '../../utils/content';
 import * as Icons from 'lucide-astro';
@@ -52,7 +51,10 @@ const GoodieIcons = Icons as any;
               </div>
 
               {/* Arrow */}
-              <IconArrow class="w-4 h-4 shrink-0 text-zinc-600 group-hover:text-primary transition-colors" />
+              <Icons.ChevronRight
+                class="w-4 h-4 shrink-0 text-zinc-600 group-hover:text-primary transition-colors"
+                aria-hidden="true"
+              />
             </a>
           </li>
         );
