@@ -1,5 +1,10 @@
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { access, readdir, readFile, writeFile } from 'node:fs/promises';
+import {
+  DeleteObjectsCommand,
+  ListObjectsV2Command,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
+import { access, readdir, readFile, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import {
   BLOG_DIRECTORY,
@@ -8,9 +13,13 @@ import {
   resolveVoices,
   voiceGenerationSettings,
 } from './lib/narration.mjs';
+import { MIN_AUDIO_BYTES } from './lib/config.mjs';
 
 const MANIFEST_PATH = path.join(process.cwd(), 'src/data/audioManifest.json');
 const GENERATED_INDEX_PATH = path.join(process.cwd(), '.cache/audio-generated.json');
+
+// When set, no objects are uploaded or deleted — actions are only logged.
+const dryRun = process.argv.includes('--dry-run');
 
 const requiredEnvironment = [
   'R2_ACCOUNT_ID',
@@ -71,6 +80,51 @@ async function uploadToR2(storageKey, filePath) {
   }));
 }
 
+// Recover the R2 object key from a published manifest URL (drops the public
+// base and any query string), or null when the URL points elsewhere.
+function storageKeyFromUrl(url) {
+  if (typeof url !== 'string' || !url.startsWith(publicBaseUrl)) return null;
+  return url.slice(publicBaseUrl.length).replace(/^\/+/, '').split('?')[0] || null;
+}
+
+async function listStorageKeys(prefix) {
+  const keys = [];
+  let continuationToken;
+  do {
+    const response = await s3.send(new ListObjectsV2Command({
+      Bucket: process.env.R2_BUCKET,
+      Prefix: prefix,
+      ContinuationToken: continuationToken,
+    }));
+    for (const object of response.Contents ?? []) {
+      if (object.Key) keys.push(object.Key);
+    }
+    continuationToken = response.IsTruncated ? response.NextContinuationToken : undefined;
+  } while (continuationToken);
+  return keys;
+}
+
+// Delete every object under a post's prefix that the current manifest no longer
+// references. A content edit produces a new hash (so a new object) and this
+// removes the previous one — i.e. the file is replaced rather than accumulated.
+// Distinct voices keep distinct keys, so each is preserved.
+async function pruneStaleObjects(slug, keepKeys) {
+  const existing = await listStorageKeys(`audio/blog/${slug}/`);
+  const stale = existing.filter((key) => !keepKeys.has(key));
+  if (stale.length === 0) return 0;
+
+  if (dryRun) {
+    for (const key of stale) console.log(`[dry-run] would delete ${key}`);
+    return stale.length;
+  }
+
+  await s3.send(new DeleteObjectsCommand({
+    Bucket: process.env.R2_BUCKET,
+    Delete: { Objects: stale.map((Key) => ({ Key })), Quiet: true },
+  }));
+  return stale.length;
+}
+
 const generated = await readJson(GENERATED_INDEX_PATH);
 const manifest = await readJson(MANIFEST_PATH);
 const blogFiles = new Map(
@@ -115,6 +169,30 @@ for (const [slug, languages] of Object.entries(generated)) {
       continue;
     }
 
+    // Integrity check: the file on disk must exactly match the byte count that
+    // generation recorded for this render. A mismatch means the MP3 was
+    // truncated/corrupted after encoding, so we refuse to upload it (and
+    // therefore never record its hash in the manifest). Fall back to a minimum
+    // size floor only when an older generated index lacks the byte count.
+    const { size: stagedBytes } = await stat(entry.outputPath);
+    const expectedBytes = typeof entry.bytes === 'number' ? entry.bytes : null;
+    const corrupted = expectedBytes !== null
+      ? stagedBytes !== expectedBytes
+      : stagedBytes < MIN_AUDIO_BYTES;
+    if (corrupted) {
+      const detail = expectedBytes !== null
+        ? `${stagedBytes} bytes on disk vs ${expectedBytes} expected`
+        : `${stagedBytes} bytes, below ${MIN_AUDIO_BYTES} floor`;
+      console.warn(`Skipping ${slug}/${language}: generated MP3 looks corrupted (${detail}).`);
+      failed = true;
+      continue;
+    }
+
+    if (dryRun) {
+      console.log(`[dry-run] would upload ${slug} [${language}] → ${entry.storageKey}`);
+      continue;
+    }
+
     console.log(`Uploading ${slug} [${language}] to R2…`);
     try {
       await uploadToR2(entry.storageKey, entry.outputPath);
@@ -139,4 +217,27 @@ for (const [slug, languages] of Object.entries(generated)) {
 }
 
 console.log(uploaded > 0 ? `Uploaded ${uploaded} audio file(s).` : 'No audio needs uploading.');
+
+// Prune superseded R2 objects so each post keeps only the files the manifest
+// currently points to (one per voice). Best-effort: cleanup failures never
+// block publishing.
+let removed = 0;
+for (const [slug, languages] of Object.entries(manifest)) {
+  const keepKeys = new Set();
+  for (const entry of Object.values(languages)) {
+    const key = storageKeyFromUrl(entry?.url);
+    if (key) keepKeys.add(key);
+  }
+  if (keepKeys.size === 0) continue;
+
+  try {
+    removed += await pruneStaleObjects(slug, keepKeys);
+  } catch (error) {
+    console.warn(`Cleanup failed for ${slug}: ${error.message}`);
+  }
+}
+if (removed > 0) {
+  console.log(`${dryRun ? '[dry-run] would remove' : 'Removed'} ${removed} stale R2 object(s).`);
+}
+
 if (failed) process.exit(1);

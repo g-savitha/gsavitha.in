@@ -1,0 +1,120 @@
+name: Generate blog audio
+
+# Generates narration for blog posts, uploads the MP3s to R2, commits the
+# updated manifest back to main, and then triggers a deploy so the site picks
+# up the new audio. Runs in its own concurrency group (NOT "pages") so a long
+# text-to-speech run can finish without being superseded by — or blocking —
+# ordinary site deploys.
+#
+# Only triggers when blog content or the audio scripts change. Pure
+# styling/logic changes never reach this workflow. When nothing needs
+# (re)generating, the scripts no-op quickly using the committed manifest.
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "src/content/blog/**"
+      - "scripts/audio/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: "audio"
+  cancel-in-progress: false
+
+env:
+  BUILD_PATH: "."
+  R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+  R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+  R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+  R2_BUCKET: ${{ vars.R2_BUCKET }}
+  AUDIO_PUBLIC_BASE_URL: ${{ vars.AUDIO_PUBLIC_BASE_URL }}
+
+jobs:
+  audio:
+    name: Generate and publish audio
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Full history so the manifest commit can be rebased onto the latest
+          # main before pushing.
+          fetch-depth: 0
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - name: Install dependencies
+        run: bun install
+        working-directory: ${{ env.BUILD_PATH }}
+      - name: Remove stale audio metadata
+        run: bun run audio:check --prune-stale
+        working-directory: ${{ env.BUILD_PATH }}
+      - name: Cache Kokoro model and audio artifacts
+        if: env.R2_ACCOUNT_ID != '' && env.R2_BUCKET != '' && env.AUDIO_PUBLIC_BASE_URL != ''
+        uses: actions/cache@v4
+        with:
+          # audio-results + audio-output persist worker checkpoints so a crashed
+          # run only re-dispatches the slugs that didn't finish on the next run.
+          path: |
+            ~/.cache/huggingface
+            node_modules/@huggingface/transformers/.cache
+            .cache/audio-segments
+            .cache/audio-results
+            .cache/audio-output
+          # run_id makes the primary key unique so the cache is always re-saved
+          # at the end of the run — without this, an exact-key hit means newly
+          # synthesised segments for new/edited posts are never persisted, and
+          # they get regenerated from scratch on every run. restore-keys pulls
+          # the most recent prior cache as the warm starting point.
+          key: audio-v2-${{ runner.os }}-${{ hashFiles('scripts/audio/lib/config.mjs') }}-${{ github.run_id }}
+          restore-keys: |
+            audio-v2-${{ runner.os }}-${{ hashFiles('scripts/audio/lib/config.mjs') }}-
+            audio-v2-${{ runner.os }}-
+      - name: Generate missing audio
+        if: env.R2_ACCOUNT_ID != '' && env.R2_BUCKET != '' && env.AUDIO_PUBLIC_BASE_URL != ''
+        continue-on-error: true
+        run: bun run audio:generate
+        working-directory: ${{ env.BUILD_PATH }}
+      - name: Upload generated audio to R2
+        if: always() && env.R2_ACCOUNT_ID != '' && env.R2_BUCKET != '' && env.AUDIO_PUBLIC_BASE_URL != ''
+        continue-on-error: true
+        run: bun run audio:upload
+        working-directory: ${{ env.BUILD_PATH }}
+      - name: Reconcile manifest with R2
+        # Authoritative manifest sync after upload: keeps the exact entries the
+        # upload step wrote and rebuilds any that are stale/missing from R2, so
+        # the committed manifest always matches what is actually published.
+        if: always() && env.R2_ACCOUNT_ID != '' && env.R2_BUCKET != '' && env.AUDIO_PUBLIC_BASE_URL != ''
+        continue-on-error: true
+        run: bun run audio:reconcile --apply
+        working-directory: ${{ env.BUILD_PATH }}
+      - name: Publish manifest and trigger deploy
+        if: always()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if git diff --quiet -- src/data/audioManifest.json; then
+            echo "Manifest unchanged; nothing to publish."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/audioManifest.json
+          git commit -m "chore: update generated blog audio metadata"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
+          # Pushing with GITHUB_TOKEN does not trigger the push-based deploy, so
+          # kick it off explicitly (workflow_dispatch is allowed for the token).
+          gh workflow run deploy.yml --ref main

@@ -1,12 +1,17 @@
 name: Deploy Astro site to Pages
 
+# Builds and deploys the site only. Audio generation lives in audio.yml so that
+# styling/logic/blog changes publish fast and are never blocked by a long
+# (multi-hour) text-to-speech run. This workflow simply uses whatever audio
+# metadata is already committed in src/data/audioManifest.json.
+
 on:
   push:
     branches: ["main"]
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -16,11 +21,6 @@ concurrency:
 
 env:
   BUILD_PATH: "." # By default, the build happens in the root
-  R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
-  R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-  R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-  R2_BUCKET: ${{ vars.R2_BUCKET }}
-  AUDIO_PUBLIC_BASE_URL: ${{ vars.AUDIO_PUBLIC_BASE_URL }}
 
 jobs:
   build:
@@ -44,48 +44,6 @@ jobs:
       - name: Install dependencies
         run: bun install
         working-directory: ${{ env.BUILD_PATH }}
-      - name: Remove stale audio metadata
-        run: bun run audio:check --prune-stale
-        working-directory: ${{ env.BUILD_PATH }}
-      - name: Cache Kokoro model and audio artifacts
-        if: env.R2_ACCOUNT_ID != '' && env.R2_BUCKET != '' && env.AUDIO_PUBLIC_BASE_URL != ''
-        uses: actions/cache@v4
-        with:
-          # audio-results + audio-output persist worker checkpoints so a crashed
-          # run only re-dispatches the slugs that didn't finish on the next run.
-          path: |
-            ~/.cache/huggingface
-            node_modules/@huggingface/transformers/.cache
-            .cache/audio-segments
-            .cache/audio-results
-            .cache/audio-output
-          key: audio-v1-${{ runner.os }}-${{ hashFiles('scripts/audio/lib/config.mjs') }}
-          restore-keys: |
-            audio-v1-${{ runner.os }}-
-      - name: Generate missing audio
-        if: env.R2_ACCOUNT_ID != '' && env.R2_BUCKET != '' && env.AUDIO_PUBLIC_BASE_URL != ''
-        continue-on-error: true
-        run: bun run audio:generate
-        working-directory: ${{ env.BUILD_PATH }}
-      - name: Upload generated audio to R2
-        if: always() && env.R2_ACCOUNT_ID != '' && env.R2_BUCKET != '' && env.AUDIO_PUBLIC_BASE_URL != ''
-        continue-on-error: true
-        run: bun run audio:upload
-        working-directory: ${{ env.BUILD_PATH }}
-      - name: Save published audio metadata
-        if: always()
-        continue-on-error: true
-        run: |
-          if git diff --quiet -- src/data/audioManifest.json; then
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/data/audioManifest.json
-          git commit -m "chore: update generated blog audio metadata"
-          git fetch origin main
-          git rebase origin/main
-          git push origin HEAD:main
       - name: Build with Astro
         run: bun run build
         working-directory: ${{ env.BUILD_PATH }}

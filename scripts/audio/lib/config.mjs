@@ -6,6 +6,11 @@ export const SAMPLE_RATE = 24_000;
 export const MP3_BITRATE = 64;
 export const GENERATOR_VERSION = 2;
 
+// Floor for a plausibly valid narration MP3. Real clips are tens to hundreds of
+// KB; anything smaller is treated as corrupted/truncated (an empty or
+// header-only file) so it is neither uploaded nor recorded in the manifest.
+export const MIN_AUDIO_BYTES = 1024;
+
 export function generationSettings(voice = DEFAULT_VOICE) {
   return {
     model: MODEL,
