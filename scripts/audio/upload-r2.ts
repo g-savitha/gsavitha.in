@@ -12,8 +12,9 @@ import {
   narrationHash,
   resolveVoices,
   voiceGenerationSettings,
-} from './lib/narration.mjs';
-import { MIN_AUDIO_BYTES } from './lib/config.mjs';
+} from './lib/narration.ts';
+import { MIN_AUDIO_BYTES } from './lib/config.ts';
+import type { AudioManifest, GeneratedAudioIndex } from './lib/types.ts';
 
 const MANIFEST_PATH = path.join(process.cwd(), 'src/data/audioManifest.json');
 const GENERATED_INDEX_PATH = path.join(process.cwd(), '.cache/audio-generated.json');
@@ -35,22 +36,22 @@ if (missingEnvironment.length > 0) {
   process.exit(1);
 }
 
-const publicBaseUrl = process.env.AUDIO_PUBLIC_BASE_URL.replace(/\/+$/, '');
+const publicBaseUrl = process.env.AUDIO_PUBLIC_BASE_URL!.replace(/\/+$/, '');
 if (!/^https:\/\//.test(publicBaseUrl)) {
   console.error('AUDIO_PUBLIC_BASE_URL must be an HTTPS URL.');
   process.exit(1);
 }
 
-async function readJson(filePath, fallback = {}) {
+async function readJson<T>(filePath: string, fallback: T): Promise<T> {
   try {
-    return JSON.parse(await readFile(filePath, 'utf8'));
+    return JSON.parse(await readFile(filePath, 'utf8')) as T;
   } catch (error) {
-    if (error.code === 'ENOENT') return fallback;
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return fallback;
     throw error;
   }
 }
 
-async function fileExists(filePath) {
+async function fileExists(filePath: string) {
   try {
     await access(filePath);
     return true;
@@ -63,12 +64,12 @@ const s3 = new S3Client({
   region: 'auto',
   endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
   credentials: {
-    accessKeyId: process.env.R2_ACCESS_KEY_ID,
-    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+    accessKeyId: process.env.R2_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
   },
 });
 
-async function uploadToR2(storageKey, filePath) {
+async function uploadToR2(storageKey: string, filePath: string) {
   const body = await readFile(filePath);
   await s3.send(
     new PutObjectCommand({
@@ -83,14 +84,14 @@ async function uploadToR2(storageKey, filePath) {
 
 // Recover the R2 object key from a published manifest URL (drops the public
 // base and any query string), or null when the URL points elsewhere.
-function storageKeyFromUrl(url) {
+function storageKeyFromUrl(url: unknown) {
   if (typeof url !== 'string' || !url.startsWith(publicBaseUrl)) return null;
   return url.slice(publicBaseUrl.length).replace(/^\/+/, '').split('?')[0] || null;
 }
 
-async function listStorageKeys(prefix) {
-  const keys = [];
-  let continuationToken;
+async function listStorageKeys(prefix: string) {
+  const keys: string[] = [];
+  let continuationToken: string | undefined;
   do {
     const response = await s3.send(
       new ListObjectsV2Command({
@@ -111,7 +112,7 @@ async function listStorageKeys(prefix) {
 // references. A content edit produces a new hash (so a new object) and this
 // removes the previous one — i.e. the file is replaced rather than accumulated.
 // Distinct voices keep distinct keys, so each is preserved.
-async function pruneStaleObjects(slug, keepKeys) {
+async function pruneStaleObjects(slug: string, keepKeys: Set<string>) {
   const existing = await listStorageKeys(`audio/blog/${slug}/`);
   const stale = existing.filter((key) => !keepKeys.has(key));
   if (stale.length === 0) return 0;
@@ -130,8 +131,8 @@ async function pruneStaleObjects(slug, keepKeys) {
   return stale.length;
 }
 
-const generated = await readJson(GENERATED_INDEX_PATH);
-const manifest = await readJson(MANIFEST_PATH);
+const generated = await readJson<GeneratedAudioIndex>(GENERATED_INDEX_PATH, {});
+const manifest = await readJson<AudioManifest>(MANIFEST_PATH, {});
 const blogFiles = new Map(
   (await readdir(BLOG_DIRECTORY))
     .filter((file) => /\.(md|mdx)$/i.test(file))
@@ -142,7 +143,7 @@ let failed = false;
 
 for (const [slug, languages] of Object.entries(generated)) {
   const blogFile = blogFiles.get(slug);
-  let voiceByLanguage = null;
+  let voiceByLanguage: Map<string, ReturnType<typeof resolveVoices>[number]> | null = null;
 
   for (const [language, entry] of Object.entries(languages)) {
     if (!entry || manifest[slug]?.[language]?.hash === entry.hash) continue;
@@ -200,14 +201,15 @@ for (const [slug, languages] of Object.entries(generated)) {
 
     console.log(`Uploading ${slug} [${language}] to R2…`);
     try {
-      await uploadToR2(entry.storageKey, entry.outputPath);
+      await uploadToR2(entry.storageKey ?? '', entry.outputPath);
     } catch (error) {
-      console.error(`Upload failed for ${slug}/${language}: ${error.message}`);
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`Upload failed for ${slug}/${language}: ${message}`);
       failed = true;
       continue;
     }
 
-    const { outputPath, storageKey, ...metadata } = entry;
+    const { outputPath: _outputPath, storageKey, ...metadata } = entry;
     manifest[slug] = {
       ...(manifest[slug] ?? {}),
       [language]: {
@@ -228,7 +230,7 @@ console.log(uploaded > 0 ? `Uploaded ${uploaded} audio file(s).` : 'No audio nee
 // block publishing.
 let removed = 0;
 for (const [slug, languages] of Object.entries(manifest)) {
-  const keepKeys = new Set();
+  const keepKeys = new Set<string>();
   for (const entry of Object.values(languages)) {
     const key = storageKeyFromUrl(entry?.url);
     if (key) keepKeys.add(key);
@@ -238,7 +240,8 @@ for (const [slug, languages] of Object.entries(manifest)) {
   try {
     removed += await pruneStaleObjects(slug, keepKeys);
   } catch (error) {
-    console.warn(`Cleanup failed for ${slug}: ${error.message}`);
+    const message = error instanceof Error ? error.message : String(error);
+    console.warn(`Cleanup failed for ${slug}: ${message}`);
   }
 }
 if (removed > 0) {

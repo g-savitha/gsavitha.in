@@ -1,9 +1,7 @@
-// @ts-check
-
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig } from 'astro/config';
-import { remarkMermaid } from './remark-mermaid.mjs';
+import { remarkMermaid } from './remark-mermaid.ts';
 
 import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';

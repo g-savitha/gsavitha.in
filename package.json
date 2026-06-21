@@ -11,13 +11,13 @@
     "preview": "astro preview",
     "astro": "astro",
     "new": "node scripts/new.js",
-    "audio:extract": "node scripts/audio/extract.mjs",
-    "audio:check": "node scripts/audio/check.mjs",
-    "audio:generate": "node scripts/audio/generate.mjs",
-    "audio:upload": "node scripts/audio/upload-r2.mjs",
-    "audio:reconcile": "node scripts/audio/reconcile-r2.mjs",
-    "audio:enable-published": "node scripts/audio/enable-published.mjs",
-    "test:audio": "node --test scripts/audio/lib/narration.test.mjs scripts/audio/lib/cache.test.mjs",
+    "audio:extract": "bun scripts/audio/extract.ts",
+    "audio:check": "bun scripts/audio/check.ts",
+    "audio:generate": "bun scripts/audio/generate.ts",
+    "audio:upload": "bun scripts/audio/upload-r2.ts",
+    "audio:reconcile": "bun scripts/audio/reconcile-r2.ts",
+    "audio:enable-published": "bun scripts/audio/enable-published.ts",
+    "test:audio": "node --experimental-strip-types --test scripts/audio/lib/narration.test.ts scripts/audio/lib/cache.test.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
@@ -48,9 +48,11 @@
     "tailwindcss": "^4.2.2",
     "typescript": "^5.9.3",
     "unified": "^11.0.5",
+    "unist-util-visit": "^5.1.0",
     "yaml": "^2.9.0"
   },
   "devDependencies": {
+    "@types/node": "^26.0.0",
     "prettier": "^3.8.4",
     "prettier-plugin-astro": "^0.14.1"
   }

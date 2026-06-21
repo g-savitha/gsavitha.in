@@ -1,7 +1,7 @@
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { parse as parseYaml } from 'yaml';
-import { BLOG_DIRECTORY } from './lib/narration.mjs';
+import { BLOG_DIRECTORY } from './lib/narration.ts';
 
 const files = (await readdir(BLOG_DIRECTORY)).filter((file) => /\.(md|mdx)$/i.test(file));
 let enabled = 0;
@@ -12,7 +12,7 @@ for (const file of files) {
   const frontmatterMatch = source.match(/^---\n([\s\S]*?)\n---/);
   if (!frontmatterMatch) continue;
 
-  const frontmatter = parseYaml(frontmatterMatch[1]) ?? {};
+  const frontmatter = (parseYaml(frontmatterMatch[1]) as Record<string, unknown>) ?? {};
   if (frontmatter.draft || frontmatter.audio) continue;
 
   const updated = source.replace(

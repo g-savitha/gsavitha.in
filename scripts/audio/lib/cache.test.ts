@@ -8,7 +8,8 @@ import {
   resultFileLanguageStates,
   selectStaleSegmentFiles,
   splitLongText,
-} from './cache.mjs';
+} from './cache.ts';
+import type { AudioConfig, Narration, NarrationSegment } from './types.ts';
 
 const settings = { model: 'm', dtype: 'q8', voice: 'af_heart', speed: 1 };
 
@@ -33,7 +34,13 @@ test('splitLongText falls back to word splitting for a single long sentence', ()
 });
 
 test('buildSpeechChunks packs short segments together and punctuates them', () => {
-  const chunks = buildSpeechChunks([{ text: 'First' }, { text: 'Second' }], 420);
+  const chunks = buildSpeechChunks(
+    [
+      { type: 'prose', text: 'First' },
+      { type: 'prose', text: 'Second' },
+    ],
+    420,
+  );
   assert.deepEqual(chunks, ['First. Second.']);
 });
 
@@ -53,12 +60,28 @@ test('chunkCacheHash changes when text or voice changes', () => {
 
 // ─── Live-set computation + eviction ─────────────────────────────────────────
 
-function narrationOf(segments, audio = { enabled: true, voice: 'af_heart' }) {
-  return { segments, audio };
+function narrationOf(
+  segments: NarrationSegment[],
+  audio: AudioConfig = {
+    enabled: true,
+    voice: 'af_heart',
+    voices: null,
+    codeSummaryMode: 'required',
+  },
+): Narration {
+  return {
+    schemaVersion: 2,
+    slug: 'test',
+    title: 'Test',
+    audio,
+    segments,
+    missingCodeSummaries: [],
+    text: segments.map((segment) => segment.text).join('\n\n'),
+  };
 }
 
 test('liveChunkHashes covers every chunk of every active narration', () => {
-  const narration = narrationOf([{ text: 'Hello world' }]);
+  const narration = narrationOf([{ type: 'prose', text: 'Hello world' }]);
   const live = liveChunkHashes([narration]);
   const expected = chunkCacheHash('Hello world.', {
     model: 'onnx-community/Kokoro-82M-v1.0-ONNX',
@@ -70,12 +93,14 @@ test('liveChunkHashes covers every chunk of every active narration', () => {
 });
 
 test('liveChunkHashes produces a distinct hash per configured voice', () => {
-  const narration = narrationOf([{ text: 'Hello' }], {
+  const narration = narrationOf([{ type: 'prose', text: 'Hello' }], {
     enabled: true,
+    voice: null,
     voices: [
-      { voice: 'af_heart', language: 'en' },
-      { voice: 'bf_emma', language: 'gb' },
+      { voice: 'af_heart', language: 'en', label: 'English' },
+      { voice: 'bf_emma', language: 'gb', label: 'British English' },
     ],
+    codeSummaryMode: 'required',
   });
   assert.equal(liveChunkHashes([narration]).size, 2);
 });
@@ -93,29 +118,87 @@ test('selectStaleSegmentFiles treats everything as stale when nothing is live', 
 // ─── Recovery decision ───────────────────────────────────────────────────────
 
 test('isSlugRecoverable requires every language to be satisfied', () => {
-  assert.equal(isSlugRecoverable([{ manifestCurrent: true }]), true);
-  assert.equal(isSlugRecoverable([{ stagedCurrent: true }]), true);
-  assert.equal(isSlugRecoverable([{ resultHashMatches: true, resultFileExists: true }]), true);
   assert.equal(
     isSlugRecoverable([
-      { manifestCurrent: true },
-      { resultHashMatches: true, resultFileExists: false },
+      {
+        language: 'en',
+        manifestCurrent: true,
+        stagedCurrent: false,
+        resultHashMatches: false,
+        resultFileExists: false,
+      },
+    ]),
+    true,
+  );
+  assert.equal(
+    isSlugRecoverable([
+      {
+        language: 'en',
+        manifestCurrent: false,
+        stagedCurrent: true,
+        resultHashMatches: false,
+        resultFileExists: false,
+      },
+    ]),
+    true,
+  );
+  assert.equal(
+    isSlugRecoverable([
+      {
+        language: 'en',
+        manifestCurrent: false,
+        stagedCurrent: false,
+        resultHashMatches: true,
+        resultFileExists: true,
+      },
+    ]),
+    true,
+  );
+  assert.equal(
+    isSlugRecoverable([
+      {
+        language: 'en',
+        manifestCurrent: true,
+        stagedCurrent: false,
+        resultHashMatches: false,
+        resultFileExists: false,
+      },
+      {
+        language: 'gb',
+        manifestCurrent: false,
+        stagedCurrent: false,
+        resultHashMatches: true,
+        resultFileExists: false,
+      },
     ]),
     false,
   );
-  assert.equal(isSlugRecoverable([{ resultHashMatches: true, resultFileExists: false }]), false);
+  assert.equal(
+    isSlugRecoverable([
+      {
+        language: 'en',
+        manifestCurrent: false,
+        stagedCurrent: false,
+        resultHashMatches: true,
+        resultFileExists: false,
+      },
+    ]),
+    false,
+  );
 });
 
 test('resultFileLanguageStates recovers a partial result with one manifest-current language', async () => {
-  const narration = narrationOf([{ text: 'Hello' }], {
+  const narration = narrationOf([{ type: 'prose', text: 'Hello' }], {
     enabled: true,
+    voice: null,
     voices: [
-      { voice: 'af_heart', language: 'en' },
-      { voice: 'bf_emma', language: 'gb' },
+      { voice: 'af_heart', language: 'en', label: 'English' },
+      { voice: 'bf_emma', language: 'gb', label: 'British English' },
     ],
+    codeSummaryMode: 'required',
   });
   // Compute the real hashes the way the pipeline does.
-  const { narrationHash, resolveVoices, voiceGenerationSettings } = await import('./narration.mjs');
+  const { narrationHash, resolveVoices, voiceGenerationSettings } = await import('./narration.ts');
   const byLanguage = Object.fromEntries(
     resolveVoices(narration).map((voice) => [
       voice.language,
@@ -133,13 +216,13 @@ test('resultFileLanguageStates recovers a partial result with one manifest-curre
 
   assert.equal(isSlugRecoverable(states), true);
   const gb = states.find((s) => s.language === 'gb');
-  assert.equal(gb.resultHashMatches, true);
-  assert.equal(gb.resultFileExists, true);
+  assert.equal(gb?.resultHashMatches, true);
+  assert.equal(gb?.resultFileExists, true);
 });
 
 test('resultFileLanguageStates rejects when a result output file is missing', async () => {
-  const narration = narrationOf([{ text: 'Hello' }]);
-  const { narrationHash, resolveVoices, voiceGenerationSettings } = await import('./narration.mjs');
+  const narration = narrationOf([{ type: 'prose', text: 'Hello' }]);
+  const { narrationHash, resolveVoices, voiceGenerationSettings } = await import('./narration.ts');
   const [voice] = resolveVoices(narration);
   const hash = narrationHash(narration, voiceGenerationSettings(voice));
 

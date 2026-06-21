@@ -6,21 +6,31 @@ import remarkGfm from 'remark-gfm';
 import remarkParse from 'remark-parse';
 import { unified } from 'unified';
 import { parse as parseYaml } from 'yaml';
-import { DEFAULT_VOICE, generationSettings } from './config.mjs';
+import { DEFAULT_VOICE, generationSettings } from './config.ts';
+import type {
+  AudioConfig,
+  MdNode,
+  MdRoot,
+  MissingCodeSummary,
+  Narration,
+  NarrationSegment,
+  ResolvedVoice,
+  VoiceGenerationSettings,
+} from './types.ts';
 
 export const NARRATION_SCHEMA_VERSION = 2;
 export const BLOG_DIRECTORY = path.join(process.cwd(), 'src/content/blog');
 
 const processor = unified().use(remarkParse).use(remarkFrontmatter, ['yaml']).use(remarkGfm);
 
-function cleanText(value) {
+function cleanText(value: string) {
   return value
     .replace(/\s+/g, ' ')
     .replace(/\s+([,;:!?])/g, '$1')
     .trim();
 }
 
-function inlineText(node) {
+function inlineText(node: MdNode | null | undefined): string {
   if (!node) return '';
 
   switch (node.type) {
@@ -42,45 +52,54 @@ function inlineText(node) {
   }
 }
 
-function audioSummaryFromHtml(value) {
+function audioSummaryFromHtml(value: string) {
   const match = value.match(/<!--\s*audio-summary\s*:\s*([\s\S]*?)-->/i);
   return match ? cleanText(match[1]) : null;
 }
 
-function frontmatterFromTree(tree) {
+function frontmatterFromTree(tree: MdRoot) {
   const node = tree.children.find((child) => child.type === 'yaml');
-  if (!node) return {};
+  if (!node?.value) return {};
 
   try {
-    return parseYaml(node.value) ?? {};
+    return (parseYaml(node.value) as Record<string, unknown>) ?? {};
   } catch (error) {
-    throw new Error(`Invalid YAML frontmatter: ${error.message}`);
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`Invalid YAML frontmatter: ${message}`);
   }
 }
 
-function normalizedAudioConfig(value) {
-  if (value === true) return { enabled: true };
-  if (!value || value === false) return { enabled: false };
+function normalizedAudioConfig(value: unknown): AudioConfig {
+  if (value === true)
+    return { enabled: true, voice: null, voices: null, codeSummaryMode: 'required' };
+  if (!value || value === false) {
+    return { enabled: false, voice: null, voices: null, codeSummaryMode: 'required' };
+  }
+
+  const config = value as Record<string, unknown>;
 
   // voices[] overrides single voice field when present
-  const voices = Array.isArray(value.voices)
-    ? value.voices.map((v) => ({
-        voice: v.voice ?? null,
-        language: v.language ?? 'en',
-        label: v.label ?? 'English',
-      }))
+  const voices = Array.isArray(config.voices)
+    ? config.voices.map((voiceEntry) => {
+        const voice = voiceEntry as Record<string, unknown>;
+        return {
+          voice: (voice.voice as string | null | undefined) ?? null,
+          language: (voice.language as string | undefined) ?? 'en',
+          label: (voice.label as string | undefined) ?? 'English',
+        };
+      })
     : null;
 
   return {
-    enabled: value.enabled !== false,
-    voice: value.voice ?? null,
+    enabled: config.enabled !== false,
+    voice: (config.voice as string | null | undefined) ?? null,
     voices,
-    codeSummaryMode: value.codeSummaryMode ?? 'required',
+    codeSummaryMode: (config.codeSummaryMode as AudioConfig['codeSummaryMode']) ?? 'required',
   };
 }
 
-function codeLabel(language) {
-  const labels = {
+function codeLabel(language: string | null | undefined) {
+  const labels: Record<string, string> = {
     bash: 'shell',
     css: 'CSS',
     html: 'HTML',
@@ -96,7 +115,7 @@ function codeLabel(language) {
     yaml: 'YAML',
     yml: 'YAML',
   };
-  return labels[language] ?? (language ? `${language} code` : 'code');
+  return labels[language ?? ''] ?? (language ? `${language} code` : 'code');
 }
 
 const GENERIC_IDENTIFIERS = new Set([
@@ -124,19 +143,19 @@ const GENERIC_IDENTIFIERS = new Set([
   'y',
 ]);
 
-function capitalizeFirst(text) {
+function capitalizeFirst(text: string) {
   if (!text) return text;
   return `${text.charAt(0).toUpperCase()}${text.slice(1)}`;
 }
 
-function joinNatural(items) {
+function joinNatural(items: string[]) {
   if (items.length === 0) return '';
   if (items.length === 1) return items[0];
   if (items.length === 2) return `${items[0]} and ${items[1]}`;
   return `${items.slice(0, -1).join(', ')}, and ${items.at(-1)}`;
 }
 
-function extractLeadingComment(code) {
+function extractLeadingComment(code: string) {
   const trimmed = code.trim();
   const blockMatch = trimmed.match(/^\/\*\*?\s*([\s\S]*?)\*\/\s*/);
   if (blockMatch) {
@@ -157,17 +176,17 @@ function extractLeadingComment(code) {
   return null;
 }
 
-function stripComments(code) {
+function stripComments(code: string) {
   return code.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
 }
 
-function extractDefinedNames(code, language) {
+function extractDefinedNames(code: string, language: string | null | undefined) {
   const lang = (language ?? '').toLowerCase();
   if (!['js', 'javascript', 'jsx', 'ts', 'typescript', 'tsx'].includes(lang)) return [];
 
-  const names = [];
-  const seen = new Set();
-  const addName = (name) => {
+  const names: string[] = [];
+  const seen = new Set<string>();
+  const addName = (name: string | undefined) => {
     if (!name || seen.has(name) || GENERIC_IDENTIFIERS.has(name.toLowerCase())) return;
     seen.add(name);
     names.push(name);
@@ -191,7 +210,7 @@ function extractDefinedNames(code, language) {
   return names.slice(0, 4);
 }
 
-function extractHtmlSummary(code) {
+function extractHtmlSummary(code: string) {
   const tags = [...code.matchAll(/<(header|main|footer|nav|section|article|form|table)\b/gi)].map(
     (match) => match[1].toLowerCase(),
   );
@@ -205,7 +224,7 @@ function extractHtmlSummary(code) {
   return null;
 }
 
-function extractCssSummary(code) {
+function extractCssSummary(code: string) {
   const selectors = [...code.matchAll(/(?:^|\n)\s*([.#][\w-]+)\s*\{/g)]
     .map((match) => cleanText(match[1]))
     .filter((selector) => selector.length > 1)
@@ -216,7 +235,7 @@ function extractCssSummary(code) {
   return null;
 }
 
-function extractShellSummary(code) {
+function extractShellSummary(code: string) {
   const lines = code
     .trim()
     .split('\n')
@@ -236,13 +255,17 @@ function extractShellSummary(code) {
   return null;
 }
 
-function summaryFromDefinedNames(names, language) {
+function summaryFromDefinedNames(names: string[], language: string | null | undefined) {
   const label = codeLabel(language);
   if (names.length === 1) return `This ${label} example defines ${names[0]}.`;
   return `This ${label} example defines ${joinNatural(names)}.`;
 }
 
-export function contextualCodeSummary(language, heading, code = '') {
+export function contextualCodeSummary(
+  language: string | null | undefined,
+  heading: string,
+  code = '',
+) {
   const lang = (language ?? '').toLowerCase();
   const label = codeLabel(language);
 
@@ -272,24 +295,24 @@ export function contextualCodeSummary(language, heading, code = '') {
   return `This ${label} example relates to ${heading}.`;
 }
 
-function extractSegments(tree, title, audio) {
-  const segments = [];
-  const missingCodeSummaries = [];
+function extractSegments(tree: MdRoot, title: string, audio: AudioConfig) {
+  const segments: NarrationSegment[] = [];
+  const missingCodeSummaries: MissingCodeSummary[] = [];
   let currentHeading = title;
 
-  const addSegment = (type, text) => {
+  const addSegment = (type: string, text: string) => {
     const cleaned = cleanText(text);
     if (cleaned) segments.push({ type, text: cleaned });
   };
 
   addSegment('title', title);
 
-  function walkChildren(children) {
-    let pendingCodeSummary = null;
+  function walkChildren(children: MdNode[] | undefined) {
+    let pendingCodeSummary: string | null = null;
 
     for (const node of children ?? []) {
       if (node.type === 'html') {
-        pendingCodeSummary = audioSummaryFromHtml(node.value) ?? pendingCodeSummary;
+        pendingCodeSummary = audioSummaryFromHtml(node.value ?? '') ?? pendingCodeSummary;
         continue;
       }
 
@@ -343,22 +366,22 @@ function extractSegments(tree, title, audio) {
   return { segments, missingCodeSummaries };
 }
 
-export async function extractNarration(filePath) {
+export async function extractNarration(filePath: string): Promise<Narration> {
   const source = await readFile(filePath, 'utf8');
-  const tree = processor.parse(source);
+  const tree = processor.parse(source) as MdRoot;
   const frontmatter = frontmatterFromTree(tree);
   const slug = path.basename(filePath).replace(/\.(md|mdx)$/i, '');
   const audio = normalizedAudioConfig(frontmatter.audio);
   const { segments, missingCodeSummaries } = extractSegments(
     tree,
-    frontmatter.title ?? slug,
+    (frontmatter.title as string | undefined) ?? slug,
     audio,
   );
 
   return {
     schemaVersion: NARRATION_SCHEMA_VERSION,
     slug,
-    title: frontmatter.title ?? slug,
+    title: (frontmatter.title as string | undefined) ?? slug,
     audio,
     segments,
     missingCodeSummaries,
@@ -366,18 +389,24 @@ export async function extractNarration(filePath) {
   };
 }
 
-export function resolveVoices(narration) {
+export function resolveVoices(narration: Narration): ResolvedVoice[] {
   if (Array.isArray(narration.audio.voices) && narration.audio.voices.length > 0) {
-    return narration.audio.voices.map((v) => ({
-      voice: v.voice ?? DEFAULT_VOICE,
-      language: v.language ?? 'en',
-      label: v.label ?? 'English',
+    return narration.audio.voices.map((voice) => ({
+      voice: voice.voice ?? DEFAULT_VOICE,
+      language: voice.language ?? 'en',
+      label: voice.label ?? 'English',
     }));
   }
-  return [{ voice: narration.audio.voice ?? DEFAULT_VOICE, language: 'en', label: 'English' }];
+  return [
+    {
+      voice: narration.audio.voice ?? DEFAULT_VOICE,
+      language: 'en',
+      label: 'English',
+    },
+  ];
 }
 
-export function voiceGenerationSettings(voiceConfig) {
+export function voiceGenerationSettings(voiceConfig: ResolvedVoice): VoiceGenerationSettings {
   return {
     ...generationSettings(voiceConfig.voice),
     language: voiceConfig.language,
@@ -385,7 +414,7 @@ export function voiceGenerationSettings(voiceConfig) {
   };
 }
 
-export function narrationHash(narration, settings) {
+export function narrationHash(narration: Narration, settings: VoiceGenerationSettings) {
   return createHash('sha256')
     .update(
       JSON.stringify({

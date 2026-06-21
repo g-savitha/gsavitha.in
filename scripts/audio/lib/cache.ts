@@ -1,15 +1,21 @@
 import { createHash } from 'node:crypto';
-import { narrationHash, resolveVoices, voiceGenerationSettings } from './narration.mjs';
+import { narrationHash, resolveVoices, voiceGenerationSettings } from './narration.ts';
+import type {
+  ChunkGenerationSettings,
+  LanguageRecoveryState,
+  Narration,
+  NarrationSegment,
+} from './types.ts';
 
 // ─── Text chunking ───────────────────────────────────────────────────────────
 //
 // Kokoro has a hard per-call token limit, so long paragraphs are split at
 // sentence (then word) boundaries before synthesis.
 
-export function splitLongText(text, maxLen = 420) {
+export function splitLongText(text: string, maxLen = 420) {
   if (text.length <= maxLen) return [text];
   const sentences = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g) ?? [text];
-  const chunks = [];
+  const chunks: string[] = [];
   let current = '';
   for (const sentence of sentences) {
     const candidate = `${current} ${sentence}`.trim();
@@ -35,8 +41,8 @@ export function splitLongText(text, maxLen = 420) {
   return chunks;
 }
 
-export function buildSpeechChunks(segments, maxLen = 420) {
-  const chunks = [];
+export function buildSpeechChunks(segments: NarrationSegment[], maxLen = 420) {
+  const chunks: string[] = [];
   let current = '';
   for (const seg of segments) {
     const punctuated = /[.!?]$/.test(seg.text) ? seg.text : `${seg.text}.`;
@@ -59,7 +65,7 @@ export function buildSpeechChunks(segments, maxLen = 420) {
 // Each synthesised text chunk is stored as a raw Float32LE file keyed by a
 // hash of (text, model, dtype, voice, speed).
 
-export function chunkCacheHash(text, settings) {
+export function chunkCacheHash(text: string, settings: ChunkGenerationSettings) {
   return createHash('sha256')
     .update(
       JSON.stringify({
@@ -76,8 +82,8 @@ export function chunkCacheHash(text, settings) {
 // The set of chunk hashes referenced by the given active narrations — i.e. every
 // segment file that should be retained in the cache.  Chunk text is independent
 // of voice, so it is computed once per narration and reused across voices.
-export function liveChunkHashes(narrations) {
-  const live = new Set();
+export function liveChunkHashes(narrations: Narration[]) {
+  const live = new Set<string>();
   for (const narration of narrations) {
     const chunks = buildSpeechChunks(narration.segments);
     for (const voiceConfig of resolveVoices(narration)) {
@@ -90,7 +96,7 @@ export function liveChunkHashes(narrations) {
 
 // Given the `.f32` filenames present in the cache and the live hash set, return
 // the filenames that are no longer referenced and may be deleted.
-export function selectStaleSegmentFiles(f32Files, liveHashes) {
+export function selectStaleSegmentFiles(f32Files: string[], liveHashes: Set<string>) {
   return f32Files.filter((file) => !liveHashes.has(file.replace(/\.f32$/, '')));
 }
 
@@ -101,13 +107,21 @@ export function selectStaleSegmentFiles(f32Files, liveHashes) {
 // staged with its output on disk, or present in the per-slug result file with a
 // matching hash and an existing output file.
 
-export function isSlugRecoverable(languageStates) {
+export function isSlugRecoverable(languageStates: LanguageRecoveryState[]) {
   return languageStates.every(
     (state) =>
       state.manifestCurrent ||
       state.stagedCurrent ||
       (state.resultHashMatches && state.resultFileExists),
   );
+}
+
+interface ResultFileLanguageStatesArgs {
+  narration: Narration;
+  manifestEntry?: Record<string, { hash?: string }>;
+  generatedEntry?: Record<string, { hash?: string; outputPath?: string }>;
+  resultEntry?: Record<string, { hash?: string; outputPath?: string }>;
+  fileExists: (filePath: string) => Promise<boolean>;
 }
 
 // Build the per-language recovery facts for a slug.  `fileExists` is injected so
@@ -119,7 +133,7 @@ export async function resultFileLanguageStates({
   generatedEntry,
   resultEntry,
   fileExists,
-}) {
+}: ResultFileLanguageStatesArgs): Promise<LanguageRecoveryState[]> {
   return Promise.all(
     resolveVoices(narration).map(async (voiceConfig) => {
       const { language } = voiceConfig;
@@ -129,9 +143,9 @@ export async function resultFileLanguageStates({
       return {
         language,
         manifestCurrent: manifestEntry?.[language]?.hash === expected,
-        stagedCurrent: staged?.hash === expected && (await fileExists(staged.outputPath)),
+        stagedCurrent: staged?.hash === expected && (await fileExists(staged.outputPath ?? '')),
         resultHashMatches: result?.hash === expected,
-        resultFileExists: result ? await fileExists(result.outputPath) : false,
+        resultFileExists: result ? await fileExists(result.outputPath ?? '') : false,
       };
     }),
   );
