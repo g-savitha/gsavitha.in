@@ -478,4 +478,4 @@ The cost is real though. Hashing, segment caching, worker coordination, upload v
 
 The whole thing is about 800 lines across the pipeline and the player. The part I'm happiest about is the manifest as a contract: the pipeline writes it, Astro reads it, and neither side knows anything about the other. I can swap the TTS model, move storage providers, or redesign the player entirely without touching more than one piece at a time.
 
-If you're building something similar: **do the expensive work at build time, not at runtime.** Synthesize, commit the metadata, serve static files from a CDN. The browser doesn't need to know how hard the build worked. It just needs a URL.
+If you're building something similar: **do the expensive work at build time, not at runtime.** Synthesize, commit the metadata, serve static files from a CDN. The browser doesn't need to know how hard the build worked. It just needs a URL. And whatever you do, make the step that commits that metadata resilient — a publish that fails silently is far worse than one that fails loudly.
