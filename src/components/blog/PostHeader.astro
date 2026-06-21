@@ -1,5 +1,6 @@
 ---
 import FormattedDate from '../FormattedDate.astro';
+import { ArrowLeft } from 'lucide-astro';
 
 interface Props {
   title: string;
@@ -16,18 +17,7 @@ const { title, date, updatedDate, tags = [] } = Astro.props;
     href="/blog"
     class="inline-flex items-center gap-1 text-base text-zinc-500 hover:text-primary mb-6 rounded-lg px-2 py-1 -mx-2 hover-lift"
   >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      class="w-3.5 h-3.5"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    >
-      <path d="M15 18l-6-6 6-6"></path>
-    </svg>
+    <ArrowLeft class="w-3.5 h-3.5" aria-hidden="true" />
     All Posts
   </a>
   <h1

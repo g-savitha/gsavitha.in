@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { Pause, Play } from 'lucide-react';
 import type { AudioSource } from '../../utils/audio';
-import styles from './AudioPlayer.module.css';
 
 interface AudioPlayerProps {
   slug: string;
@@ -141,7 +141,7 @@ export default function AudioPlayer({ slug, title, sources }: AudioPlayerProps) 
   const progress = duration ? (currentTime / duration) * 100 : 0;
 
   return (
-    <section className={`not-prose ${styles.player}`} aria-label={`Listen to ${title}`}>
+    <section className="audio-player not-prose" aria-label={`Listen to ${title}`}>
       <audio
         ref={audioRef}
         preload="metadata"
@@ -163,34 +163,26 @@ export default function AudioPlayer({ slug, title, sources }: AudioPlayerProps) 
         }}
       />
 
-      <div className={styles.heading}>
-        <span className={styles.eyebrow}>Listen to this article</span>
-        <span className={styles.status} aria-live="polite">
+      <div className="audio-player__heading">
+        <span className="audio-player__eyebrow">Listen to this article</span>
+        <span className="audio-player__status" aria-live="polite">
           {status}
         </span>
       </div>
 
-      <div className={styles.controls}>
-        <div className={styles.controlsStart}>
+      <div className="audio-player__controls">
+        <div className="audio-player__controls-group">
           <button
-            className={styles.play}
+            className="audio-player__play"
             type="button"
             disabled={isUnavailable}
             aria-label={isPlaying ? 'Pause article' : 'Play article'}
             onClick={handleTogglePlayback}
           >
-            {isPlaying ? (
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M6 5h4v14H6zm8 0h4v14h-4z" />
-              </svg>
-            ) : (
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            )}
+            {isPlaying ? <Pause aria-hidden="true" /> : <Play aria-hidden="true" />}
           </button>
 
-          <span className={styles.time}>{formatTime(currentTime)}</span>
+          <span className="audio-player__time">{formatTime(currentTime)}</span>
         </div>
 
         <label className="sr-only" htmlFor={`audio-progress-${slug}`}>
@@ -198,7 +190,7 @@ export default function AudioPlayer({ slug, title, sources }: AudioPlayerProps) 
         </label>
         <input
           id={`audio-progress-${slug}`}
-          className={styles.progress}
+          className="audio-player__progress"
           type="range"
           min="0"
           max="100"
@@ -208,13 +200,14 @@ export default function AudioPlayer({ slug, title, sources }: AudioPlayerProps) 
           onChange={(event) => handleSeek(Number(event.currentTarget.value))}
         />
 
-        <div className={styles.controlsEnd}>
-          <span className={styles.time}>{formatTime(duration)}</span>
+        <div className="audio-player__controls-group">
+          <span className="audio-player__time">{formatTime(duration)}</span>
 
           {sources.length > 1 && (
-            <label className={styles.selectWrap}>
+            <label>
               <span className="sr-only">Narration language</span>
               <select
+                className="audio-select"
                 value={selectedUrl}
                 aria-label="Narration language"
                 onChange={(event) => handleLanguageChange(event.currentTarget.value)}
@@ -228,9 +221,10 @@ export default function AudioPlayer({ slug, title, sources }: AudioPlayerProps) 
             </label>
           )}
 
-          <label className={styles.selectWrap}>
+          <label>
             <span className="sr-only">Playback speed</span>
             <select
+              className="audio-select"
               value={playbackRate}
               aria-label="Playback speed"
               onChange={(event) => handleSpeedChange(Number(event.currentTarget.value))}

@@ -1,4 +1,5 @@
 import { useMemo, useState, type ReactNode } from 'react';
+import { ChevronRight, ExternalLink, Search } from 'lucide-react';
 
 export interface SearchableItem {
   title: string;
@@ -53,42 +54,6 @@ function highlightTitle(title: string, term: string) {
   );
 }
 
-function ChevronIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="w-5 h-5"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m9 18 6-6-6-6" />
-    </svg>
-  );
-}
-
-function ExternalLinkIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="w-4 h-4"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-      <polyline points="15 3 21 3 21 9" />
-      <line x1="10" y1="14" x2="21" y2="3" />
-    </svg>
-  );
-}
-
 export default function SearchableList({ title, items, itemLabel, children }: SearchableListProps) {
   const [term, setTerm] = useState('');
 
@@ -100,14 +65,12 @@ export default function SearchableList({ title, items, itemLabel, children }: Se
 
   return (
     <>
-      <div className="mb-12 border-b border-zinc-800/80 pb-8">
-        <h1 className="text-4xl sm:text-[2.75rem] font-bold tracking-tight text-white mb-4">
-          {title}
-        </h1>
+      <div className="page-header">
+        <h1 className="page-title">{title}</h1>
         {children}
         <div className="relative max-w-sm">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <span className="text-zinc-400">🔍</span>
+            <Search className="h-4 w-4 text-zinc-400" aria-hidden="true" />
           </div>
           <input
             type="text"
@@ -120,30 +83,28 @@ export default function SearchableList({ title, items, itemLabel, children }: Se
         </div>
       </div>
 
-      <ul className="flex flex-col">
+      <ul className="list-rows">
         {filteredItems.map((item) => (
-          <li key={item.href} className="border-b border-zinc-800/80 last:border-0">
+          <li key={item.href} className="list-row">
             <a
               href={item.href}
               target={item.external ? '_blank' : undefined}
               rel={item.external ? 'noopener noreferrer' : undefined}
-              className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 py-3 -mx-3 px-3 rounded-xl hover-lift group font-outfit"
+              className="list-row__link"
             >
-              <span className="text-zinc-400 group-hover:text-zinc-200 text-base shrink-0 w-32 mt-1 sm:mt-0 transition-colors">
+              <span className="list-row__date list-row__date--offset">
                 {item.date ? <time dateTime={item.date}>{formatDate(item.date)}</time> : 'Recent'}
               </span>
-              <div className="flex-1">
-                <span className="text-primary group-hover:text-primary-hover font-medium font-outfit transition-colors text-xl mb-2 block">
-                  {highlightTitle(item.title, term.trim())}
-                </span>
-                {item.description && (
-                  <p className="text-zinc-400 group-hover:text-zinc-300 text-base line-clamp-2 leading-relaxed max-w-2xl transition-colors">
-                    {item.description}
-                  </p>
-                )}
+              <div className="list-row__body">
+                <span className="list-row__title">{highlightTitle(item.title, term.trim())}</span>
+                {item.description && <p className="list-row__description">{item.description}</p>}
               </div>
-              <div className="hidden sm:flex text-zinc-500 opacity-0 group-hover:opacity-100 transition-all duration-300 shrink-0 transform translate-x-[-10px] group-hover:translate-x-0 items-center justify-center">
-                {item.external ? <ExternalLinkIcon /> : <ChevronIcon />}
+              <div className="list-row__chevron">
+                {item.external ? (
+                  <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                ) : (
+                  <ChevronRight className="h-5 w-5" aria-hidden="true" />
+                )}
               </div>
             </a>
           </li>

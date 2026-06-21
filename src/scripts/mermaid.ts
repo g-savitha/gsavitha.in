@@ -25,7 +25,9 @@ function getSource(el: HTMLElement): string {
   return el.dataset.mermaidSource ?? el.textContent?.trim() ?? '';
 }
 
-function renderMermaid() {
+let renderQueue = Promise.resolve();
+
+async function renderMermaid() {
   mermaid.initialize({
     startOnLoad: false,
     theme: 'dark',
@@ -35,21 +37,24 @@ function renderMermaid() {
     securityLevel: 'loose',
   });
 
-  const nodes = document.querySelectorAll<HTMLElement>('.mermaid');
+  const nodes = document.querySelectorAll<HTMLElement>('.mermaid:not([data-processed="true"])');
+  if (nodes.length === 0) return;
+
   nodes.forEach((el) => {
     const raw = getSource(el);
     if (!el.dataset.mermaidSource) {
       el.dataset.mermaidSource = raw;
     }
-    el.removeAttribute('data-processed');
     el.textContent = prepareMermaidContent(raw);
   });
 
-  return mermaid.run({ nodes: [...nodes] });
+  await mermaid.run({ nodes: [...nodes] });
 }
 
 function initMermaid() {
-  renderMermaid().catch((err) => console.error('Mermaid render failed:', err));
+  renderQueue = renderQueue
+    .then(renderMermaid)
+    .catch((error) => console.error('Mermaid render failed:', error));
 }
 
 if (document.readyState === 'loading') {
@@ -57,6 +62,8 @@ if (document.readyState === 'loading') {
 } else {
   initMermaid();
 }
+
+document.addEventListener('astro:page-load', initMermaid);
 
 if (import.meta.hot) {
   import.meta.hot.accept(() => {

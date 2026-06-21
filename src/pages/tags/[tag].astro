@@ -25,27 +25,22 @@ posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
 <PageLayout title={`${tag} - ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
-  <div class="mb-12 border-b border-zinc-800/80 pb-8">
+  <div class="page-header">
     <h1 class="text-3xl font-bold tracking-tight text-white mb-2">
       Posts tagged "<span class="text-primary">{tag}</span>"
     </h1>
   </div>
 
-  <ul class="flex flex-col">
+  <ul class="list-rows">
     {
       posts.map((post) => (
-        <li class="border-b border-zinc-800/80 last:border-0">
-          <a
-            href={`/blog/${post.id}`}
-            class="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-6 py-3 -mx-3 px-3 rounded-xl hover-lift group font-outfit"
-          >
-            <span class="text-zinc-400 group-hover:text-zinc-200 text-base shrink-0 w-32 mt-1 sm:mt-0 transition-colors">
+        <li class="list-row">
+          <a href={`/blog/${post.id}`} class="list-row__link list-row__link--baseline">
+            <span class="list-row__date list-row__date--offset">
               <FormattedDate date={post.data.date} />
             </span>
             <div>
-              <span class="text-primary group-hover:text-primary-hover font-medium font-outfit transition-colors text-xl mb-2 block">
-                {post.data.title}
-              </span>
+              <span class="list-row__title">{post.data.title}</span>
             </div>
           </a>
         </li>

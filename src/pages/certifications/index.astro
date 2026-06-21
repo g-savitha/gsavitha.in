@@ -1,7 +1,9 @@
 ---
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
+import { ExternalLink } from 'lucide-astro';
 import PageLayout from '../../layouts/PageLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import { SITE_TITLE } from '../../consts';
 import { getCertificationLogo } from '../../utils/certificationLogos';
@@ -15,14 +17,10 @@ const certifications = (await getCollection('certifications')).sort(
   title={`Certifications | ${SITE_TITLE}`}
   description="Professional certifications and courses I have completed."
 >
-  <div class="mb-12 border-b border-zinc-800/80 pb-8">
-    <h1 class="text-4xl sm:text-[2.75rem] font-bold tracking-tight text-white mb-4">
-      Certifications
-    </h1>
-    <p class="text-lg text-zinc-400 max-w-2xl">
-      Professional certifications and courses I have completed.
-    </p>
-  </div>
+  <PageHeader
+    title="Certifications"
+    description="Professional certifications and courses I have completed."
+  />
 
   <ul class="flex flex-col max-w-2xl mx-auto divide-y divide-zinc-800/80">
     {
@@ -60,20 +58,7 @@ const certifications = (await getCollection('certifications')).sort(
             {/* External link indicator */}
             {cert.data.url && (
               <div class="text-zinc-600 group-hover:text-primary transition-colors">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="w-4 h-4 shrink-0"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                  <polyline points="15 3 21 3 21 9" />
-                  <line x1="10" y1="14" x2="21" y2="3" />
-                </svg>
+                <ExternalLink class="w-4 h-4 shrink-0" aria-hidden="true" />
               </div>
             )}
           </a>

@@ -1,34 +1,27 @@
 ---
 import { getCollection } from 'astro:content';
 import PageLayout from '../../layouts/PageLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
-import IconArrow from '../../components/IconArrow.astro';
 import { SITE_TITLE } from '../../consts';
 import { sortByDate } from '../../utils/content';
-import * as Icons from 'lucide-astro';
+import { ChevronRight } from 'lucide-astro';
+import { resolveIcon } from '../../utils/icons';
 
 const goodies = await getCollection('goodies');
 const sortedGoodies = sortByDate(goodies);
-
-// Map icon names to Lucide components
-const GoodieIcons = Icons as any;
 ---
 
 <PageLayout
   title={`Goodies | ${SITE_TITLE}`}
   description="Small tools, cheat sheets, and utilities I've built or collected."
 >
-  <div class="mb-12 border-b border-zinc-800/80 pb-8">
-    <h1 class="text-4xl sm:text-[2.75rem] font-bold tracking-tight text-white mb-4">Goodies</h1>
-    <p class="text-lg text-zinc-400 max-w-2xl">
-      Small tools, cheat sheets, and utilities I've built.
-    </p>
-  </div>
+  <PageHeader title="Goodies" description="Small tools, cheat sheets, and utilities I've built." />
 
   <ul class="flex flex-col max-w-2xl mx-auto divide-y divide-zinc-800/80">
     {
       sortedGoodies.map((goodie) => {
-        const IconComp = goodie.data.icon ? GoodieIcons[goodie.data.icon] : Icons.Sparkles;
+        const Icon = resolveIcon(goodie.data.icon);
         return (
           <li class="group">
             <a
@@ -37,7 +30,7 @@ const GoodieIcons = Icons as any;
             >
               {/* Icon badge */}
               <div class="w-12 h-12 shrink-0 rounded-xl bg-zinc-800 border border-zinc-700/60 flex items-center justify-center">
-                <IconComp class="w-6 h-6 text-primary" />
+                <Icon class="w-6 h-6 text-primary" aria-hidden="true" />
               </div>
 
               {/* Content */}
@@ -54,7 +47,10 @@ const GoodieIcons = Icons as any;
               </div>
 
               {/* Arrow */}
-              <IconArrow class="w-4 h-4 shrink-0 text-zinc-600 group-hover:text-primary transition-colors" />
+              <ChevronRight
+                class="w-4 h-4 shrink-0 text-zinc-600 group-hover:text-primary transition-colors"
+                aria-hidden="true"
+              />
             </a>
           </li>
         );
