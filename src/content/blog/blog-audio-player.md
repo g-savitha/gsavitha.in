@@ -54,7 +54,7 @@ This is the tech stack I used to build the audio pipeline, and the reasons I pic
 - **lamejs** turns raw audio samples into MP3s without adding native build dependencies.
 - **Cloudflare R2** stores the final audio files. Audio is a static asset, so I wanted something fast, CDN-friendly, and cheap to serve globally.
 - **The S3 SDK** uploads to R2 directly, which keeps CI simpler than shelling out to a CLI.
-- **GitHub Actions** runs the pipeline, caches the heavy pieces, uploads new audio, and deploys the site. I didn't want to run a separate cloud service just for generation yet. If this grows, moving the audio job closer to Cloudflare would be a natural next step.
+- **GitHub Actions** runs everything as two separate workflows — a fast one that just builds and deploys the site, and a dedicated one that generates audio, uploads it, and commits the manifest. I didn't want to run a separate cloud service just for generation yet. If this grows, moving the audio job closer to Cloudflare would be a natural next step.
 - **Bun** runs the project scripts and installs dependencies quickly in CI. For this workflow it is simply faster than waiting on npm or pnpm for every deploy.
 
 I wanted the stack to be reliable and maintainable, not fancy. If I come back to this six months later, I should still understand why every piece exists.
@@ -420,6 +420,8 @@ flowchart TD
 
 `audio.yml` owns generation. It only triggers when blog content or the audio scripts change, and it runs in its own concurrency group with `cancel-in-progress: false` — so a long synthesis run finishes instead of being killed by the next unrelated push. When it's done it commits the manifest back to main, rebasing first so it never clobbers a concurrent change, and then explicitly triggers a deploy so the new URLs go live.
 
+That commit step is deliberately defensive, and learning why cost me a few confused hours. The job runs with `continue-on-error: true` so a flaky synthesis never blocks a deploy — but that same flag will happily swallow a failed `git push` too. At one point `bun install` was leaving the lockfile dirty, which made the rebase abort, which dropped the manifest push, all while the run stayed green. The bucket had the new audio; main still pointed at the old, already-deleted file. The fix is to auto-stash that unrelated working-tree noise before rebasing, so the publish either lands or fails loudly. A commit step that can fail silently is the one thing this whole design can't tolerate — a dropped manifest is exactly what sent earlier runs into endless regeneration.
+
 Both generation and upload still run with `continue-on-error: true`. If TTS has a bad day, the manifest simply doesn't change and the site keeps deploying with the audio that already exists.
 
 The model weights, segment cache, worker result files, and staged MP3 output are cached between runs, keyed so that freshly synthesized segments are always persisted rather than thrown away. The first run is slow. Every run after that only processes what actually changed — and when nothing changed, the whole job finishes in seconds instead of hours.
@@ -471,12 +473,12 @@ The alternative — synthesize on demand, per request — means server costs, co
 
 Build-time gives the CDN the best possible asset: content-addressed URL, immutable cache header, nothing to re-validate. The browser fetches a static file. That's genuinely the simplest thing it can do.
 
-The cost is real though. Hashing, segment caching, worker coordination, upload validation — none of it is trivial to get right, and I got parts of it wrong the first time. But all that complexity lives in the build system. Readers don't see it. The player is just a URL and a component.
+The cost is real though. Hashing, segment caching, worker coordination, upload validation, resilient publishing — none of it is trivial to get right, and I got parts of it wrong the first time. But all that complexity lives in the build system. Readers don't see it. The player is just a URL and a component.
 
 ---
 
 ## Closing Thoughts
 
-The whole thing is about 800 lines across the pipeline and the player. The part I'm happiest about is the manifest as a contract: the pipeline writes it, Astro reads it, and neither side knows anything about the other. I can swap the TTS model, move storage providers, or redesign the player entirely without touching more than one piece at a time.
+The whole thing is around 1,800 lines across the pipeline and the player, and it grew most in the places I underestimated — cache invalidation, R2 cleanup, and making the manifest commit bulletproof. The part I'm happiest about is the manifest as a contract: the pipeline writes it, Astro reads it, and neither side knows anything about the other. I can swap the TTS model, move storage providers, or redesign the player entirely without touching more than one piece at a time.
 
 If you're building something similar: **do the expensive work at build time, not at runtime.** Synthesize, commit the metadata, serve static files from a CDN. The browser doesn't need to know how hard the build worked. It just needs a URL.
