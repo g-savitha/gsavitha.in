@@ -392,41 +392,56 @@ await s3.send(new PutObjectCommand({
 
 `CacheControl: immutable` is not optional here. The URL already encodes the hash — there's no version of "same URL, different audio". Browsers and CDN edges can cache these forever.
 
-Before writing the public URL into the manifest, the uploader checks the full chain: does the source post still exist, is the language still configured, does the generated hash match what we'd compute today, is the MP3 actually on disk. Every check has to pass. 
+Before writing the public URL into the manifest, the uploader checks the full chain: does the source post still exist, is the language still configured, does the generated hash match what we'd compute today, is the MP3 on disk, and does its size exactly match the byte count the generator recorded. That last check is the corruption guard — a truncated or half-written render never gets uploaded, so a broken file can never have its hash recorded in the manifest. Only when every check passes is the URL written.
+
+Because the storage key is content-addressed, editing a post produces a brand-new key. To stop the bucket from hoarding every past version, the uploader then prunes any object under a post's prefix that the current manifest no longer references — each voice keeps exactly one file. Same voice, edited text: the old MP3 is replaced, not accumulated.
 
 ---
 
 ## CI Keeps Everything in Sync
 
-Every push to main runs the full pipeline. The tricky part is that audio generation can fail — the model can have a slow run, the R2 upload can time out, whatever — and I don't want that to block the site from deploying.
+For a while, every push to main ran the whole thing — generate, upload, commit, build — as one workflow. That was a mistake. A pure styling tweak shouldn't wait behind a multi-hour synthesis run, and a run that got cancelled by my next push could drop the manifest commit entirely, which sent the *following* run off regenerating everything from scratch. So I split it into two pipelines.
 
 ```mermaid
-sequenceDiagram
-    actor Push
-    participant CI as GitHub Actions
-    participant Cache as Actions Cache
-    participant TTS as Audio Generator
-    participant R2 as Cloudflare R2
-    participant Build as Astro Build
+flowchart TD
+    PUSH["Push to main"]:::content --> Q{"What changed?"}:::warning
+    Q -->|"blog content or\naudio scripts"| AUDIO["audio.yml"]:::accent
+    Q -->|"anything"| DEPLOY["deploy.yml"]:::primary
 
-    Push->>CI: push to main
-    CI->>CI: install dependencies
-    CI->>CI: validate and prune stale manifest entries
-    CI->>Cache: restore model weights and audio cache
-    Cache-->>CI: cached artifacts (or fresh download)
-    CI->>TTS: generate only missing or changed audio
-    TTS-->>CI: staged MP3 files
-    CI->>R2: upload staged audio
-    R2-->>CI: public CDN URLs
-    CI->>CI: commit updated manifest
-    CI->>Build: build Astro site with current manifest
+    subgraph AudioJob["audio.yml — its own concurrency group"]
+        GEN["Generate only\nchanged audio"]:::accent
+        UP["Upload to R2\n+ prune old files"]:::accent
+        REC["Reconcile manifest\nagainst R2"]:::info
+        COMMIT["Commit manifest\nto main (rebase first)"]:::success
+    end
+
+    AUDIO --> GEN --> UP --> REC --> COMMIT
+    COMMIT -->|"triggers a deploy"| DEPLOY
+
+    subgraph DeployJob["deploy.yml — fast path"]
+        BUILD["Astro build\nreads committed manifest"]:::primary
+        PAGES["Deploy to Pages"]:::success
+    end
+
+    DEPLOY --> BUILD --> PAGES
+
+    classDef primary fill:#2563eb,stroke:#93c5fd,color:#ffffff
+    classDef accent fill:#7c3aed,stroke:#c4b5fd,color:#ffffff
+    classDef success fill:#059669,stroke:#6ee7b7,color:#ffffff
+    classDef warning fill:#d97706,stroke:#fcd34d,color:#111827
+    classDef info fill:#0891b2,stroke:#67e8f9,color:#ffffff
+    classDef content fill:#334155,stroke:#94a3b8,color:#ffffff
 ```
 
-Both generation and upload run with `continue-on-error: true`. If TTS fails for one post, everything else still ships. The audio catches up on the next run.
+`deploy.yml` builds and ships the site. It runs on every push to main, touches no audio at all, and simply trusts whatever is already committed in the manifest. Styling, logic, and prose changes go live in well under a minute.
 
-The model weights, segment cache, worker result files, and staged MP3 output are all cached between runs. The first run is slow. Every run after that only processes what changed.
+`audio.yml` owns generation. It only triggers when blog content or the audio scripts change, and it runs in its own concurrency group with `cancel-in-progress: false` — so a long synthesis run finishes instead of being killed by the next unrelated push. When it's done it commits the manifest back to main, rebasing first so it never clobbers a concurrent change, and then explicitly triggers a deploy so the new URLs go live.
 
-After uploading, if the manifest changed, the workflow commits it back before the Astro build starts. That's the only way new CDN URLs make it into the static site — Astro reads the manifest as a build-time import, so it has to be committed and up to date first.
+Both generation and upload still run with `continue-on-error: true`. If TTS has a bad day, the manifest simply doesn't change and the site keeps deploying with the audio that already exists.
+
+The model weights, segment cache, worker result files, and staged MP3 output are cached between runs, keyed so that freshly synthesized segments are always persisted rather than thrown away. The first run is slow. Every run after that only processes what actually changed — and when nothing changed, the whole job finishes in seconds instead of hours.
+
+After upload, a reconcile step rebuilds the manifest from what's genuinely published in R2: it keeps the entries the upload just wrote, recovers any that drifted, and drops anything whose audio isn't really there. The committed manifest is then guaranteed to match the bucket — which is exactly the invariant that used to break silently.
 
 ---
 
