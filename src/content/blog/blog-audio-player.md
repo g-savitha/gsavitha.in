@@ -66,46 +66,47 @@ Here's the full picture before we go through each piece.
 
 ```mermaid
 flowchart TD
-    subgraph Authoring["Authoring"]
-        POST["Blog post\nMarkdown"]:::content
-        CONFIG["Frontmatter\naudio config"]:::content
-        ANNOT["Code block\nannotations"]:::content
+    subgraph Authoring["1 · Authoring"]
+        INPUT["Markdown post\n+ audio frontmatter\n+ optional code summaries"]:::content
     end
 
-    subgraph Pipeline["Build Pipeline"]
-        VALIDATE["Manifest\nvalidator"]:::warning
-        EXTRACT["Narration\nextractor"]:::primary
-        GENERATE["Audio\ngenerator"]:::accent
-        CACHE["Segment\ncache"]:::info
-        UPLOAD["R2\nupload"]:::accent
-        MANIFEST["Audio\nmanifest"]:::success
+    subgraph Build["2 · Audio pipeline · GitHub Actions"]
+        EXTRACT["Parse Markdown AST\ninto narration segments"]:::primary
+        HASH["Hash content +\nvoice settings"]:::primary
+        CHANGED{"Audio already\npublished?"}:::decision
+        GENERATE["Chunk text · reuse segment cache\nKokoro-82M synthesis · MP3 encoding"]:::accent
+        UPLOAD["Validate + upload\ncontent-addressed MP3"]:::accent
+
+        EXTRACT --> HASH --> CHANGED
+        CHANGED -->|"no · generate"| GENERATE --> UPLOAD
     end
 
-    subgraph Site["Astro Site"]
-        LAYOUT["Blog layout"]:::primary
-        RESOLVE["Audio\nresolver"]:::info
-        PLAYER["React\naudio player"]:::success
-        STORAGE["localStorage\nprogress"]:::warning
+    subgraph Contract["3 · Published contract"]
+        MANIFEST["Committed audio manifest\nslug → URL · label · duration"]:::success
+        R2[("Cloudflare R2\nimmutable MP3s")]:::storage
+        UPLOAD --> R2
+        UPLOAD --> MANIFEST
+        CHANGED -->|"yes · reuse"| MANIFEST
     end
 
-    subgraph CDN["Cloudflare R2"]
-        MP3["Immutable MP3s"]:::accent
+    subgraph Delivery["4 · Build and playback"]
+        ASTRO["Astro build\nresolve audio by slug"]:::primary
+        PAGE["Static blog page"]:::content
+        PLAYER["React audio player\nseek · speed · voice"]:::success
+        PROGRESS[("localStorage\nplayback position")]:::storage
+
+        MANIFEST --> ASTRO --> PAGE --> PLAYER
+        PLAYER <-->|"save / restore"| PROGRESS
     end
 
-    POST --> CONFIG --> VALIDATE --> EXTRACT --> GENERATE
-    ANNOT --> EXTRACT
-    GENERATE <--> CACHE
-    GENERATE --> UPLOAD --> MP3
-    UPLOAD --> MANIFEST
-    MANIFEST --> LAYOUT --> RESOLVE --> PLAYER
-    PLAYER --> MP3
-    PLAYER <--> STORAGE
+    INPUT --> EXTRACT
+    PLAYER -->|"stream MP3 from CDN"| R2
 
     classDef primary fill:#2563eb,stroke:#93c5fd,color:#ffffff
     classDef accent fill:#7c3aed,stroke:#c4b5fd,color:#ffffff
     classDef success fill:#059669,stroke:#6ee7b7,color:#ffffff
-    classDef warning fill:#d97706,stroke:#fcd34d,color:#111827
-    classDef info fill:#0891b2,stroke:#67e8f9,color:#ffffff
+    classDef decision fill:#d97706,stroke:#fcd34d,color:#111827
+    classDef storage fill:#0891b2,stroke:#67e8f9,color:#ffffff
     classDef content fill:#334155,stroke:#94a3b8,color:#ffffff
 ```
 
@@ -160,20 +161,10 @@ The system handles code blocks in two ways. You can place an explicit `<!-- audi
 flowchart TD
     CB["Code block"]:::content --> EXPLICIT{"Explicit\naudio-summary?"}:::warning
     EXPLICIT -->|"yes"| OUT["Narration text"]:::success
-    EXPLICIT -->|"no"| LANG{"Language-aware\nanalysis"}:::primary
-
-    LANG --> COMMENT["Leading comment\nin the code"]:::info
-    LANG --> HTML["HTML semantic\ntag structure"]:::info
-    LANG --> CSS["CSS class\nand ID selectors"]:::info
-    LANG --> SHELL["Shell command\nnames"]:::info
-    LANG --> SYMBOLS["Top-level function\nand class names"]:::info
-    LANG --> FALLBACK["Section heading\nfallback"]:::warning
-
-    COMMENT --> OUT
-    HTML --> OUT
-    CSS --> OUT
-    SHELL --> OUT
-    SYMBOLS --> OUT
+    EXPLICIT -->|"no"| ANALYZE["Contextual analysis\ncomments · semantic tags · selectors\ncommands · functions · classes"]:::info
+    ANALYZE --> FOUND{"Useful context\nfound?"}:::warning
+    FOUND -->|"yes"| OUT
+    FOUND -->|"no"| FALLBACK["Use section heading\nas fallback"]:::primary
     FALLBACK --> OUT
 
     classDef primary fill:#2563eb,stroke:#93c5fd,color:#ffffff
@@ -243,9 +234,8 @@ Each voice gets its own hash, its own MP3, and its own manifest entry. Voice, mo
 Every decision in the pipeline — synthesize or skip, upload or skip, re-run or not — comes down to a single SHA-256 hash computed from the narration segments and the voice settings.
 
 ```mermaid
-flowchart LR
-    SEG["Narration\nsegments"]:::content --> HASH["SHA-256\nnarration hash"]:::primary
-    SETTINGS["Model · dtype\nvoice · speed"]:::content --> HASH
+flowchart TD
+    INPUTS["Narration segments\n+ model · dtype · voice · speed"]:::content --> HASH["SHA-256\nnarration hash"]:::primary
     HASH --> URL["CDN path\nslug/hash/lang.mp3"]:::accent
     HASH --> ENTRY["Manifest\nentry"]:::success
 
@@ -338,17 +328,9 @@ With one post to generate, running serially is fine. With dozens, it wastes the 
 ```mermaid
 flowchart TD
     ORCH["Orchestrator"]:::primary --> QUEUE["Pending posts"]:::content
-    QUEUE --> W1["Worker — post A"]:::accent
-    QUEUE --> W2["Worker — post B"]:::accent
-    QUEUE --> W3["Worker — post C"]:::accent
-
-    W1 --> R1["Result: post A"]:::info
-    W2 --> R2["Result: post B"]:::info
-    W3 --> R3["Result: post C"]:::info
-
-    R1 --> MERGE["Merge results"]:::success
-    R2 --> MERGE
-    R3 --> MERGE
+    QUEUE --> WORKERS["Up to four isolated workers\none post per worker"]:::accent
+    WORKERS --> RESULTS["Validated result files\nserve as recovery checkpoints"]:::info
+    RESULTS --> MERGE["Merge results"]:::success
     MERGE --> INDEX["Generated index"]:::success
 
     classDef primary fill:#2563eb,stroke:#93c5fd,color:#ffffff
