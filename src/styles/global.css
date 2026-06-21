@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 @plugin "@tailwindcss/typography";
 
 @font-face {
@@ -20,7 +20,9 @@
 @theme {
   --color-primary: var(--theme-color);
   --color-primary-hover: var(--theme-color-hover);
-  --font-mono: 'Dank Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-mono:
+    'Dank Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Courier New', monospace;
   --font-outfit: 'Outfit', system-ui, -apple-system, sans-serif;
   --font-sacramento: 'Sacramento', cursive;
   /* 1rem = 16px root scale — all type sizes in rem */
@@ -45,7 +47,11 @@
 
   body {
     @apply bg-zinc-900 text-zinc-300 text-base antialiased selection:bg-zinc-700/50 selection:text-zinc-100;
-    font-family: 'Overlock', system-ui, -apple-system, sans-serif;
+    font-family:
+      'Overlock',
+      system-ui,
+      -apple-system,
+      sans-serif;
     font-size: 1rem;
     line-height: 1.5;
   }
@@ -60,8 +66,10 @@
   }
 
   a:where(
-      :not(.hover-lift):not(.hover-lift-surface):not(.hover-lift-pill):not(.hover-lift-accent):not(.no-hover-lift):not([class*='flex'])
-    ) {
+    :not(.hover-lift):not(.hover-lift-surface):not(.hover-lift-pill):not(.hover-lift-accent):not(
+        .no-hover-lift
+      ):not([class*='flex'])
+  ) {
     @apply font-outfit text-zinc-200 hover:text-white hover:no-underline;
     display: inline-block;
     border-radius: 0.25rem;
@@ -76,7 +84,9 @@
   }
 
   a:where(
-      :not(.hover-lift):not(.hover-lift-surface):not(.hover-lift-pill):not(.hover-lift-accent):not(.no-hover-lift):not([class*='flex'])
+      :not(.hover-lift):not(.hover-lift-surface):not(.hover-lift-pill):not(.hover-lift-accent):not(
+          .no-hover-lift
+        ):not([class*='flex'])
     ):hover {
     background-color: var(--hover-lift-bg);
     transform: translateY(-1px);
@@ -105,11 +115,11 @@
 
   /* Target shiki comments specifically to enforce italics,
      using the github-dark comment color (#8b949e) and dark+ (#6A9955) */
-  .prose pre span[style*="#8b949e" i],
-  .prose pre span[style*="#8B949E" i],
-  .prose pre span[style*="#6a9955" i],
-  .prose pre span[style*="#6A9955" i],
-  .prose pre span[style*="italic" i] {
+  .prose pre span[style*='#8b949e' i],
+  .prose pre span[style*='#8B949E' i],
+  .prose pre span[style*='#6a9955' i],
+  .prose pre span[style*='#6A9955' i],
+  .prose pre span[style*='italic' i] {
     font-style: italic !important;
   }
 }

@@ -1,7 +1,6 @@
 # Savitha Gollamudi's Portfolio
 
-Welcome to my digital garden! 🪴 
-
+Welcome to my digital garden! 🪴
 
 ---
 
@@ -26,6 +25,7 @@ before it:
 <!-- audio-summary:
 This function checks the cache first and queries the database only on a miss.
 -->
+
 ```js
 // code omitted
 ```

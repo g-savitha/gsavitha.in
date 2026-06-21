@@ -20,13 +20,7 @@ import {
   resultFileLanguageStates,
   selectStaleSegmentFiles,
 } from './lib/cache.mjs';
-import {
-  DTYPE,
-  GENERATION_SPEED,
-  MODEL,
-  MP3_BITRATE,
-  SAMPLE_RATE,
-} from './lib/config.mjs';
+import { DTYPE, GENERATION_SPEED, MODEL, MP3_BITRATE, SAMPLE_RATE } from './lib/config.mjs';
 
 // ─── Paths ───────────────────────────────────────────────────────────────────
 
@@ -191,7 +185,9 @@ async function generateForVoice(narration, voiceConfig) {
   const outputPath = path.join(GENERATED_AUDIO_ROOT, storageKey);
   await mkdir(path.dirname(outputPath), { recursive: true });
   await writeFile(outputPath, mp3);
-  console.log(`    Encoded ${(mp3.length / 1024).toFixed(0)} KB · ${(totalSamples / SAMPLE_RATE).toFixed(1)} s`);
+  console.log(
+    `    Encoded ${(mp3.length / 1024).toFixed(0)} KB · ${(totalSamples / SAMPLE_RATE).toFixed(1)} s`,
+  );
 
   return {
     storageKey,
@@ -339,11 +335,9 @@ async function mergeResultFiles(generated, slugs) {
 
 function spawnWorker(slug) {
   return new Promise((resolve, reject) => {
-    const child = spawn(
-      process.execPath,
-      [__filename, `--slug=${slug}`, '--worker'],
-      { stdio: 'inherit' },
-    );
+    const child = spawn(process.execPath, [__filename, `--slug=${slug}`, '--worker'], {
+      stdio: 'inherit',
+    });
     child.once('error', reject);
     child.once('exit', (code) => {
       if (code === 0) resolve();
@@ -400,7 +394,10 @@ if (!requestedSlug && !isWorker) {
   const available = new Set(allFiles.map((f) => f.replace(/\.(md|mdx)$/i, '')));
   let pruned = false;
   for (const slug of Object.keys(generated)) {
-    if (!available.has(slug)) { delete generated[slug]; pruned = true; }
+    if (!available.has(slug)) {
+      delete generated[slug];
+      pruned = true;
+    }
   }
   if (pruned) await saveJson(GENERATED_INDEX_PATH, generated);
 }
@@ -439,7 +436,7 @@ for (const narration of narrations) {
     const hash = narrationHash(narration, voiceGenerationSettings(voiceConfig));
     const staged = generated[narration.slug]?.[language];
     if (!force && manifest[narration.slug]?.[language]?.hash === hash) continue;
-    if (!force && staged?.hash === hash && await fileExists(staged.outputPath)) continue;
+    if (!force && staged?.hash === hash && (await fileExists(staged.outputPath))) continue;
     needsGeneration = true;
     break;
   }
@@ -481,17 +478,21 @@ if (!isWorker && jobs.length >= 2) {
     }
 
     // Clear result files only for slugs we're actually re-dispatching.
-    await Promise.allSettled(
-      pending.map((n) => unlink(path.join(RESULTS_DIR, `${n.slug}.json`))),
-    );
+    await Promise.allSettled(pending.map((n) => unlink(path.join(RESULTS_DIR, `${n.slug}.json`))));
 
     if (pending.length > 0) {
       const actualWorkers = Math.min(pending.length, workerCount);
-      await runParallel(pending.map((n) => n.slug), actualWorkers);
+      await runParallel(
+        pending.map((n) => n.slug),
+        actualWorkers,
+      );
     }
 
     // Merge result files for all jobs (newly dispatched + recovered).
-    const merged = await mergeResultFiles(generated, jobs.map((n) => n.slug));
+    const merged = await mergeResultFiles(
+      generated,
+      jobs.map((n) => n.slug),
+    );
     await saveJson(GENERATED_INDEX_PATH, merged);
     console.log(`\nUpdated ${path.relative(process.cwd(), GENERATED_INDEX_PATH)}`);
 

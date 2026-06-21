@@ -9,84 +9,74 @@ import AudioPlayer from '../components/blog/AudioPlayer';
 import { getPostAudio } from '../utils/audio';
 
 type Props = CollectionEntry<'blog'>['data'] & {
-    headings?: any[];
-    prevPost?: CollectionEntry<'blog'> | null;
-    nextPost?: CollectionEntry<'blog'> | null;
-    recentPosts?: CollectionEntry<'blog'>[];
-    slug: string;
+  headings?: any[];
+  prevPost?: CollectionEntry<'blog'> | null;
+  nextPost?: CollectionEntry<'blog'> | null;
+  recentPosts?: CollectionEntry<'blog'>[];
+  slug: string;
 };
 
 const {
-    title,
-    description,
-    date,
-    updatedDate,
-    headings = [],
-    tags = [],
-    heroImage,
-    prevPost = null,
-    nextPost = null,
-    recentPosts = [],
-    slug,
+  title,
+  description,
+  date,
+  updatedDate,
+  headings = [],
+  tags = [],
+  heroImage,
+  prevPost = null,
+  nextPost = null,
+  recentPosts = [],
+  slug,
 } = Astro.props;
 const audioSources = getPostAudio(slug);
 ---
 
 <PageLayout title={title} description={description} image={heroImage}>
-    <div
-        class="xl:grid xl:grid-cols-[1fr_260px] lg:gap-12 xl:gap-20 items-start"
+  <div class="xl:grid xl:grid-cols-[1fr_260px] lg:gap-12 xl:gap-20 items-start">
+    <article
+      class="prose prose-base prose-invert prose-zinc max-w-none text-zinc-300 leading-relaxed min-w-0 pb-16"
     >
-        <article
-            class="prose prose-base prose-invert prose-zinc max-w-none text-zinc-300 leading-relaxed min-w-0 pb-16"
-        >
-            <PostHeader
-                title={title}
-                date={date}
-                updatedDate={updatedDate}
-                tags={tags}
+      <PostHeader title={title} date={date} updatedDate={updatedDate} tags={tags} />
+
+      {
+        audioSources.length > 0 && (
+          <AudioPlayer client:load slug={slug} title={title} sources={audioSources} />
+        )
+      }
+
+      <!-- Mobile inline TOC (collapsible) -->
+      {
+        headings.length > 0 && (
+          <div class="xl:hidden mb-10 border border-zinc-800/50 rounded-xl px-5 py-4 not-prose">
+            <TableOfContents
+              headings={headings}
+              isMobile={true}
+              client:media="(max-width: 1279px)"
             />
+          </div>
+        )
+      }
 
-            {
-                audioSources.length > 0 && (
-                    <AudioPlayer client:load slug={slug} title={title} sources={audioSources} />
-                )
-            }
+      <!-- Main Content Slot -->
+      <slot />
 
-			<!-- Mobile inline TOC (collapsible) -->
-			{
-				headings.length > 0 && (
-					<div class="xl:hidden mb-10 border border-zinc-800/50 rounded-xl px-5 py-4 not-prose">
-						<TableOfContents
-							headings={headings}
-							isMobile={true}
-							client:media="(max-width: 1279px)"
-						/>
-					</div>
-				)
-			}
+      <!-- See Also Section -->
+      <RelatedPosts posts={recentPosts} />
 
-            <!-- Main Content Slot -->
-            <slot />
+      <!-- Post Navigation -->
+      <PostNavigation prevPost={prevPost} nextPost={nextPost} />
+    </article>
 
-            <!-- See Also Section -->
-            <RelatedPosts posts={recentPosts} />
+    <!-- Desktop sticky TOC -->
+    {
+      headings.length > 0 && (
+        <aside class="hidden xl:block sticky top-24 shrink-0 -mt-2">
+          <TableOfContents headings={headings} client:media="(min-width: 1280px)" />
+        </aside>
+      )
+    }
+  </div>
 
-            <!-- Post Navigation -->
-            <PostNavigation prevPost={prevPost} nextPost={nextPost} />
-        </article>
-
-		<!-- Desktop sticky TOC -->
-		{
-			headings.length > 0 && (
-				<aside class="hidden xl:block sticky top-24 shrink-0 -mt-2">
-					<TableOfContents
-						headings={headings}
-						client:media="(min-width: 1280px)"
-					/>
-				</aside>
-			)
-		}
-    </div>
-
-    <script src="../scripts/mermaid.ts"></script>
+  <script src="../scripts/mermaid.ts"></script>
 </PageLayout>

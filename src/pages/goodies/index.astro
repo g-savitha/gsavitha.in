@@ -15,60 +15,50 @@ const GoodieIcons = Icons as any;
 ---
 
 <PageLayout
-    title={`Goodies | ${SITE_TITLE}`}
-    description="Small tools, cheat sheets, and utilities I've built or collected."
+  title={`Goodies | ${SITE_TITLE}`}
+  description="Small tools, cheat sheets, and utilities I've built or collected."
 >
-    <div class="mb-12 border-b border-zinc-800/80 pb-8">
-        <h1
-            class="text-4xl sm:text-[2.75rem] font-bold tracking-tight text-white mb-4"
-        >
-            Goodies
-        </h1>
-        <p class="text-lg text-zinc-400 max-w-2xl">
-            Small tools, cheat sheets, and utilities I've built.
-        </p>
-    </div>
+  <div class="mb-12 border-b border-zinc-800/80 pb-8">
+    <h1 class="text-4xl sm:text-[2.75rem] font-bold tracking-tight text-white mb-4">Goodies</h1>
+    <p class="text-lg text-zinc-400 max-w-2xl">
+      Small tools, cheat sheets, and utilities I've built.
+    </p>
+  </div>
 
-    <ul class="flex flex-col max-w-2xl mx-auto divide-y divide-zinc-800/80">
-        {
-            sortedGoodies.map((goodie) => {
-                const IconComp = goodie.data.icon
-                    ? GoodieIcons[goodie.data.icon]
-                    : Icons.Sparkles;
-                return (
-                    <li class="group">
-                        <a
-                            href={goodie.data.href}
-                            class="flex items-center gap-4 py-5 px-3 -mx-3 rounded-xl hover-lift"
-                        >
-                            {/* Icon badge */}
-                            <div class="w-12 h-12 shrink-0 rounded-xl bg-zinc-800 border border-zinc-700/60 flex items-center justify-center">
-                                <IconComp class="w-6 h-6 text-primary" />
-                            </div>
+  <ul class="flex flex-col max-w-2xl mx-auto divide-y divide-zinc-800/80">
+    {
+      sortedGoodies.map((goodie) => {
+        const IconComp = goodie.data.icon ? GoodieIcons[goodie.data.icon] : Icons.Sparkles;
+        return (
+          <li class="group">
+            <a
+              href={goodie.data.href}
+              class="flex items-center gap-4 py-5 px-3 -mx-3 rounded-xl hover-lift"
+            >
+              {/* Icon badge */}
+              <div class="w-12 h-12 shrink-0 rounded-xl bg-zinc-800 border border-zinc-700/60 flex items-center justify-center">
+                <IconComp class="w-6 h-6 text-primary" />
+              </div>
 
-                            {/* Content */}
-                            <div class="flex-1 min-w-0">
-                                <h3 class="text-base font-semibold text-zinc-100 group-hover:text-primary transition-colors leading-snug">
-                                    {goodie.data.title}
-                                </h3>
-                                <p class="text-base text-zinc-300 mt-0.5 line-clamp-2">
-                                    {goodie.data.description}
-                                </p>
-                                {goodie.data.date && (
-                                    <p class="text-[0.875rem] text-zinc-400 mt-1 font-mono">
-                                        <FormattedDate
-                                            date={goodie.data.date}
-                                        />
-                                    </p>
-                                )}
-                            </div>
+              {/* Content */}
+              <div class="flex-1 min-w-0">
+                <h3 class="text-base font-semibold text-zinc-100 group-hover:text-primary transition-colors leading-snug">
+                  {goodie.data.title}
+                </h3>
+                <p class="text-base text-zinc-300 mt-0.5 line-clamp-2">{goodie.data.description}</p>
+                {goodie.data.date && (
+                  <p class="text-[0.875rem] text-zinc-400 mt-1 font-mono">
+                    <FormattedDate date={goodie.data.date} />
+                  </p>
+                )}
+              </div>
 
-                            {/* Arrow */}
-                            <IconArrow class="w-4 h-4 shrink-0 text-zinc-600 group-hover:text-primary transition-colors" />
-                        </a>
-                    </li>
-                );
-            })
-        }
-    </ul>
+              {/* Arrow */}
+              <IconArrow class="w-4 h-4 shrink-0 text-zinc-600 group-hover:text-primary transition-colors" />
+            </a>
+          </li>
+        );
+      })
+    }
+  </ul>
 </PageLayout>

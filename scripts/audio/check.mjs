@@ -84,7 +84,9 @@ for (const file of files) {
         failed = true;
       }
     } else if (!entry.url.startsWith('https://')) {
-      console.error(`Audio URL must be root-relative or HTTPS for ${narration.slug} [${language}]: ${entry.url}`);
+      console.error(
+        `Audio URL must be root-relative or HTTPS for ${narration.slug} [${language}]: ${entry.url}`,
+      );
       failed = true;
     }
   }

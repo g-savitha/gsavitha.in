@@ -7,94 +7,78 @@ import { SITE_TITLE } from '../../consts';
 import { getCertificationLogo } from '../../utils/certificationLogos';
 
 const certifications = (await getCollection('certifications')).sort(
-    (a, b) => (b.data.date?.valueOf() || 0) - (a.data.date?.valueOf() || 0),
+  (a, b) => (b.data.date?.valueOf() || 0) - (a.data.date?.valueOf() || 0),
 );
 ---
 
 <PageLayout
-    title={`Certifications | ${SITE_TITLE}`}
-    description="Professional certifications and courses I have completed."
+  title={`Certifications | ${SITE_TITLE}`}
+  description="Professional certifications and courses I have completed."
 >
-    <div class="mb-12 border-b border-zinc-800/80 pb-8">
-        <h1
-            class="text-4xl sm:text-[2.75rem] font-bold tracking-tight text-white mb-4"
-        >
-            Certifications
-        </h1>
-        <p class="text-lg text-zinc-400 max-w-2xl">
-            Professional certifications and courses I have completed.
-        </p>
-    </div>
+  <div class="mb-12 border-b border-zinc-800/80 pb-8">
+    <h1 class="text-4xl sm:text-[2.75rem] font-bold tracking-tight text-white mb-4">
+      Certifications
+    </h1>
+    <p class="text-lg text-zinc-400 max-w-2xl">
+      Professional certifications and courses I have completed.
+    </p>
+  </div>
 
-    <ul class="flex flex-col max-w-2xl mx-auto divide-y divide-zinc-800/80">
-        {
-            certifications.map((cert) => (
-                <li class="group">
-                    <a
-                        href={cert.data.url || '#'}
-                        target={cert.data.url ? '_blank' : '_self'}
-                        rel={cert.data.url ? 'noopener noreferrer' : ''}
-                        class="flex items-center gap-4 py-5 px-3 -mx-3 rounded-xl hover-lift"
-                    >
-                        {/* Logo badge */}
-                        <div class="w-14 h-14 shrink-0 rounded-xl bg-zinc-800 border border-zinc-700/60 overflow-hidden flex items-center justify-center p-2">
-                            {(() => {
-                                const logo =
-                                    cert.data.thumbnail ??
-                                    getCertificationLogo(cert.data.issuer);
-                                return logo ? (
-                                    <Image
-                                        src={logo}
-                                        alt={cert.data.issuer}
-                                        class="w-full h-full object-contain"
-                                    />
-                                ) : (
-                                    <span class="text-zinc-300 text-lg font-bold">
-                                        {cert.data.issuer.charAt(0)}
-                                    </span>
-                                );
-                            })()}
-                        </div>
+  <ul class="flex flex-col max-w-2xl mx-auto divide-y divide-zinc-800/80">
+    {
+      certifications.map((cert) => (
+        <li class="group">
+          <a
+            href={cert.data.url || '#'}
+            target={cert.data.url ? '_blank' : '_self'}
+            rel={cert.data.url ? 'noopener noreferrer' : ''}
+            class="flex items-center gap-4 py-5 px-3 -mx-3 rounded-xl hover-lift"
+          >
+            {/* Logo badge */}
+            <div class="w-14 h-14 shrink-0 rounded-xl bg-zinc-800 border border-zinc-700/60 overflow-hidden flex items-center justify-center p-2">
+              {(() => {
+                const logo = cert.data.thumbnail ?? getCertificationLogo(cert.data.issuer);
+                return logo ? (
+                  <Image src={logo} alt={cert.data.issuer} class="w-full h-full object-contain" />
+                ) : (
+                  <span class="text-zinc-300 text-lg font-bold">{cert.data.issuer.charAt(0)}</span>
+                );
+              })()}
+            </div>
 
-                        {/* Content */}
-                        <div class="flex-1 min-w-0">
-                            <h3 class="text-base font-semibold text-zinc-100 group-hover:text-primary transition-colors leading-snug">
-                                {cert.data.title}
-                            </h3>
-                            <p class="text-base text-zinc-300 mt-0.5">
-                                {cert.data.issuer}
-                            </p>
-                            <p class="text-[0.875rem] text-zinc-400 mt-1 font-mono">
-                                {cert.data.date ? (
-                                    <FormattedDate date={cert.data.date} />
-                                ) : (
-                                    '—'
-                                )}
-                            </p>
-                        </div>
+            {/* Content */}
+            <div class="flex-1 min-w-0">
+              <h3 class="text-base font-semibold text-zinc-100 group-hover:text-primary transition-colors leading-snug">
+                {cert.data.title}
+              </h3>
+              <p class="text-base text-zinc-300 mt-0.5">{cert.data.issuer}</p>
+              <p class="text-[0.875rem] text-zinc-400 mt-1 font-mono">
+                {cert.data.date ? <FormattedDate date={cert.data.date} /> : '—'}
+              </p>
+            </div>
 
-                        {/* External link indicator */}
-                        {cert.data.url && (
-                            <div class="text-zinc-600 group-hover:text-primary transition-colors">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    class="w-4 h-4 shrink-0"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                >
-                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                                    <polyline points="15 3 21 3 21 9" />
-                                    <line x1="10" y1="14" x2="21" y2="3" />
-                                </svg>
-                            </div>
-                        )}
-                    </a>
-                </li>
-            ))
-        }
-    </ul>
+            {/* External link indicator */}
+            {cert.data.url && (
+              <div class="text-zinc-600 group-hover:text-primary transition-colors">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-4 h-4 shrink-0"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                  <polyline points="15 3 21 3 21 9" />
+                  <line x1="10" y1="14" x2="21" y2="3" />
+                </svg>
+              </div>
+            )}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
 </PageLayout>

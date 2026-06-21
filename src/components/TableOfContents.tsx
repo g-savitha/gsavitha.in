@@ -34,7 +34,7 @@ function TableOfContentsInner({ headings, isMobile = false }: Props) {
         });
 
         const visibleHeadings = Object.values(headingElementsRef.current).filter(
-          (entry) => entry.isIntersecting
+          (entry) => entry.isIntersecting,
         );
 
         if (visibleHeadings.length > 0) {
@@ -42,7 +42,7 @@ function TableOfContentsInner({ headings, isMobile = false }: Props) {
           setActiveId(visibleHeadings[0].target.id);
         }
       },
-      { rootMargin: '0px 0px -70% 0px', threshold: 0 }
+      { rootMargin: '0px 0px -70% 0px', threshold: 0 },
     );
 
     toc.forEach((h) => {
@@ -84,7 +84,10 @@ function TableOfContentsInner({ headings, isMobile = false }: Props) {
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className={`w-4 h-4 transition-transform duration-200 ${open ? 'rotate-180 text-primary' : 'text-zinc-400'}`}
-            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
           >
             <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
           </svg>
@@ -96,7 +99,9 @@ function TableOfContentsInner({ headings, isMobile = false }: Props) {
 
   return (
     <nav>
-      <h3 className="text-lg font-bold font-outfit text-white mb-4 tracking-tight">Table of Contents</h3>
+      <h3 className="text-lg font-bold font-outfit text-white mb-4 tracking-tight">
+        Table of Contents
+      </h3>
       {list}
     </nav>
   );
@@ -109,4 +114,3 @@ export default function TableOfContents(props: Props) {
     </ErrorBoundary>
   );
 }
-

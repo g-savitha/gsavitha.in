@@ -59,7 +59,6 @@ async function fileExists(filePath) {
   }
 }
 
-
 const s3 = new S3Client({
   region: 'auto',
   endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
@@ -71,13 +70,15 @@ const s3 = new S3Client({
 
 async function uploadToR2(storageKey, filePath) {
   const body = await readFile(filePath);
-  await s3.send(new PutObjectCommand({
-    Bucket: process.env.R2_BUCKET,
-    Key: storageKey,
-    Body: body,
-    ContentType: 'audio/mpeg',
-    CacheControl: 'public, max-age=31536000, immutable',
-  }));
+  await s3.send(
+    new PutObjectCommand({
+      Bucket: process.env.R2_BUCKET,
+      Key: storageKey,
+      Body: body,
+      ContentType: 'audio/mpeg',
+      CacheControl: 'public, max-age=31536000, immutable',
+    }),
+  );
 }
 
 // Recover the R2 object key from a published manifest URL (drops the public
@@ -91,11 +92,13 @@ async function listStorageKeys(prefix) {
   const keys = [];
   let continuationToken;
   do {
-    const response = await s3.send(new ListObjectsV2Command({
-      Bucket: process.env.R2_BUCKET,
-      Prefix: prefix,
-      ContinuationToken: continuationToken,
-    }));
+    const response = await s3.send(
+      new ListObjectsV2Command({
+        Bucket: process.env.R2_BUCKET,
+        Prefix: prefix,
+        ContinuationToken: continuationToken,
+      }),
+    );
     for (const object of response.Contents ?? []) {
       if (object.Key) keys.push(object.Key);
     }
@@ -118,10 +121,12 @@ async function pruneStaleObjects(slug, keepKeys) {
     return stale.length;
   }
 
-  await s3.send(new DeleteObjectsCommand({
-    Bucket: process.env.R2_BUCKET,
-    Delete: { Objects: stale.map((Key) => ({ Key })), Quiet: true },
-  }));
+  await s3.send(
+    new DeleteObjectsCommand({
+      Bucket: process.env.R2_BUCKET,
+      Delete: { Objects: stale.map((Key) => ({ Key })), Quiet: true },
+    }),
+  );
   return stale.length;
 }
 
@@ -163,7 +168,7 @@ for (const [slug, languages] of Object.entries(generated)) {
       continue;
     }
 
-    if (!await fileExists(entry.outputPath)) {
+    if (!(await fileExists(entry.outputPath))) {
       console.warn(`Skipping ${slug}/${language}: generated MP3 is missing.`);
       failed = true;
       continue;
@@ -176,13 +181,13 @@ for (const [slug, languages] of Object.entries(generated)) {
     // size floor only when an older generated index lacks the byte count.
     const { size: stagedBytes } = await stat(entry.outputPath);
     const expectedBytes = typeof entry.bytes === 'number' ? entry.bytes : null;
-    const corrupted = expectedBytes !== null
-      ? stagedBytes !== expectedBytes
-      : stagedBytes < MIN_AUDIO_BYTES;
+    const corrupted =
+      expectedBytes !== null ? stagedBytes !== expectedBytes : stagedBytes < MIN_AUDIO_BYTES;
     if (corrupted) {
-      const detail = expectedBytes !== null
-        ? `${stagedBytes} bytes on disk vs ${expectedBytes} expected`
-        : `${stagedBytes} bytes, below ${MIN_AUDIO_BYTES} floor`;
+      const detail =
+        expectedBytes !== null
+          ? `${stagedBytes} bytes on disk vs ${expectedBytes} expected`
+          : `${stagedBytes} bytes, below ${MIN_AUDIO_BYTES} floor`;
       console.warn(`Skipping ${slug}/${language}: generated MP3 looks corrupted (${detail}).`);
       failed = true;
       continue;

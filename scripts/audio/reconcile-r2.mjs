@@ -56,11 +56,13 @@ async function listAll(prefix) {
   const out = new Map();
   let continuationToken;
   do {
-    const response = await s3.send(new ListObjectsV2Command({
-      Bucket: process.env.R2_BUCKET,
-      Prefix: prefix,
-      ContinuationToken: continuationToken,
-    }));
+    const response = await s3.send(
+      new ListObjectsV2Command({
+        Bucket: process.env.R2_BUCKET,
+        Prefix: prefix,
+        ContinuationToken: continuationToken,
+      }),
+    );
     for (const object of response.Contents ?? []) {
       out.set(object.Key, { size: object.Size, lastModified: object.LastModified });
     }
@@ -119,7 +121,9 @@ for (const file of files) {
     // A truncated/empty object means the upload was corrupted or interrupted —
     // don't reconstruct a manifest entry that would point at broken audio.
     if (object.size < MIN_AUDIO_BYTES) {
-      console.warn(`CORRUPTED in R2 (needs regeneration): ${narration.slug} [${voiceConfig.language}] — ${object.size} bytes`);
+      console.warn(
+        `CORRUPTED in R2 (needs regeneration): ${narration.slug} [${voiceConfig.language}] — ${object.size} bytes`,
+      );
       missing += 1;
       continue;
     }

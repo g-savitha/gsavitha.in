@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { PaintBucket } from 'lucide-react';
 import { THEMES, type ThemeName } from '../utils/themes';
 import ErrorBoundary from './ErrorBoundary';
 
@@ -6,13 +7,15 @@ const themes = THEMES;
 
 function ThemePickerInner() {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeTheme, setActiveTheme] = useState<ThemeName>('blue');
+  const [activeTheme, setActiveTheme] = useState<ThemeName | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Initialize theme from localStorage or default to blue
-    const saved = localStorage.getItem('theme-color') || 'blue';
-    setActiveTheme(saved as ThemeName);
+    // Initialize theme from localStorage if the user has previously selected one
+    const saved = localStorage.getItem('theme-color');
+    if (saved && saved in themes) {
+      setActiveTheme(saved as ThemeName);
+    }
 
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -46,41 +49,40 @@ function ThemePickerInner() {
     setIsOpen(false);
   };
 
-  const activeColor = themes[activeTheme]?.primary || themes['blue'].primary;
-
   return (
     <div className="relative" ref={dropdownRef}>
-        <button 
-          onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center justify-center w-7 h-7 focus:outline-none focus:ring-2 focus:ring-primary/50 rounded-full cursor-pointer hover-lift"
-          aria-label="Theme picker"
-          aria-haspopup="true"
-          aria-expanded={isOpen}
-        >
-          <span 
-            className="w-3.5 h-3.5 rounded-full shadow-inner border border-white/10" 
-            style={{ backgroundColor: activeColor }}
-          />
-        </button>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={`flex items-center justify-center w-7 h-7 focus:outline-none focus:ring-2 focus:ring-primary/50 rounded-full cursor-pointer hover-lift transition-colors ${
+          activeTheme ? 'text-primary hover:text-primary-hover' : 'text-zinc-200 hover:text-primary'
+        }`}
+        aria-label="Theme picker"
+        aria-haspopup="true"
+        aria-expanded={isOpen}
+      >
+        <PaintBucket size={20} aria-hidden="true" />
+      </button>
 
       {isOpen && (
-        <div 
+        <div
           className="absolute top-10 left-0 z-50 py-3 px-2 bg-[rgb(30,30,33)] border border-zinc-800 rounded-lg shadow-xl animate-in fade-in zoom-in-95 duration-100"
           role="menu"
           aria-label="Theme options"
         >
           <ul className="flex flex-col gap-3 items-center list-none p-0 m-0">
-            {(Object.entries(themes) as [ThemeName, typeof themes['blue']][]).map(([name, theme]) => (
-              <li key={name} role="none">
-                <button
-                  onClick={() => setTheme(name)}
-                  className={`w-5 h-5 rounded-full transition-transform hover:scale-110 shadow-inner block cursor-pointer ${activeTheme === name ? 'ring-2 ring-white ring-offset-2 ring-offset-[rgb(30,30,33)]' : 'border border-white/5'}`}
-                  style={{ backgroundColor: theme.primary }}
-                  aria-label={`Select ${name} theme`}
-                  role="menuitem"
-                />
-              </li>
-            ))}
+            {(Object.entries(themes) as [ThemeName, (typeof themes)['blue']][]).map(
+              ([name, theme]) => (
+                <li key={name} role="none">
+                  <button
+                    onClick={() => setTheme(name)}
+                    className={`w-5 h-5 rounded-full transition-transform hover:scale-110 shadow-inner block cursor-pointer ${activeTheme === name ? 'ring-2 ring-white ring-offset-2 ring-offset-[rgb(30,30,33)]' : 'border border-white/5'}`}
+                    style={{ backgroundColor: theme.primary }}
+                    aria-label={`Select ${name} theme`}
+                    role="menuitem"
+                  />
+                </li>
+              ),
+            )}
           </ul>
         </div>
       )}

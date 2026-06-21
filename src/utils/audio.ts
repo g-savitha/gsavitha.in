@@ -13,4 +13,3 @@ export function getPostAudio(slug: string): AudioSource[] {
   const post = (manifest as Manifest)[slug];
   return post ? Object.values(post) : [];
 }
-

@@ -3,66 +3,70 @@ import { getCollection } from 'astro:content';
 import PageLayout from '../../layouts/PageLayout.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 
-const allPosts = await getCollection('blog', ({ data }) => import.meta.env.PROD ? data.draft !== true : true);
+const allPosts = await getCollection('blog', ({ data }) =>
+  import.meta.env.PROD ? data.draft !== true : true,
+);
 
 // Get all tags
 const tags = [...new Set(allPosts.map((post) => post.data.tags || []).flat())].sort();
 
 // Get all categories with corresponding counts
-const categoriesCount = allPosts.reduce((acc, post) => {
+const categoriesCount = allPosts.reduce(
+  (acc, post) => {
     const categories = post.data.categories || [];
     categories.forEach((cat) => {
-        acc[cat] = (acc[cat] || 0) + 1;
+      acc[cat] = (acc[cat] || 0) + 1;
     });
     return acc;
-}, {} as Record<string, number>);
+  },
+  {} as Record<string, number>,
+);
 
 const categories = Object.entries(categoriesCount).sort((a, b) => a[0].localeCompare(b[0]));
 ---
 
 <PageLayout title={`Topics | ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
-    
-    <!-- Categories Section -->
-    <div class="mb-16">
-        <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-8">
-            Categories
-        </h2>
-        
-        <div class="flex flex-wrap gap-4">
-            {categories.map(([category, count]) => (
-                <a 
-                    href={`/categories/${category}`}
-                    class="flex items-center rounded-xl overflow-hidden group border border-zinc-800/80 hover-lift-surface"
-                >
-                    <span class="px-3.5 py-1.5 bg-zinc-800/40 text-base font-medium text-primary group-hover:bg-zinc-800/80 transition-colors">
-                        {category}
-                    </span>
-                    <span class="px-3 py-1.5 bg-zinc-900 text-base font-bold text-zinc-100 border-l border-zinc-800/80 group-hover:bg-[#1a1a1c] transition-colors">
-                        {count}
-                    </span>
-                </a>
-            ))}
-        </div>
+  <!-- Categories Section -->
+  <div class="mb-16">
+    <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-8">Categories</h2>
+
+    <div class="flex flex-wrap gap-4">
+      {
+        categories.map(([category, count]) => (
+          <a
+            href={`/categories/${category}`}
+            class="flex items-center rounded-xl overflow-hidden group border border-zinc-800/80 hover-lift-surface"
+          >
+            <span class="px-3.5 py-1.5 bg-zinc-800/40 text-base font-medium text-primary group-hover:bg-zinc-800/80 transition-colors">
+              {category}
+            </span>
+            <span class="px-3 py-1.5 bg-zinc-900 text-base font-bold text-zinc-100 border-l border-zinc-800/80 group-hover:bg-[#1a1a1c] transition-colors">
+              {count}
+            </span>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+
+  <!-- Tags Section -->
+  <div>
+    <div class="mb-8">
+      <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-3">Tags</h2>
+      <p class="text-lg text-zinc-400">All topics covered in the blog.</p>
     </div>
 
-    <!-- Tags Section -->
-    <div>
-        <div class="mb-8">
-            <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-3">
-                Tags
-            </h2>
-            <p class="text-lg text-zinc-400">All topics covered in the blog.</p>
-        </div>
-        
-        <div class="flex flex-wrap gap-3">
-            {tags.map(tag => (
-                <a 
-                    href={`/tags/${tag}`}
-                    class="px-4 py-2 bg-transparent border border-zinc-700/80 rounded-xl text-zinc-300 hover:text-white text-base font-medium hover-lift-pill"
-                >
-                    {tag}
-                </a>
-            ))}
-        </div>
+    <div class="flex flex-wrap gap-3">
+      {
+        tags.map((tag) => (
+          <a
+            href={`/tags/${tag}`}
+            class="px-4 py-2 bg-transparent border border-zinc-700/80 rounded-xl text-zinc-300 hover:text-white text-base font-medium hover-lift-pill"
+          >
+            {tag}
+          </a>
+        ))
+      }
     </div>
+  </div>
 </PageLayout>

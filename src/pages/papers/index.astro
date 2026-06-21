@@ -5,30 +5,24 @@ import SearchableList from '../../components/SearchableList';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 
 const papers = (await getCollection('papers')).sort(
-    (a, b) => (b.data.date?.valueOf() || 0) - (a.data.date?.valueOf() || 0),
+  (a, b) => (b.data.date?.valueOf() || 0) - (a.data.date?.valueOf() || 0),
 );
 
 const items = papers.map((paper) => ({
-    title: paper.data.title,
-    href: paper.data.url ?? '#',
-    date: paper.data.date?.toISOString(),
-    tags: paper.data.tags,
-    categories: paper.data.categories,
-    external: true,
+  title: paper.data.title,
+  href: paper.data.url ?? '#',
+  date: paper.data.date?.toISOString(),
+  tags: paper.data.tags,
+  categories: paper.data.categories,
+  external: true,
 }));
 ---
 
 <PageLayout title={`Papershelf | ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
-    <SearchableList
-        client:load
-        title="Papershelf"
-        items={items}
-        itemLabel="papers"
-    >
-        <p class="text-lg text-zinc-400 max-w-2xl mb-6">
-            Every week I go down a new technical rabbit hole. This is a
-            collection of the most amusing and fascinating concepts I've
-            researched.
-        </p>
-    </SearchableList>
+  <SearchableList client:load title="Papershelf" items={items} itemLabel="papers">
+    <p class="text-lg text-zinc-400 max-w-2xl mb-6">
+      Every week I go down a new technical rabbit hole. This is a collection of the most amusing and
+      fascinating concepts I've researched.
+    </p>
+  </SearchableList>
 </PageLayout>

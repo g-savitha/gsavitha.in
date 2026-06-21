@@ -4,18 +4,18 @@
  * It also includes a machine-readable datetime attribute for SEO/accessibility.
  */
 interface Props {
-	date: Date;
+  date: Date;
 }
 
 const { date } = Astro.props;
 ---
 
 <time datetime={date.toISOString()}>
-	{
-		date.toLocaleDateString('en-us', {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric',
-		})
-	}
+  {
+    date.toLocaleDateString('en-us', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    })
+  }
 </time>

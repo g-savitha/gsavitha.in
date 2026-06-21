@@ -5,18 +5,17 @@ interface Props {
   title?: string;
 }
 
-const { url, height = "500px", title = "Eraser.io Architecture Diagram" } = Astro.props;
+const { url, height = '500px', title = 'Eraser.io Architecture Diagram' } = Astro.props;
 
 // Ensure it's the embed URL if they pasted a normal one
 const embedUrl = url.includes('?') ? `${url}&embed=true` : `${url}?embed=true`;
 ---
 
 <div class="my-8 rounded-xl overflow-hidden border border-zinc-800 shadow-lg w-full bg-zinc-900/50">
-  <iframe 
-    src={embedUrl} 
+  <iframe
+    src={embedUrl}
     title={title}
     style={`height: ${height}; width: 100%; border: none;`}
     loading="lazy"
-    allowfullscreen
-  />
+    allowfullscreen></iframe>
 </div>

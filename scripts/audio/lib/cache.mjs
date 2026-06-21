@@ -13,14 +13,22 @@ export function splitLongText(text, maxLen = 420) {
   let current = '';
   for (const sentence of sentences) {
     const candidate = `${current} ${sentence}`.trim();
-    if (candidate.length <= maxLen) { current = candidate; continue; }
+    if (candidate.length <= maxLen) {
+      current = candidate;
+      continue;
+    }
     if (current) chunks.push(current);
-    if (sentence.length <= maxLen) { current = sentence.trim(); continue; }
+    if (sentence.length <= maxLen) {
+      current = sentence.trim();
+      continue;
+    }
     current = '';
     for (const word of sentence.trim().split(/\s+/)) {
       const wc = `${current} ${word}`.trim();
-      if (wc.length > maxLen && current) { chunks.push(current); current = word; }
-      else current = wc;
+      if (wc.length > maxLen && current) {
+        chunks.push(current);
+        current = word;
+      } else current = wc;
     }
   }
   if (current) chunks.push(current);
@@ -34,8 +42,12 @@ export function buildSpeechChunks(segments, maxLen = 420) {
     const punctuated = /[.!?]$/.test(seg.text) ? seg.text : `${seg.text}.`;
     for (const part of splitLongText(punctuated, maxLen)) {
       const candidate = `${current} ${part}`.trim();
-      if (candidate.length <= maxLen) { current = candidate; }
-      else { if (current) chunks.push(current); current = part; }
+      if (candidate.length <= maxLen) {
+        current = candidate;
+      } else {
+        if (current) chunks.push(current);
+        current = part;
+      }
     }
   }
   if (current) chunks.push(current);
@@ -49,13 +61,15 @@ export function buildSpeechChunks(segments, maxLen = 420) {
 
 export function chunkCacheHash(text, settings) {
   return createHash('sha256')
-    .update(JSON.stringify({
-      text,
-      model: settings.model,
-      dtype: settings.dtype,
-      voice: settings.voice,
-      speed: settings.speed,
-    }))
+    .update(
+      JSON.stringify({
+        text,
+        model: settings.model,
+        dtype: settings.dtype,
+        voice: settings.voice,
+        speed: settings.speed,
+      }),
+    )
     .digest('hex');
 }
 
@@ -88,10 +102,12 @@ export function selectStaleSegmentFiles(f32Files, liveHashes) {
 // matching hash and an existing output file.
 
 export function isSlugRecoverable(languageStates) {
-  return languageStates.every((state) =>
-    state.manifestCurrent
-    || state.stagedCurrent
-    || (state.resultHashMatches && state.resultFileExists));
+  return languageStates.every(
+    (state) =>
+      state.manifestCurrent ||
+      state.stagedCurrent ||
+      (state.resultHashMatches && state.resultFileExists),
+  );
 }
 
 // Build the per-language recovery facts for a slug.  `fileExists` is injected so
@@ -113,7 +129,7 @@ export async function resultFileLanguageStates({
       return {
         language,
         manifestCurrent: manifestEntry?.[language]?.hash === expected,
-        stagedCurrent: staged?.hash === expected && await fileExists(staged.outputPath),
+        stagedCurrent: staged?.hash === expected && (await fileExists(staged.outputPath)),
         resultHashMatches: result?.hash === expected,
         resultFileExists: result ? await fileExists(result.outputPath) : false,
       };

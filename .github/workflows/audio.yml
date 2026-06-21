@@ -12,10 +12,10 @@ name: Generate blog audio
 
 on:
   push:
-    branches: ["main"]
+    branches: ['main']
     paths:
-      - "src/content/blog/**"
-      - "scripts/audio/**"
+      - 'src/content/blog/**'
+      - 'scripts/audio/**'
   workflow_dispatch:
 
 permissions:
@@ -23,11 +23,11 @@ permissions:
   actions: write
 
 concurrency:
-  group: "audio"
+  group: 'audio'
   cancel-in-progress: false
 
 env:
-  BUILD_PATH: "."
+  BUILD_PATH: '.'
   R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
   R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
   R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}

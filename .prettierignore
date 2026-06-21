@@ -1,0 +1,16 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# lockfiles
+package-lock.json
+bun.lockb
+
+# generated data
+src/data/audioManifest.json
+
+# author-written content (avoid accidental mass reformat)
+src/content/

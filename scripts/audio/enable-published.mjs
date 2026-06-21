@@ -30,4 +30,3 @@ for (const file of files) {
 }
 
 console.log(`Enabled audio for ${enabled} published posts.`);
-

@@ -46,11 +46,7 @@ export default function AudioPlayer({ slug, title, sources }: AudioPlayerProps) 
   const restorePosition = (audio: HTMLAudioElement) => {
     try {
       const saved = JSON.parse(localStorage.getItem(storageKey) ?? '{}');
-      if (
-        saved.src === audio.currentSrc
-        && saved.time > 0
-        && saved.time < audio.duration - 5
-      ) {
+      if (saved.src === audio.currentSrc && saved.time > 0 && saved.time < audio.duration - 5) {
         audio.currentTime = saved.time;
       }
     } catch {
@@ -169,7 +165,9 @@ export default function AudioPlayer({ slug, title, sources }: AudioPlayerProps) 
 
       <div className={styles.heading}>
         <span className={styles.eyebrow}>Listen to this article</span>
-        <span className={styles.status} aria-live="polite">{status}</span>
+        <span className={styles.status} aria-live="polite">
+          {status}
+        </span>
       </div>
 
       <div className={styles.controls}>
@@ -192,7 +190,9 @@ export default function AudioPlayer({ slug, title, sources }: AudioPlayerProps) 
         </button>
 
         <span className={styles.time}>{formatTime(currentTime)}</span>
-        <label className="sr-only" htmlFor={`audio-progress-${slug}`}>Audio progress</label>
+        <label className="sr-only" htmlFor={`audio-progress-${slug}`}>
+          Audio progress
+        </label>
         <input
           id={`audio-progress-${slug}`}
           className={styles.progress}
@@ -215,7 +215,9 @@ export default function AudioPlayer({ slug, title, sources }: AudioPlayerProps) 
               onChange={(event) => handleLanguageChange(event.currentTarget.value)}
             >
               {sources.map((source) => (
-                <option key={source.url} value={source.url}>{source.label}</option>
+                <option key={source.url} value={source.url}>
+                  {source.label}
+                </option>
               ))}
             </select>
           </label>
@@ -229,7 +231,9 @@ export default function AudioPlayer({ slug, title, sources }: AudioPlayerProps) 
             onChange={(event) => handleSpeedChange(Number(event.currentTarget.value))}
           >
             {PLAYBACK_SPEEDS.map((speed) => (
-              <option key={speed} value={speed}>{speed}×</option>
+              <option key={speed} value={speed}>
+                {speed}×
+              </option>
             ))}
           </select>
         </label>
@@ -237,4 +241,3 @@ export default function AudioPlayer({ slug, title, sources }: AudioPlayerProps) 
     </section>
   );
 }
-

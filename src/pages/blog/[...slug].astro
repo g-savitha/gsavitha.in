@@ -5,24 +5,24 @@ import BlogPost from '../../layouts/BlogPost.astro';
 import { filterDrafts, sortByDate, getRelatedPosts, getRecentPosts } from '../../utils/content';
 
 export async function getStaticPaths() {
-	const allPosts = await getCollection('blog');
-	const posts = sortByDate(filterDrafts(allPosts));
+  const allPosts = await getCollection('blog');
+  const posts = sortByDate(filterDrafts(allPosts));
 
-	return posts.map((post, index) => {
-		const nextPost = index > 0 ? posts[index - 1] : null;
-		const prevPost = index < posts.length - 1 ? posts[index + 1] : null;
+  return posts.map((post, index) => {
+    const nextPost = index > 0 ? posts[index - 1] : null;
+    const prevPost = index < posts.length - 1 ? posts[index + 1] : null;
 
-		return {
-			params: { slug: post.id },
-			props: { post, prevPost, nextPost },
-		};
-	});
+    return {
+      params: { slug: post.id },
+      props: { post, prevPost, nextPost },
+    };
+  });
 }
 
 type Props = {
-	post: CollectionEntry<'blog'>;
-	prevPost: CollectionEntry<'blog'> | null;
-	nextPost: CollectionEntry<'blog'> | null;
+  post: CollectionEntry<'blog'>;
+  prevPost: CollectionEntry<'blog'> | null;
+  nextPost: CollectionEntry<'blog'> | null;
 };
 
 const { post, prevPost, nextPost } = Astro.props;
@@ -35,6 +35,13 @@ const related = getRelatedPosts(post, filteredPosts, 5);
 const recentPosts = related.length > 0 ? related : getRecentPosts(filteredPosts, post.id, 5);
 ---
 
-<BlogPost {...post.data} slug={post.id} headings={headings} prevPost={prevPost} nextPost={nextPost} recentPosts={recentPosts}>
-	<Content />
+<BlogPost
+  {...post.data}
+  slug={post.id}
+  headings={headings}
+  prevPost={prevPost}
+  nextPost={nextPost}
+  recentPosts={recentPosts}
+>
+  <Content />
 </BlogPost>

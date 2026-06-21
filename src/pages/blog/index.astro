@@ -4,25 +4,25 @@ import PageLayout from '../../layouts/PageLayout.astro';
 import SearchableList from '../../components/SearchableList';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 
-const posts = (await getCollection('blog', ({ data }) => import.meta.env.PROD ? data.draft !== true : true)).sort(
-    (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
-);
+const posts = (
+  await getCollection('blog', ({ data }) => (import.meta.env.PROD ? data.draft !== true : true))
+).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
 const items = posts.map((post) => ({
-    title: post.data.title,
-    href: `/blog/${post.id}`,
-    date: post.data.date.toISOString(),
-    description: post.data.description,
-    tags: post.data.tags,
-    categories: post.data.categories,
+  title: post.data.title,
+  href: `/blog/${post.id}`,
+  date: post.data.date.toISOString(),
+  description: post.data.description,
+  tags: post.data.tags,
+  categories: post.data.categories,
 }));
 ---
 
 <PageLayout title={`Blog | ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
-    <SearchableList client:load title="Blog" items={items} itemLabel="posts">
-        <p class="text-lg text-zinc-400 mb-6">
-            Guides, references, and tutorials on programming, web development, and design. 
-            <a href="/tags" class="text-primary hover:text-primary-hover font-medium">View all topics.</a>
-        </p>
-    </SearchableList>
+  <SearchableList client:load title="Blog" items={items} itemLabel="posts">
+    <p class="text-lg text-zinc-400 mb-6">
+      Guides, references, and tutorials on programming, web development, and design.
+      <a href="/tags" class="text-primary hover:text-primary-hover font-medium">View all topics.</a>
+    </p>
+  </SearchableList>
 </PageLayout>

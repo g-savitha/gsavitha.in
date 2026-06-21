@@ -60,10 +60,12 @@ function narrationOf(segments, audio = { enabled: true, voice: 'af_heart' }) {
 test('liveChunkHashes covers every chunk of every active narration', () => {
   const narration = narrationOf([{ text: 'Hello world' }]);
   const live = liveChunkHashes([narration]);
-  const expected = chunkCacheHash(
-    'Hello world.',
-    { model: 'onnx-community/Kokoro-82M-v1.0-ONNX', dtype: 'q8', voice: 'af_heart', speed: 1 },
-  );
+  const expected = chunkCacheHash('Hello world.', {
+    model: 'onnx-community/Kokoro-82M-v1.0-ONNX',
+    dtype: 'q8',
+    voice: 'af_heart',
+    speed: 1,
+  });
   assert.ok(live.has(expected));
 });
 
@@ -93,10 +95,7 @@ test('selectStaleSegmentFiles treats everything as stale when nothing is live', 
 test('isSlugRecoverable requires every language to be satisfied', () => {
   assert.equal(isSlugRecoverable([{ manifestCurrent: true }]), true);
   assert.equal(isSlugRecoverable([{ stagedCurrent: true }]), true);
-  assert.equal(
-    isSlugRecoverable([{ resultHashMatches: true, resultFileExists: true }]),
-    true,
-  );
+  assert.equal(isSlugRecoverable([{ resultHashMatches: true, resultFileExists: true }]), true);
   assert.equal(
     isSlugRecoverable([
       { manifestCurrent: true },

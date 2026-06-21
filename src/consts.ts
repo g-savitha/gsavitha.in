@@ -2,7 +2,7 @@
 // You can import this data from anywhere in your site by using the `import` keyword.
 
 export const SITE_TITLE = 'Savitha Gollamudi';
-export const SITE_DESCRIPTION = 'Savitha\'s Digital Garden';
+export const SITE_DESCRIPTION = "Savitha's Digital Garden";
 export const USER_NAME = 'Savitha';
 export const USER_FULL_NAME = 'G. Savitha';
 

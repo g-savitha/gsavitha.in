@@ -2,40 +2,36 @@
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
-    posts: CollectionEntry<'blog'>[];
+  posts: CollectionEntry<'blog'>[];
 }
 
 const { posts } = Astro.props;
 ---
 
 {
-    posts.length > 0 && (
-        <div class="mt-20 pt-8 not-prose">
-            <div class="flex flex-col items-center justify-center mb-10">
-                <div class="h-1 w-32 bg-zinc-700/80 mb-3" />
-                <h2 class="text-3xl sm:text-4xl font-bold font-outfit text-white mb-3">
-                    See Also
-                </h2>
-                <div class="h-1 w-32 bg-zinc-700/80" />
-            </div>
+  posts.length > 0 && (
+    <div class="mt-20 pt-8 not-prose">
+      <div class="flex flex-col items-center justify-center mb-10">
+        <div class="h-1 w-32 bg-zinc-700/80 mb-3" />
+        <h2 class="text-3xl sm:text-4xl font-bold font-outfit text-white mb-3">See Also</h2>
+        <div class="h-1 w-32 bg-zinc-700/80" />
+      </div>
 
-            <div class="flex justify-center">
-                <ul class="space-y-3 list-none p-0 inline-block text-left">
-                    {posts.map((p: any) => (
-                        <li class="flex items-start gap-4">
-                            <span class="text-zinc-300 mt-1">
-                                •
-                            </span>
-                            <a
-                                href={`/blog/${p.id}`}
-                                class="text-lg text-primary hover:text-primary-hover font-medium"
-                            >
-                                {p.data.title}
-                            </a>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        </div>
-    )
+      <div class="flex justify-center">
+        <ul class="space-y-3 list-none p-0 inline-block text-left">
+          {posts.map((p: any) => (
+            <li class="flex items-start gap-4">
+              <span class="text-zinc-300 mt-1">•</span>
+              <a
+                href={`/blog/${p.id}`}
+                class="text-lg text-primary hover:text-primary-hover font-medium"
+              >
+                {p.data.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  )
 }

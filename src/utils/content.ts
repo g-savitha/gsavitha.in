@@ -6,9 +6,7 @@ import { getCollection, type CollectionEntry } from 'astro:content';
  * @returns Filtered array of entries.
  */
 export function filterDrafts<T extends { data: { draft?: boolean } }>(posts: T[]): T[] {
-    return posts.filter((post) => 
-        import.meta.env.PROD ? post.data.draft !== true : true
-    );
+  return posts.filter((post) => (import.meta.env.PROD ? post.data.draft !== true : true));
 }
 
 /**
@@ -17,11 +15,11 @@ export function filterDrafts<T extends { data: { draft?: boolean } }>(posts: T[]
  * @returns Sorted array of entries.
  */
 export function sortByDate<T extends { data: { date?: Date } }>(entries: T[]): T[] {
-    return [...entries].sort((a, b) => {
-        const dateA = a.data.date?.valueOf() || 0;
-        const dateB = b.data.date?.valueOf() || 0;
-        return dateB - dateA;
-    });
+  return [...entries].sort((a, b) => {
+    const dateA = a.data.date?.valueOf() || 0;
+    const dateB = b.data.date?.valueOf() || 0;
+    return dateB - dateA;
+  });
 }
 
 /**
@@ -32,34 +30,38 @@ export function sortByDate<T extends { data: { date?: Date } }>(entries: T[]): T
  * @returns Array of related post entries.
  */
 export function getRelatedPosts(
-    currentPost: CollectionEntry<'blog'>,
-    allPosts: CollectionEntry<'blog'>[],
-    limit = 5
+  currentPost: CollectionEntry<'blog'>,
+  allPosts: CollectionEntry<'blog'>[],
+  limit = 5,
 ): CollectionEntry<'blog'>[] {
-    const currentTags = currentPost.data.tags || [];
-    const currentCats = currentPost.data.categories || [];
+  const currentTags = currentPost.data.tags || [];
+  const currentCats = currentPost.data.categories || [];
 
-    return allPosts
-        .filter((p) => p.id !== currentPost.id)
-        .map((p) => {
-            let score = 0;
-            const pTags = p.data.tags || [];
-            const pCats = p.data.categories || [];
+  return allPosts
+    .filter((p) => p.id !== currentPost.id)
+    .map((p) => {
+      let score = 0;
+      const pTags = p.data.tags || [];
+      const pCats = p.data.categories || [];
 
-            // Weights for matching
-            currentCats.forEach((c) => {
-                if (pCats.includes(c)) score += 100;
-            });
-            currentTags.forEach((t) => {
-                if (pTags.includes(t)) score += 80;
-            });
+      // Weights for matching
+      currentCats.forEach((c) => {
+        if (pCats.includes(c)) score += 100;
+      });
+      currentTags.forEach((t) => {
+        if (pTags.includes(t)) score += 80;
+      });
 
-            return { post: p, score };
-        })
-        .filter((p) => p.score > 0)
-        .sort((a, b) => b.score - a.score || (b.post.data.date?.valueOf() || 0) - (a.post.data.date?.valueOf() || 0))
-        .slice(0, limit)
-        .map((p) => p.post);
+      return { post: p, score };
+    })
+    .filter((p) => p.score > 0)
+    .sort(
+      (a, b) =>
+        b.score - a.score ||
+        (b.post.data.date?.valueOf() || 0) - (a.post.data.date?.valueOf() || 0),
+    )
+    .slice(0, limit)
+    .map((p) => p.post);
 }
 
 /**
@@ -70,11 +72,9 @@ export function getRelatedPosts(
  * @returns Array of recent post entries.
  */
 export function getRecentPosts(
-    posts: CollectionEntry<'blog'>[],
-    currentPostId?: string,
-    limit = 5
+  posts: CollectionEntry<'blog'>[],
+  currentPostId?: string,
+  limit = 5,
 ): CollectionEntry<'blog'>[] {
-    return sortByDate(
-        posts.filter((p) => p.id !== currentPostId)
-    ).slice(0, limit);
+  return sortByDate(posts.filter((p) => p.id !== currentPostId)).slice(0, limit);
 }

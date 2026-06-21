@@ -9,16 +9,16 @@ import udacity from '../assets/certifications/udacity.png';
 import udemy from '../assets/certifications/udemy.png';
 
 const certificationLogos: Record<string, ImageMetadata> = {
-	'Chai Aur Code': chaicode,
-	'Google Cloud Platform (GCP)': googlecloud,
-	'HackerRank': hackerrank,
-	'NamasteDev.com': namastedev,
-	Oracle: oracle,
-	'Scaled Agile, Inc.': scaledagile,
-	Udacity: udacity,
-	Udemy: udemy,
+  'Chai Aur Code': chaicode,
+  'Google Cloud Platform (GCP)': googlecloud,
+  HackerRank: hackerrank,
+  'NamasteDev.com': namastedev,
+  Oracle: oracle,
+  'Scaled Agile, Inc.': scaledagile,
+  Udacity: udacity,
+  Udemy: udemy,
 };
 
 export function getCertificationLogo(issuer: string): ImageMetadata | undefined {
-	return certificationLogos[issuer];
+  return certificationLogos[issuer];
 }

@@ -3,322 +3,334 @@
  * PdfViewer component uses PDF.js to render a PDF document with zoom and pan controls.
  */
 interface Props {
-    url: string;
-    title?: string;
-    height?: string;
-    downloadFilename?: string;
+  url: string;
+  title?: string;
+  height?: string;
+  downloadFilename?: string;
 }
 
-const { 
-    url, 
-    title = "PDF Viewer", 
-    height = "calc(100vh - 13rem)",
-    downloadFilename = "document.pdf"
+const {
+  url,
+  title = 'PDF Viewer',
+  height = 'calc(100vh - 13rem)',
+  downloadFilename = 'document.pdf',
 } = Astro.props;
 ---
 
 <div class="pdf-viewer-container mb-4 sm:mb-6">
-    <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4 mb-4">
-        <div>
-            <h1 class="text-2xl sm:text-4xl font-bold tracking-tight text-white mb-1.5">
-                {title}
-            </h1>
-            <slot name="description" />
-        </div>
-        <div class="flex items-center gap-2 flex-shrink-0">
-            <!-- Zoom controls -->
-            <div class="flex items-center gap-1 bg-zinc-800 border border-zinc-700/60 rounded-lg px-1 py-1">
-                <button
-                    id="zoom-out"
-                    title="Zoom out"
-                    class="w-7 h-7 flex items-center justify-center text-zinc-400 hover:text-white rounded-md hover-lift text-base leading-none"
-                    >−</button
-                >
-                <span
-                    id="zoom-level"
-                    class="text-[0.875rem] font-mono text-zinc-400 w-11 text-center"
-                    >100%</span
-                >
-                <button
-                    id="zoom-in"
-                    title="Zoom in"
-                    class="w-7 h-7 flex items-center justify-center text-zinc-400 hover:text-white rounded-md hover-lift text-base leading-none"
-                    >+</button
-                >
-                <button
-                    id="zoom-fit"
-                    title="Fit to screen"
-                    class="w-7 h-7 flex items-center justify-center text-zinc-400 hover:text-white rounded-md hover-lift"
-                    aria-label="Fit"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="w-3.5 h-3.5"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        ><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"
-                        ></path></svg
-                    >
-                </button>
-            </div>
-            <a
-                href={url}
-                download={downloadFilename}
-                class="flex items-center gap-1.5 px-3 py-2 border border-zinc-700/60 rounded-lg text-zinc-400 hover:text-primary hover:border-primary/40 transition-colors text-[0.875rem] font-medium"
-            >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="w-3.5 h-3.5"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    ><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
-                    ></path><polyline points="7 10 12 15 17 10"
-                    ></polyline><line x1="12" y1="15" x2="12" y2="3"
-                    ></line></svg
-                >
-                Download
-            </a>
-        </div>
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4 mb-4">
+    <div>
+      <h1 class="text-2xl sm:text-4xl font-bold tracking-tight text-white mb-1.5">
+        {title}
+      </h1>
+      <slot name="description" />
     </div>
-
-    <!-- PDF Canvas Viewer -->
-    <div
-        id="pdf-viewport"
-        class="-mx-4 sm:-mx-6 lg:-mx-12"
-        style={`height: ${height}; min-height: 360px; background: #111113; border-top: 1px solid #27272a; border-bottom: 1px solid #27272a; overflow: hidden; position: relative; cursor: grab; user-select: none;`}
-    >
-        <canvas
-            id="pdf-canvas"
-            style="position: absolute; transform-origin: 0 0; image-rendering: pixelated;"
-        ></canvas>
-        <div
-            id="pdf-loading"
-            style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #71717a; font-size: 1rem; font-family: system-ui, sans-serif;"
+    <div class="flex items-center gap-2 flex-shrink-0">
+      <!-- Zoom controls -->
+      <div
+        class="flex items-center gap-1 bg-zinc-800 border border-zinc-700/60 rounded-lg px-1 py-1"
+      >
+        <button
+          id="zoom-out"
+          title="Zoom out"
+          class="w-7 h-7 flex items-center justify-center text-zinc-400 hover:text-white rounded-md hover-lift text-base leading-none"
+          >−</button
         >
-            Loading PDF…
-        </div>
+        <span id="zoom-level" class="text-[0.875rem] font-mono text-zinc-400 w-11 text-center"
+          >100%</span
+        >
+        <button
+          id="zoom-in"
+          title="Zoom in"
+          class="w-7 h-7 flex items-center justify-center text-zinc-400 hover:text-white rounded-md hover-lift text-base leading-none"
+          >+</button
+        >
+        <button
+          id="zoom-fit"
+          title="Fit to screen"
+          class="w-7 h-7 flex items-center justify-center text-zinc-400 hover:text-white rounded-md hover-lift"
+          aria-label="Fit"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-3.5 h-3.5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"></path></svg
+          >
+        </button>
+      </div>
+      <a
+        href={url}
+        download={downloadFilename}
+        class="flex items-center gap-1.5 px-3 py-2 border border-zinc-700/60 rounded-lg text-zinc-400 hover:text-primary hover:border-primary/40 transition-colors text-[0.875rem] font-medium"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-3.5 h-3.5"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          ><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline
+            points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg
+        >
+        Download
+      </a>
     </div>
+  </div>
 
-    <p class="text-[0.875rem] text-zinc-600 mt-2 text-center">
-        Drag to pan · Scroll or pinch to zoom
-    </p>
+  <!-- PDF Canvas Viewer -->
+  <div
+    id="pdf-viewport"
+    class="-mx-4 sm:-mx-6 lg:-mx-12"
+    style={`height: ${height}; min-height: 360px; background: #111113; border-top: 1px solid #27272a; border-bottom: 1px solid #27272a; overflow: hidden; position: relative; cursor: grab; user-select: none;`}
+  >
+    <canvas
+      id="pdf-canvas"
+      style="position: absolute; transform-origin: 0 0; image-rendering: pixelated;"></canvas>
+    <div
+      id="pdf-loading"
+      style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #71717a; font-size: 1rem; font-family: system-ui, sans-serif;"
+    >
+      Loading PDF…
+    </div>
+  </div>
+
+  <p class="text-[0.875rem] text-zinc-600 mt-2 text-center">
+    Drag to pan · Scroll or pinch to zoom
+  </p>
 </div>
 
 <script is:inline define:vars={{ pdfUrl: url }}>
-    /**
-     * Internal script to manage PDF rendering and interactions.
-     * Injected to the client and uses CDN for PDF.js.
-     */
-    (async () => {
-        const PDFJS_VERSION = '4.4.168';
-        const CDN_BASE = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VERSION}`;
+  /**
+   * Internal script to manage PDF rendering and interactions.
+   * Injected to the client and uses CDN for PDF.js.
+   */
+  (async () => {
+    const PDFJS_VERSION = '4.4.168';
+    const CDN_BASE = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VERSION}`;
 
-        // @ts-ignore
-        const pdfjsLib = await import(`${CDN_BASE}/pdf.min.mjs`);
-        pdfjsLib.GlobalWorkerOptions.workerSrc = `${CDN_BASE}/pdf.worker.min.mjs`;
+    // @ts-ignore
+    const pdfjsLib = await import(`${CDN_BASE}/pdf.min.mjs`);
+    pdfjsLib.GlobalWorkerOptions.workerSrc = `${CDN_BASE}/pdf.worker.min.mjs`;
 
-        const viewport = document.getElementById('pdf-viewport');
-        const canvas = document.getElementById('pdf-canvas');
-        const loadingEl = document.getElementById('pdf-loading');
-        const zoomLevelEl = document.getElementById('zoom-level');
-        const ctx = canvas.getContext('2d');
+    const viewport = document.getElementById('pdf-viewport');
+    const canvas = document.getElementById('pdf-canvas');
+    const loadingEl = document.getElementById('pdf-loading');
+    const zoomLevelEl = document.getElementById('zoom-level');
+    const ctx = canvas.getContext('2d');
 
-        let scale = 1.0;
-        let offsetX = 0;
-        let offsetY = 0;
-        let pdfPage = null;
-        let baseViewport = null;
-        let renderTask = null;
-        let renderTimeout = null;
+    let scale = 1.0;
+    let offsetX = 0;
+    let offsetY = 0;
+    let pdfPage = null;
+    let baseViewport = null;
+    let renderTask = null;
+    let renderTimeout = null;
 
-        const DEVICE_PIXEL_RATIO = window.devicePixelRatio || 1;
+    const DEVICE_PIXEL_RATIO = window.devicePixelRatio || 1;
 
-        // Load PDF
-        try {
-            const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
-            pdfPage = await pdf.getPage(1);
-            baseViewport = pdfPage.getViewport({ scale: 1 });
+    // Load PDF
+    try {
+      const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
+      pdfPage = await pdf.getPage(1);
+      baseViewport = pdfPage.getViewport({ scale: 1 });
 
-            // Fit to viewport width initially
-            const containerW = viewport.clientWidth;
-            scale = containerW / baseViewport.width;
+      // Fit to viewport width initially
+      const containerW = viewport.clientWidth;
+      scale = containerW / baseViewport.width;
 
-            // Center vertically
-            const containerH = viewport.clientHeight;
-            const renderedH = baseViewport.height * scale;
-            offsetY = renderedH < containerH ? (containerH - renderedH) / 2 : 0;
+      // Center vertically
+      const containerH = viewport.clientHeight;
+      const renderedH = baseViewport.height * scale;
+      offsetY = renderedH < containerH ? (containerH - renderedH) / 2 : 0;
 
-            loadingEl.style.display = 'none';
-            renderPDF();
-        } catch (error) {
-            console.error('Failed to load PDF:', error);
-            loadingEl.textContent = 'Error loading PDF. Please try again later.';
+      loadingEl.style.display = 'none';
+      renderPDF();
+    } catch (error) {
+      console.error('Failed to load PDF:', error);
+      loadingEl.textContent = 'Error loading PDF. Please try again later.';
+    }
+
+    function renderPDF() {
+      if (renderTask) renderTask.cancel();
+
+      const scaledViewport = pdfPage.getViewport({
+        scale: scale * DEVICE_PIXEL_RATIO,
+      });
+      canvas.width = scaledViewport.width;
+      canvas.height = scaledViewport.height;
+      canvas.style.width = `${baseViewport.width * scale}px`;
+      canvas.style.height = `${baseViewport.height * scale}px`;
+      canvas.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+
+      zoomLevelEl.textContent = `${Math.round(scale * 100)}%`;
+
+      renderTask = pdfPage.render({
+        canvasContext: ctx,
+        viewport: scaledViewport,
+      });
+      renderTask.promise.catch(() => {});
+    }
+
+    function scheduleRender() {
+      if (renderTimeout) clearTimeout(renderTimeout);
+      renderTimeout = setTimeout(renderPDF, 60);
+    }
+
+    function applyTransform() {
+      canvas.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+      zoomLevelEl.textContent = `${Math.round(scale * 100)}%`;
+    }
+
+    function clamp() {
+      const vw = viewport.clientWidth;
+      const vh = viewport.clientHeight;
+      const pw = baseViewport.width * scale;
+      const ph = baseViewport.height * scale;
+      const minX = Math.min(0, vw - pw);
+      const minY = Math.min(0, vh - ph);
+      offsetX = Math.max(minX, Math.min(0, offsetX));
+      offsetY = Math.max(minY, Math.min(0, offsetY));
+    }
+
+    // Panning interaction
+    let dragging = false;
+    let lastX = 0,
+      lastY = 0;
+
+    viewport.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      viewport.setPointerCapture(e.pointerId);
+      viewport.style.cursor = 'grabbing';
+    });
+
+    viewport.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      offsetX += e.clientX - lastX;
+      offsetY += e.clientY - lastY;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      clamp();
+      applyTransform();
+    });
+
+    const stopDrag = () => {
+      dragging = false;
+      viewport.style.cursor = 'grab';
+    };
+    viewport.addEventListener('pointerup', stopDrag);
+    viewport.addEventListener('pointercancel', stopDrag);
+
+    // Zooming interaction
+    viewport.addEventListener(
+      'wheel',
+      (e) => {
+        e.preventDefault();
+        const rect = viewport.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+
+        const delta = e.deltaY < 0 ? 1.1 : 0.9;
+        const newScale = Math.max(0.3, Math.min(5, scale * delta));
+        const ratio = newScale / scale;
+
+        offsetX = mouseX - ratio * (mouseX - offsetX);
+        offsetY = mouseY - ratio * (mouseY - offsetY);
+        scale = newScale;
+        clamp();
+        applyTransform();
+        scheduleRender();
+      },
+      { passive: false },
+    );
+
+    // Touch Pinch-to-Zoom
+    let lastPinchDist = 0;
+    viewport.addEventListener(
+      'touchstart',
+      (e) => {
+        if (e.touches.length === 2) {
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          lastPinchDist = Math.sqrt(dx * dx + dy * dy);
         }
+      },
+      { passive: true },
+    );
 
-        function renderPDF() {
-            if (renderTask) renderTask.cancel();
-
-            const scaledViewport = pdfPage.getViewport({
-                scale: scale * DEVICE_PIXEL_RATIO,
-            });
-            canvas.width = scaledViewport.width;
-            canvas.height = scaledViewport.height;
-            canvas.style.width = `${baseViewport.width * scale}px`;
-            canvas.style.height = `${baseViewport.height * scale}px`;
-            canvas.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-
-            zoomLevelEl.textContent = `${Math.round(scale * 100)}%`;
-
-            renderTask = pdfPage.render({
-                canvasContext: ctx,
-                viewport: scaledViewport,
-            });
-            renderTask.promise.catch(() => {});
+    viewport.addEventListener(
+      'touchmove',
+      (e) => {
+        if (e.touches.length === 2) {
+          e.preventDefault();
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const ratio = dist / lastPinchDist;
+          const midX =
+            (e.touches[0].clientX + e.touches[1].clientX) / 2 -
+            viewport.getBoundingClientRect().left;
+          const midY =
+            (e.touches[0].clientY + e.touches[1].clientY) / 2 -
+            viewport.getBoundingClientRect().top;
+          const newScale = Math.max(0.3, Math.min(5, scale * ratio));
+          const scaleRatio = newScale / scale;
+          offsetX = midX - scaleRatio * (midX - offsetX);
+          offsetY = midY - scaleRatio * (midY - offsetY);
+          scale = newScale;
+          lastPinchDist = dist;
+          clamp();
+          applyTransform();
+          scheduleRender();
         }
+      },
+      { passive: false },
+    );
 
-        function scheduleRender() {
-            if (renderTimeout) clearTimeout(renderTimeout);
-            renderTimeout = setTimeout(renderPDF, 60);
-        }
+    // Control buttons
+    document.getElementById('zoom-in')?.addEventListener('click', () => {
+      const cx = viewport.clientWidth / 2;
+      const cy = viewport.clientHeight / 2;
+      const newScale = Math.min(5, scale * 1.25);
+      const r = newScale / scale;
+      offsetX = cx - r * (cx - offsetX);
+      offsetY = cy - r * (cy - offsetY);
+      scale = newScale;
+      clamp();
+      applyTransform();
+      scheduleRender();
+    });
 
-        function applyTransform() {
-            canvas.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-            zoomLevelEl.textContent = `${Math.round(scale * 100)}%`;
-        }
+    document.getElementById('zoom-out')?.addEventListener('click', () => {
+      const cx = viewport.clientWidth / 2;
+      const cy = viewport.clientHeight / 2;
+      const newScale = Math.max(0.3, scale / 1.25);
+      const r = newScale / scale;
+      offsetX = cx - r * (cx - offsetX);
+      offsetY = cy - r * (cy - offsetY);
+      scale = newScale;
+      clamp();
+      applyTransform();
+      scheduleRender();
+    });
 
-        function clamp() {
-            const vw = viewport.clientWidth;
-            const vh = viewport.clientHeight;
-            const pw = baseViewport.width * scale;
-            const ph = baseViewport.height * scale;
-            const minX = Math.min(0, vw - pw);
-            const minY = Math.min(0, vh - ph);
-            offsetX = Math.max(minX, Math.min(0, offsetX));
-            offsetY = Math.max(minY, Math.min(0, offsetY));
-        }
-
-        // Panning interaction
-        let dragging = false;
-        let lastX = 0, lastY = 0;
-
-        viewport.addEventListener('pointerdown', (e) => {
-            dragging = true;
-            lastX = e.clientX;
-            lastY = e.clientY;
-            viewport.setPointerCapture(e.pointerId);
-            viewport.style.cursor = 'grabbing';
-        });
-
-        viewport.addEventListener('pointermove', (e) => {
-            if (!dragging) return;
-            offsetX += e.clientX - lastX;
-            offsetY += e.clientY - lastY;
-            lastX = e.clientX;
-            lastY = e.clientY;
-            clamp();
-            applyTransform();
-        });
-
-        const stopDrag = () => {
-            dragging = false;
-            viewport.style.cursor = 'grab';
-        };
-        viewport.addEventListener('pointerup', stopDrag);
-        viewport.addEventListener('pointercancel', stopDrag);
-
-        // Zooming interaction
-        viewport.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            const rect = viewport.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
-            const mouseY = e.clientY - rect.top;
-
-            const delta = e.deltaY < 0 ? 1.1 : 0.9;
-            const newScale = Math.max(0.3, Math.min(5, scale * delta));
-            const ratio = newScale / scale;
-
-            offsetX = mouseX - ratio * (mouseX - offsetX);
-            offsetY = mouseY - ratio * (mouseY - offsetY);
-            scale = newScale;
-            clamp();
-            applyTransform();
-            scheduleRender();
-        }, { passive: false });
-
-        // Touch Pinch-to-Zoom
-        let lastPinchDist = 0;
-        viewport.addEventListener('touchstart', (e) => {
-            if (e.touches.length === 2) {
-                const dx = e.touches[0].clientX - e.touches[1].clientX;
-                const dy = e.touches[0].clientY - e.touches[1].clientY;
-                lastPinchDist = Math.sqrt(dx * dx + dy * dy);
-            }
-        }, { passive: true });
-
-        viewport.addEventListener('touchmove', (e) => {
-            if (e.touches.length === 2) {
-                e.preventDefault();
-                const dx = e.touches[0].clientX - e.touches[1].clientX;
-                const dy = e.touches[0].clientY - e.touches[1].clientY;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                const ratio = dist / lastPinchDist;
-                const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - viewport.getBoundingClientRect().left;
-                const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - viewport.getBoundingClientRect().top;
-                const newScale = Math.max(0.3, Math.min(5, scale * ratio));
-                const scaleRatio = newScale / scale;
-                offsetX = midX - scaleRatio * (midX - offsetX);
-                offsetY = midY - scaleRatio * (midY - offsetY);
-                scale = newScale;
-                lastPinchDist = dist;
-                clamp();
-                applyTransform();
-                scheduleRender();
-            }
-        }, { passive: false });
-
-        // Control buttons
-        document.getElementById('zoom-in')?.addEventListener('click', () => {
-            const cx = viewport.clientWidth / 2;
-            const cy = viewport.clientHeight / 2;
-            const newScale = Math.min(5, scale * 1.25);
-            const r = newScale / scale;
-            offsetX = cx - r * (cx - offsetX);
-            offsetY = cy - r * (cy - offsetY);
-            scale = newScale;
-            clamp();
-            applyTransform();
-            scheduleRender();
-        });
-
-        document.getElementById('zoom-out')?.addEventListener('click', () => {
-            const cx = viewport.clientWidth / 2;
-            const cy = viewport.clientHeight / 2;
-            const newScale = Math.max(0.3, scale / 1.25);
-            const r = newScale / scale;
-            offsetX = cx - r * (cx - offsetX);
-            offsetY = cy - r * (cy - offsetY);
-            scale = newScale;
-            clamp();
-            applyTransform();
-            scheduleRender();
-        });
-
-        document.getElementById('zoom-fit')?.addEventListener('click', () => {
-            scale = viewport.clientWidth / baseViewport.width;
-            offsetX = 0;
-            const ph = baseViewport.height * scale;
-            offsetY = ph < viewport.clientHeight ? (viewport.clientHeight - ph) / 2 : 0;
-            clamp();
-            applyTransform();
-            scheduleRender();
-        });
-    })();
+    document.getElementById('zoom-fit')?.addEventListener('click', () => {
+      scale = viewport.clientWidth / baseViewport.width;
+      offsetX = 0;
+      const ph = baseViewport.height * scale;
+      offsetY = ph < viewport.clientHeight ? (viewport.clientHeight - ph) / 2 : 0;
+      clamp();
+      applyTransform();
+      scheduleRender();
+    });
+  })();
 </script>

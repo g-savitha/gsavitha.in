@@ -3,7 +3,9 @@ import path from 'node:path';
 import { BLOG_DIRECTORY, extractNarration } from './lib/narration.mjs';
 
 const outputDirectory = path.join(process.cwd(), '.cache/audio-narration');
-const requestedSlug = process.argv.find((argument) => argument.startsWith('--slug='))?.split('=')[1];
+const requestedSlug = process.argv
+  .find((argument) => argument.startsWith('--slug='))
+  ?.split('=')[1];
 const checkOnly = process.argv.includes('--check');
 
 const files = (await readdir(BLOG_DIRECTORY))
@@ -40,4 +42,3 @@ if (requestedSlug && files.length === 0) {
 }
 
 if (hasErrors) process.exit(1);
-

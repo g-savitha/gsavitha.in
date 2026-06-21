@@ -17,7 +17,9 @@
     "audio:upload": "node scripts/audio/upload-r2.mjs",
     "audio:reconcile": "node scripts/audio/reconcile-r2.mjs",
     "audio:enable-published": "node scripts/audio/enable-published.mjs",
-    "test:audio": "node --test scripts/audio/lib/narration.test.mjs scripts/audio/lib/cache.test.mjs"
+    "test:audio": "node --test scripts/audio/lib/narration.test.mjs scripts/audio/lib/cache.test.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",
@@ -35,6 +37,7 @@
     "kokoro-js": "^1.2.1",
     "lamejs": "^1.2.1",
     "lucide-astro": "^0.556.0",
+    "lucide-react": "0.556.0",
     "mermaid": "^11.13.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
@@ -46,5 +49,9 @@
     "typescript": "^5.9.3",
     "unified": "^11.0.5",
     "yaml": "^2.9.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.8.4",
+    "prettier-plugin-astro": "^0.14.1"
   }
 }

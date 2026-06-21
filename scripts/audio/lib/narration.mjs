@@ -11,10 +11,7 @@ import { DEFAULT_VOICE, generationSettings } from './config.mjs';
 export const NARRATION_SCHEMA_VERSION = 2;
 export const BLOG_DIRECTORY = path.join(process.cwd(), 'src/content/blog');
 
-const processor = unified()
-  .use(remarkParse)
-  .use(remarkFrontmatter, ['yaml'])
-  .use(remarkGfm);
+const processor = unified().use(remarkParse).use(remarkFrontmatter, ['yaml']).use(remarkGfm);
 
 function cleanText(value) {
   return value
@@ -103,8 +100,28 @@ function codeLabel(language) {
 }
 
 const GENERIC_IDENTIFIERS = new Set([
-  'arr', 'cb', 'data', 'el', 'elem', 'err', 'error', 'fn', 'i', 'item', 'items', 'j', 'k',
-  'n', 'obj', 'req', 'res', 'result', 'val', 'value', 'x', 'y',
+  'arr',
+  'cb',
+  'data',
+  'el',
+  'elem',
+  'err',
+  'error',
+  'fn',
+  'i',
+  'item',
+  'items',
+  'j',
+  'k',
+  'n',
+  'obj',
+  'req',
+  'res',
+  'result',
+  'val',
+  'value',
+  'x',
+  'y',
 ]);
 
 function capitalizeFirst(text) {
@@ -141,9 +158,7 @@ function extractLeadingComment(code) {
 }
 
 function stripComments(code) {
-  return code
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .replace(/^\s*\/\/.*$/gm, '');
+  return code.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
 }
 
 function extractDefinedNames(code, language) {
@@ -159,7 +174,9 @@ function extractDefinedNames(code, language) {
   };
 
   const source = stripComments(code);
-  for (const match of source.matchAll(/^( {0,2})(?:export\s+)?(?:async\s+function|function)\s+(\w+)/gm)) {
+  for (const match of source.matchAll(
+    /^( {0,2})(?:export\s+)?(?:async\s+function|function)\s+(\w+)/gm,
+  )) {
     addName(match[2]);
   }
   for (const match of source.matchAll(/^( {0,2})class\s+(\w+)/gm)) {
@@ -175,8 +192,9 @@ function extractDefinedNames(code, language) {
 }
 
 function extractHtmlSummary(code) {
-  const tags = [...code.matchAll(/<(header|main|footer|nav|section|article|form|table)\b/gi)]
-    .map((match) => match[1].toLowerCase());
+  const tags = [...code.matchAll(/<(header|main|footer|nav|section|article|form|table)\b/gi)].map(
+    (match) => match[1].toLowerCase(),
+  );
   const uniqueTags = [...new Set(tags)];
   if (uniqueTags.length >= 2) {
     return `This HTML example includes ${joinNatural(uniqueTags)} elements.`;
@@ -199,7 +217,11 @@ function extractCssSummary(code) {
 }
 
 function extractShellSummary(code) {
-  const lines = code.trim().split('\n').map((line) => line.trim()).filter(Boolean);
+  const lines = code
+    .trim()
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
   const commands = lines
     .filter((line) => !line.startsWith('#'))
     .map((line) => line.replace(/^\$\s*/, '').split(/\s+/)[0])
@@ -275,7 +297,10 @@ function extractSegments(tree, title, audio) {
         if (pendingCodeSummary) {
           addSegment('code-summary', pendingCodeSummary);
         } else if (audio.codeSummaryMode === 'contextual') {
-          addSegment('code-summary', contextualCodeSummary(node.lang, currentHeading, node.value ?? ''));
+          addSegment(
+            'code-summary',
+            contextualCodeSummary(node.lang, currentHeading, node.value ?? ''),
+          );
         } else if (audio.codeSummaryMode !== 'skip' && node.lang !== 'mermaid') {
           missingCodeSummaries.push({
             language: node.lang ?? 'text',
@@ -362,10 +387,12 @@ export function voiceGenerationSettings(voiceConfig) {
 
 export function narrationHash(narration, settings) {
   return createHash('sha256')
-    .update(JSON.stringify({
-      schemaVersion: NARRATION_SCHEMA_VERSION,
-      segments: narration.segments,
-      settings,
-    }))
+    .update(
+      JSON.stringify({
+        schemaVersion: NARRATION_SCHEMA_VERSION,
+        segments: narration.segments,
+        settings,
+      }),
+    )
     .digest('hex');
 }
