@@ -29,13 +29,13 @@
     "en": {
       "label": "English",
       "language": "en",
-      "duration": 1147.78,
-      "bytes": 9182784,
-      "hash": "b15313648114cda8cbb70c6393f894205e4e9754deb7973476f63e1d17267660",
+      "duration": 1139.65,
+      "bytes": 9117696,
+      "hash": "1a980832efbcc801ee995f118fe226cedeacdc6f1afac59df13591d6424854bf",
       "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
       "voice": "af_heart",
-      "generatedAt": "2026-06-21T07:15:47.314Z",
-      "url": "https://audio.gsavitha.in/audio/blog/blog-audio-player/b15313648114cda8cbb70c6393f894205e4e9754deb7973476f63e1d17267660/en.mp3"
+      "generatedAt": "2026-06-21T07:31:31.453Z",
+      "url": "https://audio.gsavitha.in/audio/blog/blog-audio-player/1a980832efbcc801ee995f118fe226cedeacdc6f1afac59df13591d6424854bf/en.mp3"
     }
   },
   "build-your-own-site": {
