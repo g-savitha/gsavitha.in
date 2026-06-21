@@ -428,6 +428,45 @@ After upload, a reconcile step rebuilds the manifest from what's genuinely publi
 
 ---
 
+## Performance Improvements Along the Way
+
+The first version worked but was painfully slow — a single edit could trigger a multi-hour run re-synthesizing audio R2 already had. Each improvement below solved one bottleneck; together they turned a brute-force generator into something that usually finishes in seconds.
+
+```mermaid
+flowchart TD
+    POST["Post + voice settings"]:::content --> M{"Manifest hash\nmatches?"}:::decision
+    M -->|"yes"| SKIP["Skip entirely\naudio already in R2"]:::success
+    M -->|"no"| WORKERS["Parallel workers\nup to four posts at once"]:::accent
+    WORKERS --> CHUNKS["Build speech chunks\nfor this post only"]:::primary
+    CHUNKS --> CACHE{"Segment cache\nhit per chunk?"}:::decision
+    CACHE -->|"yes"| ASSEMBLE["Assemble from disk"]:::info
+    CACHE -->|"no"| TTS["Synthesize\nthis chunk only"]:::accent
+    TTS --> ASSEMBLE
+    ASSEMBLE --> UPLOAD["Validate + upload\nprune stale R2 objects"]:::primary
+    UPLOAD --> MANIFEST["Update manifest"]:::success
+
+    classDef primary fill:#2563eb,stroke:#93c5fd,color:#ffffff
+    classDef accent fill:#7c3aed,stroke:#c4b5fd,color:#ffffff
+    classDef success fill:#059669,stroke:#6ee7b7,color:#ffffff
+    classDef decision fill:#d97706,stroke:#fcd34d,color:#111827
+    classDef info fill:#0891b2,stroke:#67e8f9,color:#ffffff
+    classDef content fill:#334155,stroke:#94a3b8,color:#ffffff
+```
+
+**1. Parallel workers.** One post at a time wasted idle CPU cores. The orchestrator now fans out across up to four child processes; result files double as crash-recovery checkpoints.
+
+**2. Two-level caching.** Synthesized chunks live on disk as keyed `Float32LE` files — unchanged text never hits TTS again. CI caches model weights, segments, and worker artifacts between runs so cold starts stay rare.
+
+**3. Incremental synthesis.** When a post changes, only the speech chunks whose text actually changed get re-synthesized. Edit one paragraph, hear one chunk — the rest assemble from cache.
+
+**4. Manifest as skip contract.** If `audioManifest.json` already records the current narration hash, the entire post is skipped — no chunking, no TTS, no upload. The MP3 is already in R2.
+
+**5. Clean R2 storage.** Superseded objects are pruned after upload, corrupted renders are rejected before upload, and a reconcile step keeps the manifest aligned with what's actually in the bucket.
+
+Net result: styling changes deploy in under a minute, a one-line edit regenerates one chunk, and unchanged pushes finish in seconds.
+
+---
+
 ## The Browser Player
 
 The player is a React island with `client:load`. It hydrates immediately — there's no useful static version of audio controls.
