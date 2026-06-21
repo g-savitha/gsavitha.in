@@ -1,15 +1,119 @@
 {
-  "async-await": {
+  "telegram-bot": {
     "en": {
       "label": "English",
       "language": "en",
-      "duration": 266.83,
-      "bytes": 2134656,
-      "hash": "3531938d54079c2cab3e310a04b1495dd6d76dd6b685aa7a3348f25c7bf7b3ba",
+      "duration": 251.28,
+      "bytes": 2010240,
+      "hash": "27d31bbbf49ae59a9097277c12ef13ef0fb7a06b5ce7695a315afa6f30c5382f",
       "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
       "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:23:49.509Z",
-      "url": "https://audio.gsavitha.in/audio/blog/async-await/3531938d54079c2cab3e310a04b1495dd6d76dd6b685aa7a3348f25c7bf7b3ba/en.mp3"
+      "generatedAt": "2026-06-20T22:24:17.484Z",
+      "url": "https://audio.gsavitha.in/audio/blog/telegram-bot/27d31bbbf49ae59a9097277c12ef13ef0fb7a06b5ce7695a315afa6f30c5382f/en.mp3"
+    }
+  },
+  "data-normalization": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 453.24,
+      "bytes": 3625920,
+      "hash": "d4dfaf354ded45a170d6bd82d4414d0870b9c839be6e509e30274cc2c61b870a",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T22:23:57.544Z",
+      "url": "https://audio.gsavitha.in/audio/blog/data-normalization/d4dfaf354ded45a170d6bd82d4414d0870b9c839be6e509e30274cc2c61b870a/en.mp3"
+    }
+  },
+  "rbac-node": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 445.25,
+      "bytes": 3561984,
+      "hash": "f669d00b62bee156e83f9fd2444387c83bbe9487d2c3bbfedd63d78341d9cf61",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T22:24:08.968Z",
+      "url": "https://audio.gsavitha.in/audio/blog/rbac-node/f669d00b62bee156e83f9fd2444387c83bbe9487d2c3bbfedd63d78341d9cf61/en.mp3"
+    }
+  },
+  "dark-theme-css": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 59.35,
+      "bytes": 474816,
+      "hash": "b7f50fd187de84bbdb3b85c020cf24010f6362087eddf1b2f7252662bfa9fd15",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T22:23:56.667Z",
+      "url": "https://audio.gsavitha.in/audio/blog/dark-theme-css/b7f50fd187de84bbdb3b85c020cf24010f6362087eddf1b2f7252662bfa9fd15/en.mp3"
+    }
+  },
+  "event-handling-in-js": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 467.4,
+      "bytes": 3739200,
+      "hash": "d0745e3fecb23943065072f31fa213b6a4590a03d0108dc0b60512663047e1a3",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T22:23:58.969Z",
+      "url": "https://audio.gsavitha.in/audio/blog/event-handling-in-js/d0745e3fecb23943065072f31fa213b6a4590a03d0108dc0b60512663047e1a3/en.mp3"
+    }
+  },
+  "blog-audio-player": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 1257.58,
+      "bytes": 10061184,
+      "hash": "5930ac90002a9b7c4911e2f0a27f0c242840ed8a7405444969c2b83c2e4f49a0",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-21T08:32:42.184Z",
+      "url": "https://audio.gsavitha.in/audio/blog/blog-audio-player/5930ac90002a9b7c4911e2f0a27f0c242840ed8a7405444969c2b83c2e4f49a0/en.mp3"
+    }
+  },
+  "react-state-patterns": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 277.08,
+      "bytes": 2216640,
+      "hash": "0b66fdf96883f1999aa09ef5729aac12b8d8fff7460374aae933108cd0b4f803",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T22:24:10.286Z",
+      "url": "https://audio.gsavitha.in/audio/blog/react-state-patterns/0b66fdf96883f1999aa09ef5729aac12b8d8fff7460374aae933108cd0b4f803/en.mp3"
+    }
+  },
+  "feature-queries": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 202.54,
+      "bytes": 1620288,
+      "hash": "5bfb42b42d51388b2d5f9e2266a4e31947c3ae42e1ed2e5aeeb886746471ef07",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T22:24:00.382Z",
+      "url": "https://audio.gsavitha.in/audio/blog/feature-queries/5bfb42b42d51388b2d5f9e2266a4e31947c3ae42e1ed2e5aeeb886746471ef07/en.mp3"
+    }
+  },
+  "exec-context": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 301.58,
+      "bytes": 2412672,
+      "hash": "7df6972ba88c1c4e3f9d56f45f0117f93cb8a1f9105b966030cae5505b4fd6d3",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T22:23:59.721Z",
+      "url": "https://audio.gsavitha.in/audio/blog/exec-context/7df6972ba88c1c4e3f9d56f45f0117f93cb8a1f9105b966030cae5505b4fd6d3/en.mp3"
     }
   },
   "async-code-in-js": {
@@ -25,17 +129,277 @@
       "url": "https://audio.gsavitha.in/audio/blog/async-code-in-js/776017cc6b783fa4f940961f1ff37611f2219b4953772b5fcacf0734292540c8/en.mp3"
     }
   },
-  "blog-audio-player": {
+  "recursion-simplified": {
     "en": {
       "label": "English",
       "language": "en",
-      "duration": 1257.58,
-      "bytes": 10061184,
-      "hash": "5930ac90002a9b7c4911e2f0a27f0c242840ed8a7405444969c2b83c2e4f49a0",
+      "duration": 377.95,
+      "bytes": 3023616,
+      "hash": "e7b08c9910722552fec23c79723213752ec9e63facb9b895e84ba761c0b3bd59",
       "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
       "voice": "af_heart",
-      "generatedAt": "2026-06-21T08:32:42.184Z",
-      "url": "https://audio.gsavitha.in/audio/blog/blog-audio-player/5930ac90002a9b7c4911e2f0a27f0c242840ed8a7405444969c2b83c2e4f49a0/en.mp3"
+      "generatedAt": "2026-06-20T22:24:13.178Z",
+      "url": "https://audio.gsavitha.in/audio/blog/recursion-simplified/e7b08c9910722552fec23c79723213752ec9e63facb9b895e84ba761c0b3bd59/en.mp3"
+    }
+  },
+  "skipping-react-import": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 67.25,
+      "bytes": 537984,
+      "hash": "ddfd24f240df253533d9d070e920ed8cd247b1d7ea90e906780ca30d1a124ee2",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T22:24:15.146Z",
+      "url": "https://audio.gsavitha.in/audio/blog/skipping-react-import/ddfd24f240df253533d9d070e920ed8cd247b1d7ea90e906780ca30d1a124ee2/en.mp3"
+    }
+  },
+  "micro-frontends": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 394.97,
+      "bytes": 3159744,
+      "hash": "6722e0fb5e8b9dce3bbf7c9d38eb8dc00c4eb955950e3ca462e3d56746e63e18",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T22:24:06.137Z",
+      "url": "https://audio.gsavitha.in/audio/blog/micro-frontends/6722e0fb5e8b9dce3bbf7c9d38eb8dc00c4eb955950e3ca462e3d56746e63e18/en.mp3"
+    }
+  },
+  "solid-frontend": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 141.86,
+      "bytes": 1134912,
+      "hash": "be5aa3513acf5387f472bea9ffc99847e1b79c50f63dccfca3a85c42fde5da1e",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T22:24:15.723Z",
+      "url": "https://audio.gsavitha.in/audio/blog/solid-frontend/be5aa3513acf5387f472bea9ffc99847e1b79c50f63dccfca3a85c42fde5da1e/en.mp3"
+    }
+  },
+  "config-driven-ui": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 392.23,
+      "bytes": 3137856,
+      "hash": "a175b0ac23d086a44a2414c788bfe7ebeea1a361e4d914b82bf9016535535b63",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T22:23:54.739Z",
+      "url": "https://audio.gsavitha.in/audio/blog/config-driven-ui/a175b0ac23d086a44a2414c788bfe7ebeea1a361e4d914b82bf9016535535b63/en.mp3"
+    }
+  },
+  "async-await": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 266.83,
+      "bytes": 2134656,
+      "hash": "3531938d54079c2cab3e310a04b1495dd6d76dd6b685aa7a3348f25c7bf7b3ba",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T22:23:49.509Z",
+      "url": "https://audio.gsavitha.in/audio/blog/async-await/3531938d54079c2cab3e310a04b1495dd6d76dd6b685aa7a3348f25c7bf7b3ba/en.mp3"
+    }
+  },
+  "real-time-delivery": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 613.85,
+      "bytes": 4910784,
+      "hash": "1e86a5ad1aa2b91b60a00f59b333444f98dec30e7602741201c6f8b81e5faaf7",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T22:24:11.569Z",
+      "url": "https://audio.gsavitha.in/audio/blog/real-time-delivery/1e86a5ad1aa2b91b60a00f59b333444f98dec30e7602741201c6f8b81e5faaf7/en.mp3"
+    }
+  },
+  "js-fundamentals-for-react": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 606.72,
+      "bytes": 4853760,
+      "hash": "953ca2c36d60c597e3e0aeb9c155987d62f146389fd58433c38af83115370819",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T22:24:04.058Z",
+      "url": "https://audio.gsavitha.in/audio/blog/js-fundamentals-for-react/953ca2c36d60c597e3e0aeb9c155987d62f146389fd58433c38af83115370819/en.mp3"
+    }
+  },
+  "kafka-explained-like-you-are-5": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 452.93,
+      "bytes": 3623424,
+      "hash": "f7aa9ccfdfa751feb0e4dd98868a2c793f77f5f4518d557d7d06896b29047c05",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T22:24:05.321Z",
+      "url": "https://audio.gsavitha.in/audio/blog/kafka-explained-like-you-are-5/f7aa9ccfdfa751feb0e4dd98868a2c793f77f5f4518d557d7d06896b29047c05/en.mp3"
+    }
+  },
+  "sync-fork-with-original-git": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 148.51,
+      "bytes": 1188096,
+      "hash": "80cc7cdd86e992565c0743b956128f02ed21548fa8e18f53989331292746fca7",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T22:24:16.794Z",
+      "url": "https://audio.gsavitha.in/audio/blog/sync-fork-with-original-git/80cc7cdd86e992565c0743b956128f02ed21548fa8e18f53989331292746fca7/en.mp3"
+    }
+  },
+  "host-react-on-gh-pages": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 206.54,
+      "bytes": 1652352,
+      "hash": "94d5569d78259b17078607d6593cfe5f036c29bf0b818c0aa79d6a047b2a576b",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T22:24:02.325Z",
+      "url": "https://audio.gsavitha.in/audio/blog/host-react-on-gh-pages/94d5569d78259b17078607d6593cfe5f036c29bf0b818c0aa79d6a047b2a576b/en.mp3"
+    }
+  },
+  "context-management-window": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 758.4,
+      "bytes": 6067200,
+      "hash": "61ec251bec4762acc71fee36785305b1c1cbe2e8f0d9c11501fb87fa98123a8d",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T22:23:55.916Z",
+      "url": "https://audio.gsavitha.in/audio/blog/context-management-window/61ec251bec4762acc71fee36785305b1c1cbe2e8f0d9c11501fb87fa98123a8d/en.mp3"
+    }
+  },
+  "react-events": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 158.86,
+      "bytes": 1270848,
+      "hash": "02d4d553ee640497b475f9d9f94b2f19c2a85914940168d5d735374dd57e826f",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T22:24:09.537Z",
+      "url": "https://audio.gsavitha.in/audio/blog/react-events/02d4d553ee640497b475f9d9f94b2f19c2a85914940168d5d735374dd57e826f/en.mp3"
+    }
+  },
+  "promises-explained": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 360.17,
+      "bytes": 2881344,
+      "hash": "bd2a565af5ce9ce5cca54600153253a91881f6519d52e8540cc18ccd32a80763",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T22:24:07.481Z",
+      "url": "https://audio.gsavitha.in/audio/blog/promises-explained/bd2a565af5ce9ce5cca54600153253a91881f6519d52e8540cc18ccd32a80763/en.mp3"
+    }
+  },
+  "super-vs-super-props": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 169.13,
+      "bytes": 1353024,
+      "hash": "5b4207c4f8bb961ff30a3f73114f8752736307611cd5d6893206dd2cedbe8d4e",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T22:24:16.255Z",
+      "url": "https://audio.gsavitha.in/audio/blog/super-vs-super-props/5b4207c4f8bb961ff30a3f73114f8752736307611cd5d6893206dd2cedbe8d4e/en.mp3"
+    }
+  },
+  "thundering-herd": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 941.88,
+      "bytes": 7535040,
+      "hash": "eea3d5664bcdec404f145dd38c27cf4050c4bad7b92044eae232421f9ca192c7",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T22:24:19.856Z",
+      "url": "https://audio.gsavitha.in/audio/blog/thundering-herd/eea3d5664bcdec404f145dd38c27cf4050c4bad7b92044eae232421f9ca192c7/en.mp3"
+    }
+  },
+  "http-server": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 475.25,
+      "bytes": 3801984,
+      "hash": "a9a7261de9ff6c0c396cbf423acd9cfcd76c78a1c056cb16af3fea9e5d578822",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T22:24:03.274Z",
+      "url": "https://audio.gsavitha.in/audio/blog/http-server/a9a7261de9ff6c0c396cbf423acd9cfcd76c78a1c056cb16af3fea9e5d578822/en.mp3"
+    }
+  },
+  "recursion-base-cases": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 184.87,
+      "bytes": 1478976,
+      "hash": "817ef70187c8e0c97930b47093e2f8fee6b16030ece9dec0d833fa1d09af6d40",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T22:24:12.279Z",
+      "url": "https://audio.gsavitha.in/audio/blog/recursion-base-cases/817ef70187c8e0c97930b47093e2f8fee6b16030ece9dec0d833fa1d09af6d40/en.mp3"
+    }
+  },
+  "footer": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 85.75,
+      "bytes": 686016,
+      "hash": "0e111abe71167ffb9df4d29f7b46a134e51985252e54fd3f1aa39c46514ad645",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T22:24:01.696Z",
+      "url": "https://audio.gsavitha.in/audio/blog/footer/0e111abe71167ffb9df4d29f7b46a134e51985252e54fd3f1aa39c46514ad645/en.mp3"
+    }
+  },
+  "js-hard-parts": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 117,
+      "bytes": 936000,
+      "hash": "0d5a132e8f36f6d96db724ecf5df33821c836344817fcc99676a76e9cbdf6fff",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T22:24:04.671Z",
+      "url": "https://audio.gsavitha.in/audio/blog/js-hard-parts/0d5a132e8f36f6d96db724ecf5df33821c836344817fcc99676a76e9cbdf6fff/en.mp3"
+    }
+  },
+  "remove-all-facebook-likes": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 49.46,
+      "bytes": 395712,
+      "hash": "d455f058585ad46b2e77e45edffbd8c8d8cdc561a91fe43e002ea208062975c8",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-06-20T22:24:13.744Z",
+      "url": "https://audio.gsavitha.in/audio/blog/remove-all-facebook-likes/d455f058585ad46b2e77e45edffbd8c8d8cdc561a91fe43e002ea208062975c8/en.mp3"
     }
   },
   "build-your-own-site": {
@@ -64,305 +428,6 @@
       "url": "https://audio.gsavitha.in/audio/blog/caching-strategies/31191cea07755b4a5da64545969ce52e01e0c55bb05ab745ed5573f42b29e762/en.mp3"
     }
   },
-  "config-driven-ui": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 392.23,
-      "bytes": 3137856,
-      "hash": "a175b0ac23d086a44a2414c788bfe7ebeea1a361e4d914b82bf9016535535b63",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:23:54.739Z",
-      "url": "https://audio.gsavitha.in/audio/blog/config-driven-ui/a175b0ac23d086a44a2414c788bfe7ebeea1a361e4d914b82bf9016535535b63/en.mp3"
-    }
-  },
-  "context-management-window": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 758.4,
-      "bytes": 6067200,
-      "hash": "61ec251bec4762acc71fee36785305b1c1cbe2e8f0d9c11501fb87fa98123a8d",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:23:55.916Z",
-      "url": "https://audio.gsavitha.in/audio/blog/context-management-window/61ec251bec4762acc71fee36785305b1c1cbe2e8f0d9c11501fb87fa98123a8d/en.mp3"
-    }
-  },
-  "dark-theme-css": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 59.35,
-      "bytes": 474816,
-      "hash": "b7f50fd187de84bbdb3b85c020cf24010f6362087eddf1b2f7252662bfa9fd15",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:23:56.667Z",
-      "url": "https://audio.gsavitha.in/audio/blog/dark-theme-css/b7f50fd187de84bbdb3b85c020cf24010f6362087eddf1b2f7252662bfa9fd15/en.mp3"
-    }
-  },
-  "data-normalization": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 453.24,
-      "bytes": 3625920,
-      "hash": "d4dfaf354ded45a170d6bd82d4414d0870b9c839be6e509e30274cc2c61b870a",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:23:57.544Z",
-      "url": "https://audio.gsavitha.in/audio/blog/data-normalization/d4dfaf354ded45a170d6bd82d4414d0870b9c839be6e509e30274cc2c61b870a/en.mp3"
-    }
-  },
-  "event-handling-in-js": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 467.4,
-      "bytes": 3739200,
-      "hash": "d0745e3fecb23943065072f31fa213b6a4590a03d0108dc0b60512663047e1a3",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:23:58.969Z",
-      "url": "https://audio.gsavitha.in/audio/blog/event-handling-in-js/d0745e3fecb23943065072f31fa213b6a4590a03d0108dc0b60512663047e1a3/en.mp3"
-    }
-  },
-  "exec-context": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 301.58,
-      "bytes": 2412672,
-      "hash": "7df6972ba88c1c4e3f9d56f45f0117f93cb8a1f9105b966030cae5505b4fd6d3",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:23:59.721Z",
-      "url": "https://audio.gsavitha.in/audio/blog/exec-context/7df6972ba88c1c4e3f9d56f45f0117f93cb8a1f9105b966030cae5505b4fd6d3/en.mp3"
-    }
-  },
-  "feature-queries": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 202.54,
-      "bytes": 1620288,
-      "hash": "5bfb42b42d51388b2d5f9e2266a4e31947c3ae42e1ed2e5aeeb886746471ef07",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:24:00.382Z",
-      "url": "https://audio.gsavitha.in/audio/blog/feature-queries/5bfb42b42d51388b2d5f9e2266a4e31947c3ae42e1ed2e5aeeb886746471ef07/en.mp3"
-    }
-  },
-  "fluid-grids": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 115.39,
-      "bytes": 923136,
-      "hash": "e23474917adfaa0e3d7e73cbc2d54631b1a79cb9d4c37db84953668308538fef",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:24:01.055Z",
-      "url": "https://audio.gsavitha.in/audio/blog/fluid-grids/e23474917adfaa0e3d7e73cbc2d54631b1a79cb9d4c37db84953668308538fef/en.mp3"
-    }
-  },
-  "footer": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 85.75,
-      "bytes": 686016,
-      "hash": "0e111abe71167ffb9df4d29f7b46a134e51985252e54fd3f1aa39c46514ad645",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:24:01.696Z",
-      "url": "https://audio.gsavitha.in/audio/blog/footer/0e111abe71167ffb9df4d29f7b46a134e51985252e54fd3f1aa39c46514ad645/en.mp3"
-    }
-  },
-  "host-react-on-gh-pages": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 206.54,
-      "bytes": 1652352,
-      "hash": "94d5569d78259b17078607d6593cfe5f036c29bf0b818c0aa79d6a047b2a576b",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:24:02.325Z",
-      "url": "https://audio.gsavitha.in/audio/blog/host-react-on-gh-pages/94d5569d78259b17078607d6593cfe5f036c29bf0b818c0aa79d6a047b2a576b/en.mp3"
-    }
-  },
-  "http-server": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 475.25,
-      "bytes": 3801984,
-      "hash": "a9a7261de9ff6c0c396cbf423acd9cfcd76c78a1c056cb16af3fea9e5d578822",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:24:03.274Z",
-      "url": "https://audio.gsavitha.in/audio/blog/http-server/a9a7261de9ff6c0c396cbf423acd9cfcd76c78a1c056cb16af3fea9e5d578822/en.mp3"
-    }
-  },
-  "js-fundamentals-for-react": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 606.72,
-      "bytes": 4853760,
-      "hash": "953ca2c36d60c597e3e0aeb9c155987d62f146389fd58433c38af83115370819",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:24:04.058Z",
-      "url": "https://audio.gsavitha.in/audio/blog/js-fundamentals-for-react/953ca2c36d60c597e3e0aeb9c155987d62f146389fd58433c38af83115370819/en.mp3"
-    }
-  },
-  "js-hard-parts": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 117,
-      "bytes": 936000,
-      "hash": "0d5a132e8f36f6d96db724ecf5df33821c836344817fcc99676a76e9cbdf6fff",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:24:04.671Z",
-      "url": "https://audio.gsavitha.in/audio/blog/js-hard-parts/0d5a132e8f36f6d96db724ecf5df33821c836344817fcc99676a76e9cbdf6fff/en.mp3"
-    }
-  },
-  "kafka-explained-like-you-are-5": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 452.93,
-      "bytes": 3623424,
-      "hash": "f7aa9ccfdfa751feb0e4dd98868a2c793f77f5f4518d557d7d06896b29047c05",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:24:05.321Z",
-      "url": "https://audio.gsavitha.in/audio/blog/kafka-explained-like-you-are-5/f7aa9ccfdfa751feb0e4dd98868a2c793f77f5f4518d557d7d06896b29047c05/en.mp3"
-    }
-  },
-  "micro-frontends": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 394.97,
-      "bytes": 3159744,
-      "hash": "6722e0fb5e8b9dce3bbf7c9d38eb8dc00c4eb955950e3ca462e3d56746e63e18",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:24:06.137Z",
-      "url": "https://audio.gsavitha.in/audio/blog/micro-frontends/6722e0fb5e8b9dce3bbf7c9d38eb8dc00c4eb955950e3ca462e3d56746e63e18/en.mp3"
-    }
-  },
-  "promises-explained": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 360.17,
-      "bytes": 2881344,
-      "hash": "bd2a565af5ce9ce5cca54600153253a91881f6519d52e8540cc18ccd32a80763",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:24:07.481Z",
-      "url": "https://audio.gsavitha.in/audio/blog/promises-explained/bd2a565af5ce9ce5cca54600153253a91881f6519d52e8540cc18ccd32a80763/en.mp3"
-    }
-  },
-  "rbac-node": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 445.25,
-      "bytes": 3561984,
-      "hash": "f669d00b62bee156e83f9fd2444387c83bbe9487d2c3bbfedd63d78341d9cf61",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:24:08.968Z",
-      "url": "https://audio.gsavitha.in/audio/blog/rbac-node/f669d00b62bee156e83f9fd2444387c83bbe9487d2c3bbfedd63d78341d9cf61/en.mp3"
-    }
-  },
-  "react-events": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 158.86,
-      "bytes": 1270848,
-      "hash": "02d4d553ee640497b475f9d9f94b2f19c2a85914940168d5d735374dd57e826f",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:24:09.537Z",
-      "url": "https://audio.gsavitha.in/audio/blog/react-events/02d4d553ee640497b475f9d9f94b2f19c2a85914940168d5d735374dd57e826f/en.mp3"
-    }
-  },
-  "react-state-patterns": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 277.08,
-      "bytes": 2216640,
-      "hash": "0b66fdf96883f1999aa09ef5729aac12b8d8fff7460374aae933108cd0b4f803",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:24:10.286Z",
-      "url": "https://audio.gsavitha.in/audio/blog/react-state-patterns/0b66fdf96883f1999aa09ef5729aac12b8d8fff7460374aae933108cd0b4f803/en.mp3"
-    }
-  },
-  "real-time-delivery": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 613.85,
-      "bytes": 4910784,
-      "hash": "1e86a5ad1aa2b91b60a00f59b333444f98dec30e7602741201c6f8b81e5faaf7",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:24:11.569Z",
-      "url": "https://audio.gsavitha.in/audio/blog/real-time-delivery/1e86a5ad1aa2b91b60a00f59b333444f98dec30e7602741201c6f8b81e5faaf7/en.mp3"
-    }
-  },
-  "recursion-base-cases": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 184.87,
-      "bytes": 1478976,
-      "hash": "817ef70187c8e0c97930b47093e2f8fee6b16030ece9dec0d833fa1d09af6d40",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:24:12.279Z",
-      "url": "https://audio.gsavitha.in/audio/blog/recursion-base-cases/817ef70187c8e0c97930b47093e2f8fee6b16030ece9dec0d833fa1d09af6d40/en.mp3"
-    }
-  },
-  "recursion-simplified": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 377.95,
-      "bytes": 3023616,
-      "hash": "e7b08c9910722552fec23c79723213752ec9e63facb9b895e84ba761c0b3bd59",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:24:13.178Z",
-      "url": "https://audio.gsavitha.in/audio/blog/recursion-simplified/e7b08c9910722552fec23c79723213752ec9e63facb9b895e84ba761c0b3bd59/en.mp3"
-    }
-  },
-  "remove-all-facebook-likes": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 49.46,
-      "bytes": 395712,
-      "hash": "d455f058585ad46b2e77e45edffbd8c8d8cdc561a91fe43e002ea208062975c8",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:24:13.744Z",
-      "url": "https://audio.gsavitha.in/audio/blog/remove-all-facebook-likes/d455f058585ad46b2e77e45edffbd8c8d8cdc561a91fe43e002ea208062975c8/en.mp3"
-    }
-  },
   "return-multiple-jsx-elements": {
     "en": {
       "label": "English",
@@ -374,71 +439,6 @@
       "voice": "af_heart",
       "generatedAt": "2026-06-20T22:24:14.474Z",
       "url": "https://audio.gsavitha.in/audio/blog/return-multiple-jsx-elements/288b31064e7eb44ec04879d568fff72e7373ba18baf74e2f1a12f6b9a7dc36e5/en.mp3"
-    }
-  },
-  "skipping-react-import": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 67.25,
-      "bytes": 537984,
-      "hash": "ddfd24f240df253533d9d070e920ed8cd247b1d7ea90e906780ca30d1a124ee2",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:24:15.146Z",
-      "url": "https://audio.gsavitha.in/audio/blog/skipping-react-import/ddfd24f240df253533d9d070e920ed8cd247b1d7ea90e906780ca30d1a124ee2/en.mp3"
-    }
-  },
-  "solid-frontend": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 141.86,
-      "bytes": 1134912,
-      "hash": "be5aa3513acf5387f472bea9ffc99847e1b79c50f63dccfca3a85c42fde5da1e",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:24:15.723Z",
-      "url": "https://audio.gsavitha.in/audio/blog/solid-frontend/be5aa3513acf5387f472bea9ffc99847e1b79c50f63dccfca3a85c42fde5da1e/en.mp3"
-    }
-  },
-  "super-vs-super-props": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 169.13,
-      "bytes": 1353024,
-      "hash": "5b4207c4f8bb961ff30a3f73114f8752736307611cd5d6893206dd2cedbe8d4e",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:24:16.255Z",
-      "url": "https://audio.gsavitha.in/audio/blog/super-vs-super-props/5b4207c4f8bb961ff30a3f73114f8752736307611cd5d6893206dd2cedbe8d4e/en.mp3"
-    }
-  },
-  "sync-fork-with-original-git": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 148.51,
-      "bytes": 1188096,
-      "hash": "80cc7cdd86e992565c0743b956128f02ed21548fa8e18f53989331292746fca7",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:24:16.794Z",
-      "url": "https://audio.gsavitha.in/audio/blog/sync-fork-with-original-git/80cc7cdd86e992565c0743b956128f02ed21548fa8e18f53989331292746fca7/en.mp3"
-    }
-  },
-  "telegram-bot": {
-    "en": {
-      "label": "English",
-      "language": "en",
-      "duration": 251.28,
-      "bytes": 2010240,
-      "hash": "27d31bbbf49ae59a9097277c12ef13ef0fb7a06b5ce7695a315afa6f30c5382f",
-      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
-      "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:24:17.484Z",
-      "url": "https://audio.gsavitha.in/audio/blog/telegram-bot/27d31bbbf49ae59a9097277c12ef13ef0fb7a06b5ce7695a315afa6f30c5382f/en.mp3"
     }
   },
   "the-usestate-hook": {
@@ -454,17 +454,17 @@
       "url": "https://audio.gsavitha.in/audio/blog/the-usestate-hook/319be7e7554df6e2fc64481ced37a0a186d85a2b2e3bd68463449a73d233d35d/en.mp3"
     }
   },
-  "thundering-herd": {
+  "fluid-grids": {
     "en": {
       "label": "English",
       "language": "en",
-      "duration": 941.88,
-      "bytes": 7535040,
-      "hash": "eea3d5664bcdec404f145dd38c27cf4050c4bad7b92044eae232421f9ca192c7",
+      "duration": 115.39,
+      "bytes": 923136,
+      "hash": "e23474917adfaa0e3d7e73cbc2d54631b1a79cb9d4c37db84953668308538fef",
       "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
       "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:24:19.856Z",
-      "url": "https://audio.gsavitha.in/audio/blog/thundering-herd/eea3d5664bcdec404f145dd38c27cf4050c4bad7b92044eae232421f9ca192c7/en.mp3"
+      "generatedAt": "2026-06-20T22:24:01.055Z",
+      "url": "https://audio.gsavitha.in/audio/blog/fluid-grids/e23474917adfaa0e3d7e73cbc2d54631b1a79cb9d4c37db84953668308538fef/en.mp3"
     }
   }
 }
