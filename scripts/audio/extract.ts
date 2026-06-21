@@ -1,6 +1,6 @@
 import { mkdir, readdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import { BLOG_DIRECTORY, extractNarration } from './lib/narration.mjs';
+import { BLOG_DIRECTORY, extractNarration } from './lib/narration.ts';
 
 const outputDirectory = path.join(process.cwd(), '.cache/audio-narration');
 const requestedSlug = process.argv

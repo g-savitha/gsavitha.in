@@ -76,9 +76,9 @@ jobs:
           # synthesised segments for new/edited posts are never persisted, and
           # they get regenerated from scratch on every run. restore-keys pulls
           # the most recent prior cache as the warm starting point.
-          key: audio-v2-${{ runner.os }}-${{ hashFiles('scripts/audio/lib/config.mjs') }}-${{ github.run_id }}
+          key: audio-v2-${{ runner.os }}-${{ hashFiles('scripts/audio/lib/config.ts') }}-${{ github.run_id }}
           restore-keys: |
-            audio-v2-${{ runner.os }}-${{ hashFiles('scripts/audio/lib/config.mjs') }}-
+            audio-v2-${{ runner.os }}-${{ hashFiles('scripts/audio/lib/config.ts') }}-
             audio-v2-${{ runner.os }}-
             audio-v1-${{ runner.os }}-
       - name: Generate missing audio

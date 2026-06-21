@@ -22,8 +22,9 @@ import {
   narrationHash,
   resolveVoices,
   voiceGenerationSettings,
-} from './lib/narration.mjs';
-import { MIN_AUDIO_BYTES, MP3_BITRATE } from './lib/config.mjs';
+} from './lib/narration.ts';
+import { MIN_AUDIO_BYTES, MP3_BITRATE } from './lib/config.ts';
+import type { AudioManifest } from './lib/types.ts';
 
 const MANIFEST_PATH = path.join(process.cwd(), 'src/data/audioManifest.json');
 const apply = process.argv.includes('--apply');
@@ -41,20 +42,20 @@ if (missingEnvironment.length > 0) {
   process.exit(1);
 }
 
-const publicBaseUrl = process.env.AUDIO_PUBLIC_BASE_URL.replace(/\/+$/, '');
+const publicBaseUrl = process.env.AUDIO_PUBLIC_BASE_URL!.replace(/\/+$/, '');
 
 const s3 = new S3Client({
   region: 'auto',
   endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
   credentials: {
-    accessKeyId: process.env.R2_ACCESS_KEY_ID,
-    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+    accessKeyId: process.env.R2_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
   },
 });
 
-async function listAll(prefix) {
-  const out = new Map();
-  let continuationToken;
+async function listAll(prefix: string) {
+  const out = new Map<string, { size: number; lastModified?: Date }>();
+  let continuationToken: string | undefined;
   do {
     const response = await s3.send(
       new ListObjectsV2Command({
@@ -64,18 +65,20 @@ async function listAll(prefix) {
       }),
     );
     for (const object of response.Contents ?? []) {
-      out.set(object.Key, { size: object.Size, lastModified: object.LastModified });
+      if (object.Key) {
+        out.set(object.Key, { size: object.Size ?? 0, lastModified: object.LastModified });
+      }
     }
     continuationToken = response.IsTruncated ? response.NextContinuationToken : undefined;
   } while (continuationToken);
   return out;
 }
 
-async function readJson(filePath) {
+async function readJson(filePath: string): Promise<AudioManifest> {
   try {
-    return JSON.parse(await readFile(filePath, 'utf8'));
+    return JSON.parse(await readFile(filePath, 'utf8')) as AudioManifest;
   } catch (error) {
-    if (error.code === 'ENOENT') return {};
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return {};
     throw error;
   }
 }
@@ -84,7 +87,7 @@ const r2Objects = await listAll('audio/blog/');
 const files = (await readdir(BLOG_DIRECTORY)).filter((file) => /\.(md|mdx)$/i.test(file));
 const existingManifest = await readJson(MANIFEST_PATH);
 
-const manifest = {};
+const manifest: AudioManifest = {};
 let preserved = 0;
 let recovered = 0;
 let missing = 0;

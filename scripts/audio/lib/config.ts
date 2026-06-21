@@ -1,3 +1,5 @@
+import type { GenerationSettings } from './types.ts';
+
 export const MODEL = 'onnx-community/Kokoro-82M-v1.0-ONNX';
 export const DTYPE = 'q8';
 export const DEFAULT_VOICE = 'af_heart';
@@ -11,7 +13,7 @@ export const GENERATOR_VERSION = 2;
 // header-only file) so it is neither uploaded nor recorded in the manifest.
 export const MIN_AUDIO_BYTES = 1024;
 
-export function generationSettings(voice = DEFAULT_VOICE) {
+export function generationSettings(voice = DEFAULT_VOICE): GenerationSettings {
   return {
     model: MODEL,
     dtype: DTYPE,

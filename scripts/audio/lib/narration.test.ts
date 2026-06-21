@@ -1,8 +1,7 @@
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import test from 'node:test';
-import { contextualCodeSummary, extractNarration } from './narration.mjs';
+import { contextualCodeSummary, extractNarration } from './narration.ts';
 
 test('explicit audio-summary still wins over contextual fallback', async () => {
   const narration = await extractNarration(path.join(process.cwd(), 'src/content/blog/footer.md'));

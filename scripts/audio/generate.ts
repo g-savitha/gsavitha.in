@@ -11,7 +11,7 @@ import {
   narrationHash,
   resolveVoices,
   voiceGenerationSettings,
-} from './lib/narration.mjs';
+} from './lib/narration.ts';
 import {
   buildSpeechChunks,
   chunkCacheHash,
@@ -19,8 +19,9 @@ import {
   liveChunkHashes,
   resultFileLanguageStates,
   selectStaleSegmentFiles,
-} from './lib/cache.mjs';
-import { DTYPE, GENERATION_SPEED, MODEL, MP3_BITRATE, SAMPLE_RATE } from './lib/config.mjs';
+} from './lib/cache.ts';
+import { DTYPE, GENERATION_SPEED, MODEL, MP3_BITRATE, SAMPLE_RATE } from './lib/config.ts';
+import type { AudioManifest, GeneratedAudioIndex, Narration } from './lib/types.ts';
 
 // ─── Paths ───────────────────────────────────────────────────────────────────
 
@@ -40,13 +41,24 @@ const isWorker = process.argv.includes('--worker');
 
 // ─── lamejs (UMD bundle — load via vm sandbox) ───────────────────────────────
 
-const lameContext = {};
+interface Mp3EncoderInstance {
+  encodeBuffer(samples: Int16Array): Uint8Array;
+  flush(): Uint8Array;
+}
+
+interface LameContext {
+  lamejs?: {
+    Mp3Encoder: new (channels: number, sampleRate: number, bitrate: number) => Mp3EncoderInstance;
+  };
+}
+
+const lameContext: LameContext = {};
 vm.createContext(lameContext);
 vm.runInContext(
   await readFile(new URL('../../node_modules/lamejs/lame.all.js', import.meta.url), 'utf8'),
   lameContext,
 );
-const { Mp3Encoder } = lameContext.lamejs;
+const Mp3Encoder = lameContext.lamejs!.Mp3Encoder;
 
 // ─── Segment cache ───────────────────────────────────────────────────────────
 //
@@ -54,10 +66,10 @@ const { Mp3Encoder } = lameContext.lamejs;
 // hash of (text, model, dtype, voice, speed).  On a re-run only paragraphs
 // that actually changed need a TTS call; everything else is assembled from
 // the cache.  This makes incremental edits — fixing a typo, adding a section
-// — very fast.  Chunking and hashing live in ./lib/cache.mjs so they can be
+// — very fast.  Chunking and hashing live in ./lib/cache.ts so they can be
 // unit tested without loading the TTS model.
 
-async function getCachedChunk(hash) {
+async function getCachedChunk(hash: string): Promise<AudioSamples | null> {
   if (force) return null;
   try {
     const raw = await readFile(path.join(SEGMENT_CACHE_DIR, `${hash}.f32`));
@@ -69,7 +81,7 @@ async function getCachedChunk(hash) {
   }
 }
 
-async function setCachedChunk(hash, audio) {
+async function setCachedChunk(hash: string, audio: AudioSamples) {
   await mkdir(SEGMENT_CACHE_DIR, { recursive: true });
   // audio.buffer may be shared; copy just the relevant bytes
   await writeFile(
@@ -86,14 +98,15 @@ async function setCachedChunk(hash, audio) {
 // rather than O(total-file) Float32 + O(total-file) MP3 bytes.
 
 const GAP = new Float32Array(Math.round(SAMPLE_RATE * 0.22)); // 220 ms silence
+type AudioSamples = Float32Array<ArrayBufferLike>;
 
-function encodeToMp3Buffers(encoder, samples) {
+function encodeToMp3Buffers(encoder: Mp3EncoderInstance, samples: AudioSamples) {
   const int16 = new Int16Array(samples.length);
   for (let i = 0; i < samples.length; i++) {
     const s = Math.max(-1, Math.min(1, samples[i]));
     int16[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
   }
-  const out = [];
+  const out: Buffer[] = [];
   const blockSize = 1152;
   for (let i = 0; i < int16.length; i += blockSize) {
     const encoded = encoder.encodeBuffer(int16.subarray(i, i + blockSize));
@@ -108,7 +121,7 @@ function encodeToMp3Buffers(encoder, samples) {
 // cache.  If every chunk for every pending post is already cached, Kokoro is
 // never initialised — saving several seconds on incremental CI runs.
 
-let tts = null;
+let tts: KokoroTTS | null = null;
 
 async function ensureTts() {
   if (tts) return tts;
@@ -117,7 +130,7 @@ async function ensureTts() {
   tts = await KokoroTTS.from_pretrained(MODEL, {
     dtype: DTYPE,
     device: 'cpu',
-    progress_callback: (p) => {
+    progress_callback: (p: { status?: string; progress?: number }) => {
       if (p.status === 'progress' && p.progress != null) {
         const pct = Math.round(p.progress);
         if (pct > lastPct && (pct >= lastPct + 10 || pct === 100)) {
@@ -131,9 +144,25 @@ async function ensureTts() {
   return tts;
 }
 
+interface GeneratedVoiceResult {
+  storageKey: string;
+  outputPath: string;
+  label: string;
+  language: string;
+  duration: number;
+  bytes: number;
+  hash: string;
+  model: string;
+  voice: string;
+  generatedAt: string;
+}
+
 // ─── Per-voice generation ────────────────────────────────────────────────────
 
-async function generateForVoice(narration, voiceConfig) {
+async function generateForVoice(
+  narration: Narration,
+  voiceConfig: ReturnType<typeof resolveVoices>[number],
+): Promise<GeneratedVoiceResult> {
   const { voice, language, label } = voiceConfig;
   const settings = voiceGenerationSettings(voiceConfig);
   const hash = narrationHash(narration, settings);
@@ -153,22 +182,28 @@ async function generateForVoice(narration, voiceConfig) {
   if (misses > 0) await ensureTts();
 
   const encoder = new Mp3Encoder(1, SAMPLE_RATE, MP3_BITRATE);
-  const mp3Parts = [];
+  const mp3Parts: Buffer[] = [];
   let totalSamples = 0;
   let synthesised = 0;
 
   for (let i = 0; i < chunkInfos.length; i++) {
-    let { text, cHash, audio } = chunkInfos[i];
+    const { text, cHash } = chunkInfos[i];
+    let audio: AudioSamples | null = chunkInfos[i].audio;
 
     if (!audio) {
       process.stdout.write(`\r    Synthesising chunk ${++synthesised}/${misses}`);
-      const result = await tts.generate(text, { voice, speed: GENERATION_SPEED });
+      const model = await ensureTts();
+      const result = await model.generate(text, {
+        voice: voice as 'af_heart',
+        speed: GENERATION_SPEED,
+      });
       audio = result.audio;
       await setCachedChunk(cHash, audio);
     }
 
-    totalSamples += audio.length;
-    mp3Parts.push(...encodeToMp3Buffers(encoder, audio));
+    const samples = audio;
+    totalSamples += samples.length;
+    mp3Parts.push(...encodeToMp3Buffers(encoder, samples));
     if (i < chunkInfos.length - 1) {
       mp3Parts.push(...encodeToMp3Buffers(encoder, GAP));
       totalSamples += GAP.length;
@@ -205,12 +240,16 @@ async function generateForVoice(narration, voiceConfig) {
 
 // ─── Per-post generation (all voices) ───────────────────────────────────────
 
-async function generatePost(narration, manifest, generated) {
+async function generatePost(
+  narration: Narration,
+  manifest: AudioManifest,
+  generated: GeneratedAudioIndex,
+) {
   const voices = resolveVoices(narration);
-  const results = {};
+  const results: Record<string, GeneratedVoiceResult> = {};
 
   for (const voiceConfig of voices) {
-    const { voice, language } = voiceConfig;
+    const { language } = voiceConfig;
     const settings = voiceGenerationSettings(voiceConfig);
     const hash = narrationHash(narration, settings);
 
@@ -248,8 +287,8 @@ async function generatePost(narration, manifest, generated) {
 //
 // The pass is cheap: hashing is pure CPU with no I/O beyond the readdir.
 
-async function evictStaleSegments(activeNarrations) {
-  let files;
+async function evictStaleSegments(activeNarrations: Narration[]) {
+  let files: string[];
   try {
     files = await readdir(SEGMENT_CACHE_DIR);
   } catch {
@@ -268,16 +307,16 @@ async function evictStaleSegments(activeNarrations) {
 
 // ─── JSON utilities ──────────────────────────────────────────────────────────
 
-async function loadJson(filePath, fallback = {}) {
+async function loadJson<T>(filePath: string, fallback: T): Promise<T> {
   try {
-    return JSON.parse(await readFile(filePath, 'utf8'));
+    return JSON.parse(await readFile(filePath, 'utf8')) as T;
   } catch (err) {
-    if (err.code === 'ENOENT') return fallback;
+    if ((err as NodeJS.ErrnoException).code === 'ENOENT') return fallback;
     throw err;
   }
 }
 
-async function fileExists(filePath) {
+async function fileExists(filePath: string) {
   try {
     await access(filePath);
     return true;
@@ -286,7 +325,7 @@ async function fileExists(filePath) {
   }
 }
 
-async function saveJson(filePath, data) {
+async function saveJson(filePath: string, data: unknown) {
   await mkdir(path.dirname(filePath), { recursive: true });
   await writeFile(filePath, `${JSON.stringify(data, null, 2)}\n`);
 }
@@ -294,9 +333,17 @@ async function saveJson(filePath, data) {
 // Return true when a slug's result file from a previous partial run already
 // satisfies the current content hash for every voice — meaning the worker
 // completed successfully before and the orchestrator can skip re-dispatching.
-async function isResultFileValid(slug, narration, manifest, generated) {
+async function isResultFileValid(
+  slug: string,
+  narration: Narration,
+  manifest: AudioManifest,
+  generated: GeneratedAudioIndex,
+) {
   if (force) return false;
-  const result = await loadJson(path.join(RESULTS_DIR, `${slug}.json`), null);
+  const result = await loadJson<Record<string, { hash?: string; outputPath?: string }> | null>(
+    path.join(RESULTS_DIR, `${slug}.json`),
+    null,
+  );
   if (!result) return false;
 
   const languageStates = await resultFileLanguageStates({
@@ -312,10 +359,10 @@ async function isResultFileValid(slug, narration, manifest, generated) {
 // Merge per-post result files (written by workers) into the generated index.
 // Only merges slugs that were part of the current job run to avoid picking up
 // stale files from earlier aborted runs.
-async function mergeResultFiles(generated, slugs) {
+async function mergeResultFiles(generated: GeneratedAudioIndex, slugs: string[]) {
   for (const slug of slugs) {
     const resultPath = path.join(RESULTS_DIR, `${slug}.json`);
-    const results = await loadJson(resultPath, null);
+    const results = await loadJson<Record<string, GeneratedVoiceResult> | null>(resultPath, null);
     if (results) {
       generated[slug] = { ...(generated[slug] ?? {}), ...results };
     }
@@ -333,8 +380,8 @@ async function mergeResultFiles(generated, slugs) {
 // The orchestrator merges those result files into the generated index once all
 // workers complete.  No shared mutable state between workers.
 
-function spawnWorker(slug) {
-  return new Promise((resolve, reject) => {
+function spawnWorker(slug: string) {
+  return new Promise<void>((resolve, reject) => {
     const child = spawn(process.execPath, [__filename, `--slug=${slug}`, '--worker'], {
       stdio: 'inherit',
     });
@@ -346,10 +393,10 @@ function spawnWorker(slug) {
   });
 }
 
-async function runParallel(slugs, workerCount) {
+async function runParallel(slugs: string[], workerCount: number) {
   console.log(`Spawning ${workerCount} worker(s) for ${slugs.length} post(s)…\n`);
   const queue = [...slugs];
-  const failures = [];
+  const failures: string[] = [];
 
   // Each "virtual worker" pulls slugs from the shared queue until it's empty.
   // Actual CPU parallelism comes from the child processes spawned by spawnWorker.
@@ -357,10 +404,12 @@ async function runParallel(slugs, workerCount) {
     Array.from({ length: workerCount }, async () => {
       while (queue.length > 0) {
         const slug = queue.shift();
+        if (!slug) continue;
         try {
           await spawnWorker(slug);
         } catch (err) {
-          console.error(err.message);
+          const message = err instanceof Error ? err.message : String(err);
+          console.error(message);
           failures.push(slug);
         }
       }
@@ -375,8 +424,8 @@ async function runParallel(slugs, workerCount) {
 
 // ─── Main ────────────────────────────────────────────────────────────────────
 
-const manifest = await loadJson(MANIFEST_PATH);
-const generated = await loadJson(GENERATED_INDEX_PATH);
+const manifest = await loadJson<AudioManifest>(MANIFEST_PATH, {});
+const generated = await loadJson<GeneratedAudioIndex>(GENERATED_INDEX_PATH, {});
 
 const allFiles = (await readdir(BLOG_DIRECTORY)).filter((f) => /\.(md|mdx)$/i.test(f));
 const files = allFiles.filter(
@@ -408,7 +457,7 @@ const narrations = await Promise.all(
 );
 
 // Validate and build job list
-const jobs = [];
+const jobs: Narration[] = [];
 
 for (const narration of narrations) {
   if (!narration.audio.enabled) {

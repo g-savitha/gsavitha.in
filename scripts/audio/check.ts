@@ -6,12 +6,13 @@ import {
   narrationHash,
   resolveVoices,
   voiceGenerationSettings,
-} from './lib/narration.mjs';
+} from './lib/narration.ts';
+import type { AudioManifest } from './lib/types.ts';
 
 const strict = process.argv.includes('--strict');
 const pruneStale = process.argv.includes('--prune-stale');
 const manifestPath = path.join(process.cwd(), 'src/data/audioManifest.json');
-const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+const manifest = JSON.parse(await readFile(manifestPath, 'utf8')) as AudioManifest;
 
 let failed = false;
 let pruned = false;
@@ -76,14 +77,14 @@ for (const file of files) {
       continue;
     }
 
-    if (entry.url.startsWith('/')) {
+    if (entry.url?.startsWith('/')) {
       try {
         await access(path.join(process.cwd(), 'public', entry.url.replace(/^\//, '')));
       } catch {
         console.error(`Audio file is missing for ${narration.slug} [${language}]: ${entry.url}`);
         failed = true;
       }
-    } else if (!entry.url.startsWith('https://')) {
+    } else if (!entry.url?.startsWith('https://')) {
       console.error(
         `Audio URL must be root-relative or HTTPS for ${narration.slug} [${language}]: ${entry.url}`,
       );
