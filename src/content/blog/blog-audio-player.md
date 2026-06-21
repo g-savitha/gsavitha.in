@@ -420,8 +420,6 @@ flowchart TD
 
 `audio.yml` owns generation. It only triggers when blog content or the audio scripts change, and it runs in its own concurrency group with `cancel-in-progress: false` — so a long synthesis run finishes instead of being killed by the next unrelated push. When it's done it commits the manifest back to main, rebasing first so it never clobbers a concurrent change, and then explicitly triggers a deploy so the new URLs go live.
 
-That commit step is deliberately defensive, and learning why cost me a few confused hours. The job runs with `continue-on-error: true` so a flaky synthesis never blocks a deploy — but that same flag will happily swallow a failed `git push` too. At one point `bun install` was leaving the lockfile dirty, which made the rebase abort, which dropped the manifest push, all while the run stayed green. The bucket had the new audio; main still pointed at the old, already-deleted file. The fix is to auto-stash that unrelated working-tree noise before rebasing, so the publish either lands or fails loudly. A commit step that can fail silently is the one thing this whole design can't tolerate — a dropped manifest is exactly what sent earlier runs into endless regeneration.
-
 Both generation and upload still run with `continue-on-error: true`. If TTS has a bad day, the manifest simply doesn't change and the site keeps deploying with the audio that already exists.
 
 The model weights, segment cache, worker result files, and staged MP3 output are cached between runs, keyed so that freshly synthesized segments are always persisted rather than thrown away. The first run is slow. Every run after that only processes what actually changed — and when nothing changed, the whole job finishes in seconds instead of hours.
