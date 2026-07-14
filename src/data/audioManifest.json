@@ -42,13 +42,13 @@
     "en": {
       "label": "English",
       "language": "en",
-      "duration": 512.87,
-      "bytes": 4103424,
-      "hash": "a8a133de9cdfa9b7ec5a919584d98a74f412b566c44f0b508d1f694190c5f136",
+      "duration": 509.5,
+      "bytes": 4076352,
+      "hash": "50f0cc9cc7c779052cb3de4afae39969068967511a528621a197a3c3f5954f05",
       "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
       "voice": "af_heart",
-      "generatedAt": "2026-07-14T16:36:45.530Z",
-      "url": "https://audio.gsavitha.in/audio/blog/two-sides-of-ai-engineering/a8a133de9cdfa9b7ec5a919584d98a74f412b566c44f0b508d1f694190c5f136/en.mp3"
+      "generatedAt": "2026-07-14T17:52:27.149Z",
+      "url": "https://audio.gsavitha.in/audio/blog/two-sides-of-ai-engineering/50f0cc9cc7c779052cb3de4afae39969068967511a528621a197a3c3f5954f05/en.mp3"
     }
   },
   "dark-theme-css": {
