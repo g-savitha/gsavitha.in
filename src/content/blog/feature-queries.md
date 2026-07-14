@@ -1,6 +1,5 @@
 ---
 title: "Feature Queries in Web Development"
-url: "/posts/feature-queries-in-web-dev"
 date: 2023-03-27T13:26:46+05:30
 draft: false
 audio:
@@ -18,7 +17,6 @@ tags:
 categories:
   - frontend
 ---
-
 
 ## What are feature queries?
 

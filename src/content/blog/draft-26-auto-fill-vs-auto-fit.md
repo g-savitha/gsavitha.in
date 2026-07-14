@@ -1,6 +1,5 @@
 ---
 title: "Auto Fill vs Auto Fit"
-url: "/posts/auto-fill-vs-auto-fit"
 date: 2023-04-02T00:05:35+05:30
 draft: true
 ---

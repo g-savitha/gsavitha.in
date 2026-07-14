@@ -1,6 +1,5 @@
 ---
 title: "Async and Await"
-url: "/posts/async-await"
 date: 2021-05-12T12:58:09+05:30
 draft: false
 audio:

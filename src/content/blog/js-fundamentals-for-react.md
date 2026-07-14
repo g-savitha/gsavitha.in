@@ -1,6 +1,5 @@
 ---
 title: "JS fundamentals for  React"
-url: "/posts/js-fundamentals-for-react"
 date: 2021-05-10T13:38:45+05:30
 draft: false
 audio:
@@ -18,7 +17,6 @@ categories:
 series:
   - Epic React
 ---
-
 
 Hey, there :wave:
 

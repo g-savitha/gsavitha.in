@@ -1,6 +1,5 @@
 ---
 title: "Unpacking the useState hook"
-url: "/posts/the-usestate-hook"
 date: 2023-06-18T09:47:20+05:30
 draft: false
 audio:
@@ -171,7 +170,7 @@ This process is known as ***reconcillation***. React uses this algorithm to chec
 
 Now, once React has figured out the differences between two snapshots, it has to ***Commit*** those changes. It updates the DOM with only the things that have been changed.
 
-{{< img src="/images/blog-img/react-core-loop.jpeg" alt="react-core-loop-image" width="400px" position="center" >}}
+![react-core-loop-image](../../assets/blog/react-core-loop.jpeg)
 
 ### Rendering vs Painting
 
@@ -225,7 +224,6 @@ Nothing has changed in the UI, so *no DOM Manipulation*.
 When we say re-rendering, we're checking if anything is changed between the snapshots. If there is any difference, React will need to update the DOM. When React updates the DOM, browser needs to ***re-paint*** it.
 
 Refer Official React docs to learn about [Render and Commit](https://react.dev/learn/render-and-commit) in depth.
-
 
 ## Asynchronous State updates
 
@@ -290,8 +288,7 @@ Now we have access to the new value right away. We store the updated value, so t
 
 Can't updating a state variable be simple?
 
-{{< img src="/images/blog-img/state-meme.png" alt="updating-a-state-meme" width="400px" position="center" >}}
-
+![updating-a-state-meme](../../assets/blog/state-meme.png)
 
 ## What's all this fuss about?
 The above image, represents the state in [Svelte](https://svelte.dev/). 

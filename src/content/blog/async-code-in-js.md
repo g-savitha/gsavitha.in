@@ -1,6 +1,5 @@
 ---
 title: "Asynchronous Code in Javascript"
-url: "/posts/async-js"
 date: 2021-05-12T12:09:58+05:30
 draft: false
 audio:
@@ -134,9 +133,6 @@ But callbacks are not perfect, they can get messy very quickly.
 
 _In the below example, you dont need to worry what `transform` and `translate` are. Just imagine there is a button on the page, every time the below function executes, it moves right by 100px_
 
-{{< codes html js>}}
-{{< code >}}
-
 ```html
 <body>
   <button>Move me</button>
@@ -144,18 +140,12 @@ _In the below example, you dont need to worry what `transform` and `translate` a
 </body>
 ```
 
-{{< /code >}}
-{{< code >}}
-
 ```js
 const btn = document.querySelector("button");
 setTimeout(() => {
   btn.style.transform = `translateX(100px)`; //moves the button to the right by 100px
 }, 1000);
 ```
-
-{{< /code >}}
-{{< /codes >}}
 
 Now lets say i want to move this button 5 levels deeper for every 1 sec. We need to nest this function .(_move 5 times towards right_)
 
@@ -303,7 +293,7 @@ moveX(
 
 This is where promises come in. Promises allow us to rewrite a function like this without doing all of this crazy nesting. It makes the code more easier to read
 
-If you want to know more about promises, refer [Promises Explained]({{< ref "/posts/14-promises-explained.md">}}).
+If you want to know more about promises, refer [Promises Explained](/blog/promises-explained/).
 
 Hope that was not convoluted and crazy. Until next time, Happy learning :tada: :computer:
 

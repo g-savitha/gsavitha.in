@@ -1,6 +1,5 @@
 ---
 title: "Fixing Your Footer Position with Flexbox"
-url: "/posts/footer-flexbox"
 date: 2023-03-27T14:09:27+05:30
 draft: false
 audio:

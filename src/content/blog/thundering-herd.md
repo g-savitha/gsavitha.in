@@ -1,6 +1,5 @@
 ---
 title: "The Thundering Herd Problem"
-url: "/posts/thundering-herd"
 date: 2026-03-03T22:20:24+05:30
 draft: false
 audio:
@@ -450,11 +449,10 @@ Every layer has a job. Rate limiter caps volume. Single-flight ensures one DB qu
 
 **Braintree** - Failed jobs retrying on fixed intervals stacked perfectly on top of new traffic, overwhelming services every N seconds like clockwork. Adding jitter to retry logic broke the synchronization. The outage stopped.
 
-
 ---
 
 ## Further Reading
-- [Caching Strategies to Prevent Thundering Herd](https://gsavitha.in/posts/caching-strategies/) - SWR, probabilistic early expiration, cache warming and more - techniques that pick up where this post leaves off
+- [Caching Strategies to Prevent Thundering Herd](/blog/caching-strategies/) - SWR, probabilistic early expiration, cache warming and more - techniques that pick up where this post leaves off
   
 - [Instagram Engineering: Thundering Herds & Promises](https://instagram-engineering.com/thundering-herds-promises-82191c8af57d) - The Promise-caching approach, by the people who built it
 - [Braintree/PayPal: Fixing the Retry Storm](https://www.infoq.com/news/2022/05/braintree-thundering-herd/) - Real incident, real fix with backoff + jitter

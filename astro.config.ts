@@ -1,6 +1,7 @@
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig } from 'astro/config';
+import remarkGemoji from 'remark-gemoji';
 import { remarkMermaid } from './remark-mermaid.ts';
 
 import tailwindcss from '@tailwindcss/vite';
@@ -12,7 +13,7 @@ export default defineConfig({
   base: '/',
   integrations: [mdx(), sitemap(), react()],
   markdown: {
-    remarkPlugins: [remarkMermaid],
+    remarkPlugins: [remarkGemoji, remarkMermaid],
     shikiConfig: {
       theme: 'github-dark',
     },

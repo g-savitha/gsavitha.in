@@ -1,6 +1,5 @@
 ---
 title: "Must Known: Backend Communication Design Patterns"
-url: "/posts/be-communication-dp"
 date: 2023-09-01T13:16:42+05:30
 draft: true
 hideToc: false

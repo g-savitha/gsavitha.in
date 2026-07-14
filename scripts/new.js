@@ -9,14 +9,21 @@ if (!type || !name) {
   process.exit(1);
 }
 
+const slug = name.replace(/\.md$/i, '');
 const date = new Date();
 const isoString = date.toISOString();
 const shortDate = isoString.split('T')[0];
-// Format for blog: 2023-04-01T22:07:21+05:30 (approximate match)
-const fullDate = isoString;
+
+function titleFromSlug(value) {
+  return value
+    .split('-')
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
 
 const folder = type === 'blog' ? 'blog' : 'papers';
-const filename = name.endsWith('.md') ? name : `${name}.md`;
+const filename = slug.endsWith('.md') ? slug : `${slug}.md`;
 const filePath = path.join(process.cwd(), 'src/content', folder, filename);
 
 if (fs.existsSync(filePath)) {
@@ -26,17 +33,25 @@ if (fs.existsSync(filePath)) {
 
 const templates = {
   blog: `---
-title: "${name.replace(/-/g, ' ')}"
-date: ${fullDate}
+title: "${titleFromSlug(slug)}"
+date: ${isoString}
 draft: false
-heroImage: ""
+heroImage: "../../assets/${slug}.png"
+audio:
+  enabled: true
+  voice: af_heart
+  codeSummaryMode: contextual
+hideToc: false
+enableToc: true
+enableTocContent: true
+pinned: false
 tags: []
 categories: []
 ---
 
 `,
   paper: `---
-title: "${name.replace(/-/g, ' ')}"
+title: "${titleFromSlug(slug)}"
 url: ""
 date: ${shortDate}
 ---
@@ -46,8 +61,6 @@ date: ${shortDate}
 
 const template = templates[type === 'blog' ? 'blog' : 'paper'];
 
-// Ensure directory exists
 fs.mkdirSync(path.dirname(filePath), { recursive: true });
-
 fs.writeFileSync(filePath, template);
 console.log(`\x1b[32m✔ Created ${type} content at ${filePath}\x1b[0m`);

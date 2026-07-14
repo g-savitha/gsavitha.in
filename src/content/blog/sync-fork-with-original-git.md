@@ -1,6 +1,5 @@
 ---
 title: "Syncing Git Fork with Original Repository"
-url: "/posts/sync-git-fork-with-original-repo"
 date: 2020-09-11T11:30:29+05:30
 draft: false
 audio:
@@ -14,7 +13,6 @@ categories: [devops]
 hideToc: false
 enableToc: true
 enableTocContent: true
-
 
 ---
 

@@ -1,6 +1,5 @@
 ---
 title: 'Execution Context Demystified'
-url: "/posts/jshp-execution-context"
 date: 2023-03-25T14:14:58+05:30
 draft: false
 audio:
@@ -25,7 +24,7 @@ series:
 
 Greetings! :wave:,
 
-Welcome to the first part of the [JS Hard Parts: Demystified]({{< ref "/posts/19-js-hard-parts.md">}}) series. In this post, we will delve into the concepts of callbacks, execution context, functions, and higher-order functions. So let's get started without any delay :rocket:
+Welcome to the first part of the [JS Hard Parts: Demystified](/blog/js-hard-parts/) series. In this post, we will delve into the concepts of callbacks, execution context, functions, and higher-order functions. So let's get started without any delay :rocket:
 
 Before we proceed, I assume that you already have knowledge of writing loops, functions, and [call stack](https://developer.mozilla.org/en-US/docs/Glossary/Call_stack) 
 
@@ -46,8 +45,7 @@ const result = copyArrayAndMultiplyBy2(myArr);
 ``` 
 When this code is interpreted, it executes as follows:
 
-{{< img src="/images/blog-img/cm.jpeg" alt="copyAndMultiplyBy2" width="400px" position="center" >}}
-
+![copyAndMultiplyBy2](../../assets/blog/cm.jpeg)
 
 1. A function labeled `copyArrayAndMultiplyBy2` with a value of function is created in the **global memory** (interpreter just has a memory of it, didn't execute it yet).
 2. The array myArr is created in the global memory.
@@ -74,7 +72,7 @@ const result = copyArrayAndDivideBy2(myArr);
 
 This is how it is interpreted :
 
-{{< img src="/images/blog-img/cd.jpeg" alt="copyAndDivideBy2" width="400px" position="center" >}}
+![copyAndDivideBy2](../../assets/blog/cd.jpeg)
 
 Did you observe something? this function **violates the D.R.Y (Don't Repeat Yourself) principle.**
 
@@ -102,12 +100,11 @@ const result = copyArrayAndManipulate(myArr, multiplyBy2);
 ```
 In this case, we pass in a specific instruction (the `multiplyBy2` callback function) to the `copyArrayAndManipulate` function. The `copyArrayAndManipulate` function takes care of executing the `multiplyBy2` instruction on each element of myArr and returns the manipulated array result.
 
-{{< img src="/images/blog-img/cm1.jpeg" alt="copyAndManipulate" width="400px" position="center" >}}
-
+![copyAndManipulate](../../assets/blog/cm1.jpeg)
 
 Interpreter executes this as follows:
 
-{{< img src="/images/blog-img/cm2.jpeg" alt="copyAndManipulate" width="400px" position="center" >}}
+![copyAndManipulate](../../assets/blog/cm2.jpeg)
 
 Does this function `copyArrayAndManipulate` remind you of anything?. Yes, it's the polyfill of `Arrays.map()` 
 

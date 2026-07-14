@@ -1,6 +1,5 @@
 ---
 title: "React Fundamentals: Intro to Raw React APIs"
-url: "/posts/raw-react-apis"
 date: 2021-05-12T14:35:48+05:30
 draft: true
 hideToc: false
@@ -17,7 +16,7 @@ series:
 
 Hey, there :wave:
 
-Welcome to the 2nd article of the [Epic React Series]({{< ref "/posts/12-epic-react-intro.md">}}) which is based on the workshop [EpicReact.dev](https://epicreact.dev/) by [Kent C. Dodds](https://kentcdodds.com/). If you haven't read previous article of the series, I recommend you to go and read it first before proceeding further.
+Welcome to the 2nd article of the [Epic React Series](/blog/epic-react-intro/) which is based on the workshop [EpicReact.dev](https://epicreact.dev/) by [Kent C. Dodds](https://kentcdodds.com/). If you haven't read previous article of the series, I recommend you to go and read it first before proceeding further.
 
 - [JS Fundamentals required to get started with React](./js-fundamentals-for-react.md)
 

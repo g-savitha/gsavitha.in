@@ -1,6 +1,5 @@
 ---
 title: "How Did I build Bookmark GPT Pro"
-url: "/posts/bookmark-gpt-pro"
 date: 2025-11-08T08:48:46+05:30
 draft: true
 hideToc: false
@@ -450,7 +449,6 @@ The project demonstrates several key principles for modern browser extension dev
 2. **Progressive Enhancement**: Build core functionality that works without dependencies, then layer on AI features
 3. **Performance First**: Optimize for speed and responsiveness, especially when dealing with large datasets
 4. **User-Centric Design**: Focus on solving real user problems rather than showcasing technology
-
 
 The extension is now live on the Chrome Web Store, serving users who want to transform their browsing habits into an intelligent knowledge-building workflow.
 
