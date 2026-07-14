@@ -1,6 +1,5 @@
 ---
 title: "Fluid Grids"
-url: "/posts/fluid-grids"
 date: 2023-04-01T23:01:00+05:30
 draft: false
 audio:
@@ -23,8 +22,6 @@ categories:
 
 Let's look at this *world famous* CSS snippet that creates a dynamic number of columns (as you resize your browser), maintaining each column to be the same width.
 
-{{< codes html css >}}
-{{< code >}}
 ```html
 <main class="grid">
   <div class="grid_item"></div>
@@ -35,8 +32,7 @@ Let's look at this *world famous* CSS snippet that creates a dynamic number of c
   <div class="grid_item"></div>
 </main>
 ```
-{{< /code >}}
-{{< code >}}
+
 ```css
 .grid {
     display: grid;
@@ -45,15 +41,12 @@ Let's look at this *world famous* CSS snippet that creates a dynamic number of c
       repeat(auto-fill, minmax(150px, 1fr));
   }
 ```
-{{< /code >}}
-{{< /codes >}}
 
 This is useful when we have a list of items to render, lets take card components for instance. We want them to be uniform and tile nicely no matter what the screen size is, or how many items we have.
 
 Let's try to understand the snippet.
 1. `minmax` function of CSS grid, helps us in constraining the value between upper and lower bounds. 
 2. `auto-fill` helps us to fit our grid with as many 150px wide columned cards as possible. They increase/ decrease as we resize our browser. `auto-fill` helps us to implement **_fluid behaviour_** in grid.
-
 
 What if the width of the grid is higher, lets say 420px? On larger screens its fine, but on smaller screens, you might see a weird *horizontal scrollbar* extending on your screen. To avoid that, we can implement this in 2 ways.
 

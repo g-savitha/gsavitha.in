@@ -1,6 +1,5 @@
 ---
 title: "Useful Git commands for newbies"
-url : "/posts/useful-git-commands"
 date: 2020-09-01T16:46:33+05:30
 draft: true
 meta:

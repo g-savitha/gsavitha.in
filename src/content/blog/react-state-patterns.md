@@ -1,6 +1,5 @@
 ---
 title: "React State Patterns"
-url : "/posts/react-state-patterns"
 date: 2020-09-01T16:27:52+05:30
 draft: false
 audio:

@@ -1,6 +1,5 @@
 ---
 title: "Efficient Event handling in React"
-url: "/posts/efficient-event-handling-react"
 date: 2023-06-17T22:33:33+05:30
 draft: false
 audio:
@@ -39,7 +38,6 @@ Alternatively, we can embed the event handler directly in HTML:
 ```
 
 **React follows this pattern**. We pass an event handler as a prop to JSX.
-
 
 ```jsx
 const App = () =>{

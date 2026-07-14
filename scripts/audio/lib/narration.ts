@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import remarkFrontmatter from 'remark-frontmatter';
+import remarkGemoji from 'remark-gemoji';
 import remarkGfm from 'remark-gfm';
 import remarkParse from 'remark-parse';
 import { unified } from 'unified';
@@ -21,7 +22,11 @@ import type {
 export const NARRATION_SCHEMA_VERSION = 2;
 export const BLOG_DIRECTORY = path.join(process.cwd(), 'src/content/blog');
 
-const processor = unified().use(remarkParse).use(remarkFrontmatter, ['yaml']).use(remarkGfm);
+const processor = unified()
+  .use(remarkParse)
+  .use(remarkFrontmatter, ['yaml'])
+  .use(remarkGfm)
+  .use(remarkGemoji);
 
 function cleanText(value: string) {
   return value
@@ -55,6 +60,21 @@ function inlineText(node: MdNode | null | undefined): string {
 function audioSummaryFromHtml(value: string) {
   const match = value.match(/<!--\s*audio-summary\s*:\s*([\s\S]*?)-->/i);
   return match ? cleanText(match[1]) : null;
+}
+
+function paragraphImage(node: MdNode) {
+  if (node.type !== 'paragraph') return null;
+
+  const children = (node.children ?? []).filter(
+    (child) => !(child.type === 'text' && !(child.value ?? '').trim()),
+  );
+
+  if (children.length !== 1 || children[0]?.type !== 'image') return null;
+  return children[0];
+}
+
+function isImageNode(node: MdNode) {
+  return node.type === 'image' || paragraphImage(node) !== null;
 }
 
 function frontmatterFromTree(tree: MdRoot) {
@@ -334,7 +354,15 @@ function extractSegments(tree: MdRoot, title: string, audio: AudioConfig) {
         continue;
       }
 
-      // A summary only describes the code block immediately following it.
+      if (isImageNode(node)) {
+        if (pendingCodeSummary) {
+          addSegment('image-summary', pendingCodeSummary);
+        }
+        pendingCodeSummary = null;
+        continue;
+      }
+
+      // A summary only describes the code block or image immediately following it.
       pendingCodeSummary = null;
 
       switch (node.type) {

@@ -1,6 +1,5 @@
 ---
 title: "Hosting react projects on GH Pages"
-url : "/posts/hosting-react-on-ghp"
 date: 2020-09-11T12:31:59+05:30
 draft: false
 audio:
@@ -122,5 +121,4 @@ Other than Github, you can host your website on [Heroku](), [Vercel](), [Firebas
 For a good next step, try to add custom domains to your deployed application. It’s good to have a distinctive domain for projects.
 
 Until next time, Happy coding! :computer: :tada:
-
 

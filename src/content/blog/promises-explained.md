@@ -1,6 +1,5 @@
 ---
 title: "Promises Explained"
-url: "/posts/promises"
 date: 2021-05-12T05:30:10+05:30
 draft: false
 audio:
@@ -22,7 +21,7 @@ Promises are one of the important concepts in javascript one should be familiar 
 
 **Pre-requisite:** Before going into promises you need to understand what is asynchronous code, how it works, what are callbacks and why are promises introduced.
 
-Checkout [Asynchronous Code in JavaScript]({{< ref "/posts/15-async-code-in-js.md">}})
+Checkout [Asynchronous Code in JavaScript](/blog/async-code-in-js/)
 
 Once you understand that, without making any further delay lets get started..
 
@@ -32,7 +31,7 @@ Once you understand that, without making any further delay lets get started..
 
 Promises allow us to write an asynchronous code that is much easier to read and understand. Its much flatter, its not so nested.
 
-If you have checked out [this post]({{< ref "/posts/15-async-code-in-js.md">}}) you might be familiar with the Callback example we used.
+If you have checked out [this post](/blog/async-code-in-js/) you might be familiar with the Callback example we used.
 
 The same code after using promises, looks like this...
 
@@ -224,9 +223,6 @@ fakeRequest("/dogs")
 
 ## Promise Chaining
 
-{{< codes js js>}}
-{{< code >}}
-
 ```js
 const fakeRequest = (url) => {
   return new Promise((resolve, reject) => {
@@ -266,9 +262,6 @@ const fakeRequest = (url) => {
 };
 ```
 
-{{< /code >}}
-{{< code >}}
-
 ```js
 fakeRequest("/users").then((res) => {
   const id = res.data[0].id;
@@ -284,9 +277,6 @@ fakeRequest("/users").then((res) => {
   });
 });
 ```
-
-{{< /code >}}
-{{< /codes >}}
 
 This doesnt look much better than what we saw in callback hell and also we dont have catches yet, if we have catches for each `.then()` it would look more messier. We have much better way for rewriting all of this
 

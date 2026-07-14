@@ -1,6 +1,5 @@
 ---
 title: 'Epic React Series: Introduction'
-url : "/posts/epic-react-intro"
 date: 2021-05-10T12:45:39+05:30
 draft: true
 hideToc: false
@@ -25,12 +24,10 @@ In this article you can find all the blogposts I will be writing as a part of th
 
 ## React fundamentals
 
-1. [JS fundamentals for React]({{< ref "/posts/13-js-fundamentals-for-react.md" >}})
-2. [Intro to raw React APIs]({{< ref "/posts/17-intro-to-raw-react-apis.md" >}})
-3. [Understanding JSX ]({{< ref "/posts/18-understanding-jsx.md" >}})
-<!--1. [Creating custom components]({{< ref "#" >}})
-4. [Styling and Forms]({{< ref "#" >}})
-5. [Rendering Arrays]({{< ref "#" >}}) -->
+1. [JS fundamentals for React](/blog/js-fundamentals-for-react/)
+2. [Intro to raw React APIs](/blog/intro-to-raw-react-apis/)
+3. [Understanding JSX ](/blog/understanding-jsx/)
+<!-- Planned: Creating custom components, Styling and Forms, Rendering Arrays -->
 <!--
 
 ## React hooks

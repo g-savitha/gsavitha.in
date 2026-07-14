@@ -1,6 +1,5 @@
 ---
 title: "How to enable dark theme in css"
-url: "/posts/dark-theme-css"
 date: 2023-04-01T22:07:21+05:30
 draft: false
 audio:

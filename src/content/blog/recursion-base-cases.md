@@ -1,6 +1,5 @@
 ---
 title: "How to write base cases"
-url : "/posts/recursion-base-cases"
 date: 2021-02-20T15:46:57+05:30
 draft: false
 audio:
@@ -14,7 +13,7 @@ tags: [dsa, recursion]
 categories: [backend]
 ---
 
-This post requires knowledge of [Recursion]({{< ref "/posts/8-recursion-simplified.md" >}}). If you are new here, its recommended to have a look at that post first.
+This post requires knowledge of [Recursion](/blog/recursion-simplified/). If you are new here, its recommended to have a look at that post first.
 
 Many times, when it comes to recursion, we can guess the recursive solution but it becomes difficult to understand how to write proper base cases so that everything is handled and we do not get stack overflow(incase of java) or segmentation fault(incase of cpp) errors.
 
@@ -35,8 +34,6 @@ int factorial(int n){
 ```
 
 If you see recursive tree for `factorial(2)` and `factorial(3)`
-{{< codes tree tree>}}
-{{< code >}}
 
 ```tree
 factorial(2)
@@ -44,18 +41,12 @@ factorial(2)
     |__factorial(0)
 ```
 
-{{< /code >}}
-{{< code >}}
-
 ```tree
 factorial(3)
 |__factorial(2)
     |__factorial(1)
         |__factorial(0)
 ```
-
-{{< /code >}}
-{{< /codes >}}
 
 After `factorial(0)` we cannot break it further. So `0` is the smallest possible value for the problem. Also, every recursive call ends up calling 0, no matter with whichever number you begin with. So we write the base case here as `n==0`.
 
@@ -93,17 +84,11 @@ Now what do we write as base case?
 
 Remember the same thing, Base cases are those inputs for which we cannot further divide the problem into smaller sub problems.
 
-{{< codes tree tree>}}
-{{< code >}}
-
 ```tree
 fib(2)
 |__fib(1)
     |__fib(0)
 ```
-
-{{< /code >}}
-{{< code >}}
 
 ```tree
 fib(3)
@@ -112,9 +97,6 @@ fib(3)
 |     |__fib(0)
 |__fib(1)
 ```
-
-{{< /code >}}
-{{< /codes >}}
 
 Now what are the cases where we cannot divide the problem further?
 

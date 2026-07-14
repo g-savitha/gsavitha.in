@@ -1,6 +1,5 @@
 ---
 title: "Recursion Simplified"
-url : "/posts/recursion-simplified"
 date: 2021-01-31T11:16:15+05:30
 draft: false
 audio:
@@ -47,11 +46,10 @@ void fun2(){
     //some other code...
 }
 
-
 ```
 
 - If you _dont add a base case_, _recursion never stops_ and we might end up with _stackoverflow_(in case of java) or _segmentation fault_ error(in case of cpp).
-- There should be **one stopping condition atleast**. Such stopping conditions are called _*[Base cases]({{< ref "/posts/9-recursion-base-cases.md" >}})*_
+- There should be **one stopping condition atleast**. Such stopping conditions are called _*[Base cases](/blog/recursion-base-cases/)*_
 
 _Example:_
 
@@ -119,9 +117,6 @@ Now the question is if we can write equivalent iterative code for every recursiv
 
 ## Examples
 
-{{< codes cpp cpp cpp >}}
-{{< code >}}
-
 ```cpp
 void fun1(int n)
 {
@@ -140,9 +135,6 @@ int main(int argc, char const *argv[])
 }
 //Output : 321123
 ```
-
-{{< /code >}}
-{{< code >}}
 
 ```cpp
 void fun1(int n)
@@ -163,9 +155,6 @@ int main(int argc, char const *argv[])
 //Output : 1213121
 ```
 
-{{< /code >}}
-{{< code >}}
-
 ```cpp
 int fn(int n)
 {
@@ -182,9 +171,6 @@ int fn(int n)
 
 //output remains same until we get to next power of 2.
 ```
-
-{{< /code >}}
-{{< /codes >}}
 
 ### Binary representation of a number(n > 0) using recursion
 
@@ -228,9 +214,6 @@ private static void fn(int n) {
 
 To understand tail recursion, lets take a closer look at these 2 functions.
 
-{{< codes java java >}}
-{{< code >}}
-
 ```java
 //prints from n to 1
 void fn1() {
@@ -241,9 +224,6 @@ void fn1() {
 //this function takes lesser time
 ```
 
-{{< /code >}}
-{{< code >}}
-
 ```java
 //prints from 1 to n
 void fn2(){
@@ -252,9 +232,6 @@ void fn2(){
     System.out.println(n);
 }
 ```
-
-{{< /code >}}
-{{< /codes >}}
 
 Can you guess the reason why would 1st function take lesser time to compile on modern compilers?
 
@@ -304,9 +281,6 @@ Now, the question arises is when given a non tail recursive code, can we convert
 
 Lets have a look at the below examples.
 
-{{< codes java java >}}
-{{< code >}}
-
 ```java
 //prints from 1 to n
 void fn2(){
@@ -315,10 +289,6 @@ void fn2(){
     System.out.println(n);
 }
 ```
-
-{{< /code >}}
-
-{{< code >}}
 
 ```java
 //Tail recursive version of the code
@@ -329,9 +299,6 @@ void fn2(int n, int k){
     fn2(n-1,k+1);
 }
 ```
-
-{{< /code >}}
-{{< /codes >}}
 
 Can we convert every non tail recursive to tail recursive by adding few parameters?
 

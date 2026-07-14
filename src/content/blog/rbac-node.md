@@ -1,6 +1,5 @@
 ---
 title: "Implementing RBAC and ABAC in Node.js ☕️"
-url: "/posts/rbac-abac"
 date: 2025-04-09T18:39:17+05:30
 draft: false
 audio:
@@ -20,7 +19,6 @@ categories:
   - frontend
   - backend
 ---
-
 
 Authorization is a critical aspect of any application that handles sensitive data or operations. In this guide, Let's go through implementing two powerful authorization strategies: Role-Based Access Control (RBAC) and Attribute-Based Access Control (ABAC) in a Node.js application using Express.
 
@@ -581,7 +579,6 @@ If you'd like to explore the complete implementation, check out the GitHub repos
 
 - Backend: [https://github.com/g-savitha/Coffee-Shop](https://github.com/g-savitha/Coffee-Shop)
 - Frontend: [https://github.com/g-savitha/coffee-shop-ui](https://github.com/g-savitha/coffee-shop-ui)
-
 
 ---
 

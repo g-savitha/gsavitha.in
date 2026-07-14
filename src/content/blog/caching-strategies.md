@@ -1,6 +1,5 @@
 ---
 title: "Caching Strategies to Prevent the Thundering Herd"
-url: "/posts/caching-strategies"
 date: 2026-03-08T22:53:49+05:30
 draft: false
 audio:
@@ -437,7 +436,6 @@ Every strategy makes a different bet on freshness vs latency vs safety.
 | Cache Warming | High initially | Always low | Excellent |
 
 There is no universally correct answer. A payments service and a recommendation engine have very different requirements. The right combination depends on what your users actually feel and what your database can actually handle.
-
 
 ---
 

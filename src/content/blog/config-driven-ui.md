@@ -1,6 +1,5 @@
 ---
 title: "Config-Driven UI 📝"
-url: "/posts/config-driven-ui"
 date: 2025-11-03T13:28:18+05:30
 draft: false
 audio:
@@ -38,7 +37,6 @@ If you're using traditional React components, you'd need to:
 4. Wait for code review
 5. Deploy to production
 6. Hope nothing breaks
-
 
 But what if I told you there's a way to change your entire UI layout by simply updating a JSON file? No code changes. No deployments. Just instant updates.
 
@@ -151,7 +149,6 @@ Let's understand the **_why_** behind every decision:
 - **Why separate config from components?** Decoupling data from presentation enables non-developers (product managers, designers) to control layouts
 - **Why use a component map?** Dynamic component rendering without messy if-else chains
 - **Why fetch config from an API?** Real-time updates without deployments
-
 
 ## Why This Pattern Matters
 

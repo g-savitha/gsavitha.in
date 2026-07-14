@@ -1,6 +1,5 @@
 ---
 title: "What is Micro Frontends?"
-url : "/posts/mfe"
 date: 2021-03-26T14:45:17+05:30
 draft: false
 audio:
@@ -32,13 +31,13 @@ Applying microservices on frontend gives complete freedom to the developers on _
 
 Despite of having microservices in the backend, a seperate team is required to handle the front end development if you have a monolithic architecture.
 
-{{< img src="/images/blog-img/monolithic.jpeg" alt="monolithic" width="400px" position="center" >}}
+![monolithic](../../assets/blog/monolithic.jpeg)
 
 With the micro frontends approach, we split our application into vertical blocks. Where each block goes from end to end from UI to database.
 
 Using this micro frontends approach, each team will have an independence to build their own components in their desired tech stack. Later, integrating all these independent components helps us in forming a Complete UI application and also prevents a need to have a dedicated centralised UI team.
 
-{{< img src="/images/blog-img/mf.jpeg" alt="microfrontends" width="400px" position="center" >}}
+![microfrontends](../../assets/blog/mf.jpeg)
 
 ## Example - an e-commerce application
 
@@ -55,7 +54,7 @@ Our website has several UI components, some of the key feature components are:
 
 Every component is powered by a dedicated microservice running behind the scenes. A dedicated full stack teams are assigned to manage and develop individual components.
 
-{{< img src="/images/blog-img/mf2.jpeg" alt="microfrontends" width="400px" position="center" >}}
+![microfrontends](../../assets/blog/mf2.jpeg)
 
 ## Can I use this in my application?
 
@@ -82,7 +81,7 @@ This concept is pretty similar to client side & server side rendering. In this c
 
 A naive approach is to have micro frontends with unique links, whenever a user clicks a link they will be navigating to micro frontend.
 
-{{< img src="/images/blog-img/mf3.jpeg" alt="microfrontends" width="400px" position="center" >}}
+![microfrontends](../../assets/blog/mf3.jpeg)
 
 Lets say you have hosted your _checkout_ component on Google Cloud and _Payments_ on AWS. If you integrate via basic links, when you navigate from checkout page to payments page, the address in the browser will be visible to the end user (when it changes from GCP's URL to AWS's URL).
 
@@ -90,7 +89,7 @@ One way to do this is by integrating these links in a specific page using [ifram
 
 _Recommended read:_ [Good reasons why not to use Iframes in page content](https://stackoverflow.com/questions/23178505/good-reasons-why-not-to-use-iframes-in-page-content)
 
-{{< img src="/images/blog-img/mf4.jpeg" alt="microfrontends" width="400px" position="center" >}}
+![microfrontends](../../assets/blog/mf4.jpeg)
 
 A _Recommended way_ to integrate on client side is using Web Components and frameworks such as [single SPA](https://single-spa.js.org/)
 
@@ -116,5 +115,4 @@ These are few of the technologies and frameworks that helps us to achieve this.
 That's all folks, that pretty much sums up about micro frontends.
 
 Until next time, happy learning! :tada: :computer:
-
 

@@ -1,6 +1,5 @@
 ---
 title: "Event Handling in JS"
-url : "/posts/event-handling-js"
 date: 2020-09-26T15:18:15+05:30
 draft: false
 audio:
@@ -58,15 +57,9 @@ Lets explore 2 different syntaxes which we should not use.
 
 2. We first select an element in Javascript and then do inline html scripting
 
-{{< codes html js >}}
-{{< code >}}
-
 ```html
 <button id="clicker">CLicker!</button>;
 ```
-
-{{< /code >}}
-{{< code >}}
 
 ```js
 const clicker = document.querySelector("#clicker");
@@ -84,9 +77,6 @@ clicker.onclick = function () {
 //now we lost the previous data.
 //Onclick is considered just like any other property
 ```
-
-{{< /code >}}
-{{< /codes>}}
 
 - _**if you want to have multiple events to a single element use `addEventListener`**_
 
@@ -131,10 +121,6 @@ This is the important topic of event handling. We know how to add multiple event
 
 <mark>Note:</mark> `this` _refers to individual object_ onto which we are listening over when adding multiple events
 
-{{< codes html js >}}
-
-{{< code >}}
-
 ```html
 <body>
   <h1>Pick a color</h1>
@@ -142,10 +128,6 @@ This is the important topic of event handling. We know how to add multiple event
   <script src="app.js"></script>
 </body>
 ```
-
-{{< /code >}}
-
-{{< code >}}
 
 ````js
     const colors = [
@@ -173,10 +155,6 @@ This is the important topic of event handling. We know how to add multiple event
     box.addEventListener("click", pickAColor);
     }
     ```
-
-{{< /code >}}
-
-{{< /codes >}}
 
 <mark>Important</mark> : So when the function `pickAColor` is called, ie., when we click on a box, _we are never executing `pickAColor` ourselves_, its being called for us. **An Event object is passed to it**. _*Event object*_ is _automatically called every time we are not capturing it_
 
@@ -220,15 +198,10 @@ When u hold or press any key it is considered as keydown event.
 
 - _All key presses are considered as keydown events_.
   - eg: alt/option, cmd, ctrl, caps, all alphabets, space, shift, tab etc.
-    {{< codes html js>}}
-    {{< code >}}
 
 ```html
 <input type="text" id="username" placeholder="username" type="text" />
 ```
-
-{{< /code >}}
-{{< code >}}
 
 ```js
 const username = document.querySelector("#username");
@@ -237,9 +210,6 @@ username.addEventListener("keydown", function (e) {
   console.log("KEY DOWN");
 });
 ```
-
-{{< /code >}}
-{{< /codes >}}
 
 ### keyup
 
@@ -280,17 +250,11 @@ _A key that normally produces a character value_ has been pressed. If the key is
 
 Lets make a todo list
 
-{{< codes html js>}}
-{{< code >}}
-
 ```html
 <h1>Shopping list</h1>
 <input type="text" name="" id="addItem" placeholder="add items in your list" />
 <ul id="items"></ul>
 ```
-
-{{< /code >}}
-{{< code >}}
 
 ```js
 const input = document.querySelector("#addItem");
@@ -311,9 +275,6 @@ input.addEventListener("keypress", function (e) {
   }
 });
 ```
-
-{{< /code >}}
-{{< /codes >}}
 
 ---
 
@@ -406,9 +367,6 @@ termszcheckBox.addEventListener("input", (e) => {
 Refactor the above code.
 add a `name` attribute to each html input
 
-{{< codes html js>}}
-{{< code >}}
-
 ```html
 <input type="text" placeholder="credit card" id="cc" name="creditcard" />
 <label>
@@ -421,9 +379,6 @@ add a `name` attribute to each html input
   <option value="onion">Onion</option>
 </select>
 ```
-
-{{< /code >}}
-{{< code >}}
 
 ```js
 for (let input of [creditCardInput, termszcheckBox, veggiesSelect]) {
@@ -443,9 +398,6 @@ for (let input of [creditCardInput, termszcheckBox, veggiesSelect]) {
   });
 }
 ```
-
-{{< /code >}}
-{{< /codes >}}
 
 - _We can add multiple events under single event listener_ as long as we have `name` attribute.
 

@@ -99,6 +99,17 @@ test('contextual summary falls back to the section heading', () => {
   assert.equal(summary, 'This JSON example relates to Configuration.');
 });
 
+test('audio-summary before an image is included in narration', async () => {
+  const narration = await extractNarration(
+    path.join(process.cwd(), 'src/content/blog/two-sides-of-ai-engineering.md'),
+  );
+  const summaries = narration.segments.filter((segment) => segment.type === 'image-summary');
+
+  assert.equal(summaries.length, 1);
+  assert.match(summaries[0]?.text ?? '', /model development covers modeling and training/i);
+  assert.match(summaries[0]?.text ?? '', /prompt engineering/i);
+});
+
 test('async-await uses distinct contextual summaries instead of repeated headings', async () => {
   const narration = await extractNarration(
     path.join(process.cwd(), 'src/content/blog/async-await.md'),

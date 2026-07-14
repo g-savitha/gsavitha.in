@@ -1,6 +1,5 @@
 ---
 title: "Build your own HTTP Server"
-url: "/posts/http-server"
 date: 2025-04-07T22:16:23+05:30
 draft: false
 audio:

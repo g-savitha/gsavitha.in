@@ -1,6 +1,5 @@
 ---
 title: "How I Added a Text-to-Speech Audio Player to My Blog"
-url: "/posts/blog-audio-player"
 date: 2026-06-20T20:00:00+05:30
 draft: false
 heroImage: "../../assets/blog-audio-player-hero.png"
@@ -39,7 +38,6 @@ A few things I wasn't willing to compromise on before I wrote anything:
 - Code blocks can't be read verbatim — no TTS model should narrate a wall of imports and braces.
 - The player saves your position so you can pause on the train and pick up at your desk.
 - If TTS has a bad day in CI, the blog post still deploys. Partial audio beats a blocked deploy.
-
 
 ---
 

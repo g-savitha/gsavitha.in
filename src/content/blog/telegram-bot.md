@@ -1,6 +1,5 @@
 ---
 title: "How I built an expenses tracker bot on telegram"
-url: "/posts/telegram-bot"
 date: 2023-06-09T18:28:23+05:30
 draft: false
 audio:
