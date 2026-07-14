@@ -233,6 +233,3 @@ The final product also depends on the data, context, tools, evaluations, system 
 
 That was my main takeaway: AI engineering is not only about making models more intelligent. It is also about making their capabilities useful.
 
----
-
-*Based on my notes from Chip Huyen’s book, **AI Engineering**.*
