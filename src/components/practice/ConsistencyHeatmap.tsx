@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type CSSProperties } from 'react';
 import type { PlatformId, PlatformSeries } from '../../utils/consistency';
 import {
   buildHeatmapWeeks,
@@ -92,7 +92,10 @@ export default function ConsistencyHeatmap({ platforms, rangeMonths }: Consisten
           Contribution data is unavailable right now. Check back after the next site build.
         </p>
       ) : (
-        <div className="consistency-heatmap__scroll">
+        <div
+          className="consistency-heatmap__scroll"
+          style={{ '--heatmap-weeks': weeks.length } as CSSProperties}
+        >
           <div className="consistency-heatmap__chart" role="presentation">
             <div className="consistency-heatmap__weekdays" aria-hidden="true">
               {WEEKDAY_LABELS.map((label, index) => (
