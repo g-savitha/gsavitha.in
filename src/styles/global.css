@@ -711,9 +711,10 @@
         3px,
         calc(
           (
-              100cqw - var(--hm-label) - var(--hm-chart-gap) -
-                (var(--heatmap-weeks, 53) - 1) * var(--hm-gap)
-            ) / var(--heatmap-weeks, 53)
+              100cqw - var(--hm-label) - var(--hm-chart-gap) - (var(--heatmap-weeks, 53) - 1) *
+                var(--hm-gap)
+            ) /
+            var(--heatmap-weeks, 53)
         )
       );
       min-width: 0;
