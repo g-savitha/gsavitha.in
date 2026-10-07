@@ -4,9 +4,12 @@ import PageLayout from '../layouts/PageLayout.astro';
 import { Image } from 'astro:assets';
 import ProfileImage from '../assets/image.png';
 import FormattedDate from '../components/FormattedDate.astro';
+import ConsistencyHeatmap from '../components/practice/ConsistencyHeatmap';
+import DsaProgress from '../components/practice/DsaProgress';
 import { ChevronRight, ExternalLink, FileText, PenBox, User } from 'lucide-astro';
 
 import { getRecentPosts, filterDrafts } from '../utils/content';
+import { fetchPracticeSnapshot } from '../utils/practice';
 
 const allPosts = await getCollection('blog');
 const posts = getRecentPosts(filterDrafts(allPosts), undefined, 5);
@@ -14,6 +17,8 @@ const posts = getRecentPosts(filterDrafts(allPosts), undefined, 5);
 const papers = (await getCollection('papers'))
   .sort((a, b) => (b.data.date?.valueOf() || 0) - (a.data.date?.valueOf() || 0))
   .slice(0, 5);
+
+const practice = await fetchPracticeSnapshot();
 ---
 
 <PageLayout>
@@ -47,14 +52,6 @@ const papers = (await getCollection('papers'))
         >
           <User class="w-4 h-4 text-zinc-400 group-hover:text-primary transition-colors" /> Know more
         </a>
-        <!-- <a
-                    href="/rss.xml"
-                    class="px-5 py-2.5 flex items-center gap-2.5 bg-zinc-800/40 border border-zinc-700/80 rounded-xl text-base font-medium text-zinc-200 hover:text-white shadow-sm hover-lift-surface group"
-                >
-                    <Mail
-                        class="w-4 h-4 text-zinc-400 group-hover:text-primary transition-colors"
-                    /> Email Newsletter
-                </a> -->
       </div>
     </div>
 
@@ -85,80 +82,105 @@ const papers = (await getCollection('papers'))
     </div>
   </section>
 
-  <!-- Blog Section -->
-  <section class="mb-20">
-    <div class="mb-8">
-      <a
-        href="/blog"
-        class="inline-flex items-center gap-3 group/title rounded-xl px-2 py-1 -mx-2 hover-lift"
-      >
-        <h2
-          class="text-3xl font-bold font-outfit text-white mb-2 flex items-center gap-3 group-hover/title:text-primary transition-colors"
-        >
-          <PenBox class="w-7 h-7 text-zinc-500 group-hover/title:text-primary transition-colors" /> Writings
-        </h2>
-      </a>
-      <p class="text-zinc-400">Things that I've written recently</p>
+  <!-- Row 1: Consistency | DSA Progress -->
+  <div class="home-row home-row--practice">
+    <div class="home-row__col">
+      <ConsistencyHeatmap
+        client:visible
+        platforms={practice.platforms}
+        rangeMonths={practice.rangeMonths}
+      />
     </div>
-
-    <ul class="list-rows">
+    <div class="home-row__col">
       {
-        posts.map((post) => (
-          <li class="list-row">
-            <a href={`/blog/${post.id}`} class="list-row__link">
-              <span class="list-row__date">
-                <FormattedDate date={post.data.date} />
-              </span>
-              <span class="list-row__title list-row__title--compact">{post.data.title}</span>
-              <div class="list-row__chevron">
-                <ChevronRight class="w-5 h-5" aria-hidden="true" />
+        practice.dsa ? (
+          <DsaProgress
+            client:visible
+            solved={practice.dsa.solved}
+            total={practice.dsa.total}
+            byDifficulty={practice.dsa.byDifficulty}
+            profileUrl={practice.dsa.profileUrl}
+          />
+        ) : (
+          <section class="dsa-progress" aria-labelledby="dsa-progress-heading">
+            <header class="dsa-progress__header">
+              <div class="dsa-progress__heading-group">
+                <h2 id="dsa-progress-heading" class="dsa-progress__title">
+                  DSA Progress
+                </h2>
+                <p class="dsa-progress__meta">LeetCode · Easy / Medium / Hard</p>
               </div>
-            </a>
-          </li>
-        ))
+            </header>
+            <p class="dsa-progress__empty">LeetCode progress is unavailable right now.</p>
+          </section>
+        )
       }
-    </ul>
-  </section>
-
-  <!-- Papers Section -->
-  <section>
-    <div class="mb-8">
-      <a
-        href="/papers"
-        class="inline-flex items-center gap-3 group/title rounded-xl px-2 py-1 -mx-2 hover-lift"
-      >
-        <h2
-          class="text-3xl font-bold font-outfit text-white mb-2 flex items-center gap-3 group-hover/title:text-primary transition-colors"
-        >
-          <FileText
-            class="w-7 h-7 text-zinc-500 group-hover/title:text-primary transition-colors"
-          /> Papershelf
-        </h2>
-      </a>
-      <p class="text-zinc-400">Things that I've read recently</p>
     </div>
+  </div>
 
-    <ul class="list-rows">
-      {
-        papers.map((paper) => (
-          <li class="list-row">
-            <a
-              href={paper.data.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="list-row__link"
-            >
-              <span class="list-row__date">
-                {paper.data.date ? <FormattedDate date={paper.data.date} /> : 'Recent'}
-              </span>
-              <span class="list-row__title list-row__title--compact">{paper.data.title}</span>
-              <div class="list-row__chevron">
-                <ExternalLink class="w-4 h-4" aria-hidden="true" />
-              </div>
-            </a>
-          </li>
-        ))
-      }
-    </ul>
-  </section>
+  <!-- Row 2: Writings | Papershelf -->
+  <div class="home-row">
+    <section class="home-row__col home-shelf">
+      <div class="home-shelf__header">
+        <a href="/blog" class="home-shelf__title-link hover-lift">
+          <h2 class="home-shelf__title">
+            <PenBox class="home-shelf__title-icon" aria-hidden="true" /> Writings
+          </h2>
+        </a>
+        <p class="home-shelf__blurb">Things that I've written recently</p>
+      </div>
+
+      <ul class="list-rows">
+        {
+          posts.map((post) => (
+            <li class="list-row">
+              <a href={`/blog/${post.id}`} class="list-row__link">
+                <span class="list-row__date">
+                  <FormattedDate date={post.data.date} />
+                </span>
+                <span class="list-row__title list-row__title--compact">{post.data.title}</span>
+                <div class="list-row__chevron">
+                  <ChevronRight class="w-5 h-5" aria-hidden="true" />
+                </div>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="home-row__col home-shelf">
+      <div class="home-shelf__header">
+        <a href="/papers" class="home-shelf__title-link hover-lift">
+          <h2 class="home-shelf__title">
+            <FileText class="home-shelf__title-icon" aria-hidden="true" /> Papershelf
+          </h2>
+        </a>
+        <p class="home-shelf__blurb">Things that I've read recently</p>
+      </div>
+
+      <ul class="list-rows">
+        {
+          papers.map((paper) => (
+            <li class="list-row">
+              <a
+                href={paper.data.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="list-row__link"
+              >
+                <span class="list-row__date">
+                  {paper.data.date ? <FormattedDate date={paper.data.date} /> : 'Recent'}
+                </span>
+                <span class="list-row__title list-row__title--compact">{paper.data.title}</span>
+                <div class="list-row__chevron">
+                  <ExternalLink class="w-4 h-4" aria-hidden="true" />
+                </div>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </div>
 </PageLayout>

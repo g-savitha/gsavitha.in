@@ -28,6 +28,18 @@
   --lift-bg-pill: rgba(255, 255, 255, 0.07);
   --lift-border: rgba(255, 255, 255, 0.12);
 
+  /* Heatmap intensity — derived from active theme accent */
+  --heatmap-level-0: rgb(39 39 42);
+  --heatmap-level-1: color-mix(in srgb, var(--theme-color) 28%, rgb(24 24 27));
+  --heatmap-level-2: color-mix(in srgb, var(--theme-color) 48%, rgb(24 24 27));
+  --heatmap-level-3: color-mix(in srgb, var(--theme-color) 72%, rgb(24 24 27));
+  --heatmap-level-4: var(--theme-color);
+
+  /* DSA progress ring segments (reuse theme palette tokens) */
+  --dsa-easy: var(--theme-color);
+  --dsa-medium: var(--theme-yellow);
+  --dsa-hard: var(--theme-pink);
+
   /* Shared transitions */
   --lift-transition:
     background-color 0.35s var(--ease-lift), border-color 0.35s var(--ease-lift),
