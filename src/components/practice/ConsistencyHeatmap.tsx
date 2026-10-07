@@ -1,4 +1,4 @@
-import { useMemo, useState, type CSSProperties } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import type { PlatformId, PlatformSeries } from '../../utils/consistency';
 import {
   buildHeatmapWeeks,
@@ -24,12 +24,19 @@ const FILTERS: { id: FilterId; label: string }[] = [
   { id: 'leetcode', label: 'LeetCode' },
 ];
 
+/** Scroll the heatmap so the newest weeks (right edge) are in view. */
+function scrollHeatmapToEnd(element: HTMLDivElement | null) {
+  if (!element) return;
+  element.scrollLeft = element.scrollWidth;
+}
+
 export default function ConsistencyHeatmap({ platforms, rangeMonths }: ConsistencyHeatmapProps) {
   const availablePlatforms = useMemo(
     () => platforms.filter((platform) => platform.available),
     [platforms],
   );
   const [filter, setFilter] = useState<FilterId>('all');
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const range = useMemo(() => rollingMonthsRange(rangeMonths), [rangeMonths]);
 
@@ -50,6 +57,10 @@ export default function ConsistencyHeatmap({ platforms, rangeMonths }: Consisten
   const stats = useMemo(() => computeStats(activeDays), [activeDays]);
 
   const connectedCount = availablePlatforms.length;
+
+  useEffect(() => {
+    scrollHeatmapToEnd(scrollRef.current);
+  }, [weeks, filter]);
 
   return (
     <section className="consistency-heatmap" aria-labelledby="consistency-heading">
@@ -93,6 +104,7 @@ export default function ConsistencyHeatmap({ platforms, rangeMonths }: Consisten
         </p>
       ) : (
         <div
+          ref={scrollRef}
           className="consistency-heatmap__scroll"
           style={{ '--heatmap-weeks': weeks.length } as CSSProperties}
         >
