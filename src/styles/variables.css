@@ -35,12 +35,11 @@
   --heatmap-level-3: color-mix(in srgb, var(--theme-color) 72%, rgb(24 24 27));
   --heatmap-level-4: var(--theme-color);
 
-  /* DSA progress — fixed neon LeetCode palette (never derived from the theme accent) */
-  --dsa-easy: #1fe0a6;
-  --dsa-medium: #ffa31a;
-  --dsa-hard: #ff2e7e;
+  /* DSA progress — fixed theme palette tokens (never --theme-color, so they cannot collide) */
+  --dsa-easy: var(--theme-green);
+  --dsa-medium: var(--theme-yellow);
+  --dsa-hard: var(--theme-pink);
   --dsa-track-mix: 28%;
-  --dsa-glow-blur: 3px;
   --dsa-reveal-duration: 1.1s;
 
   /* Shared transitions */

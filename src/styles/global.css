@@ -847,10 +847,10 @@
   }
 
   .dsa-progress__ring {
-    @apply h-full w-full overflow-visible;
+    @apply h-full w-full;
   }
 
-  /* Difficulty colors are a fixed LeetCode palette, independent of the theme accent. */
+  /* Difficulty colors are fixed tokens, independent of the theme accent. */
   .dsa-progress--easy {
     --dsa-color: var(--dsa-easy);
     --dsa-delay: 0ms;
@@ -878,7 +878,6 @@
     stroke-linecap: round;
     stroke-dasharray: 1 2;
     stroke-dashoffset: 0;
-    filter: drop-shadow(0 0 var(--dsa-glow-blur) var(--dsa-color));
     transition:
       stroke-dashoffset var(--dsa-reveal-duration) var(--ease-lift-spring) var(--dsa-delay),
       opacity 0.2s ease var(--dsa-delay);
@@ -916,7 +915,6 @@
   .dsa-progress__swatch {
     @apply h-2.5 w-2.5 rounded-full;
     background-color: var(--dsa-color);
-    box-shadow: 0 0 var(--dsa-glow-blur) var(--dsa-color);
   }
 
   .dsa-progress__legend-label {
