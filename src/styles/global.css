@@ -843,36 +843,50 @@
   }
 
   .dsa-progress__ring-wrap {
-    @apply relative grid h-36 w-36 shrink-0 place-items-center;
+    @apply relative grid h-40 w-40 shrink-0 place-items-center;
   }
 
   .dsa-progress__ring {
-    @apply h-full w-full;
-    transform: rotate(-90deg);
+    @apply h-full w-full overflow-visible;
+  }
+
+  /* Difficulty colors are a fixed LeetCode palette, independent of the theme accent. */
+  .dsa-progress--easy {
+    --dsa-color: var(--dsa-easy);
+    --dsa-delay: 0ms;
+  }
+
+  .dsa-progress--medium {
+    --dsa-color: var(--dsa-medium);
+    --dsa-delay: 150ms;
+  }
+
+  .dsa-progress--hard {
+    --dsa-color: var(--dsa-hard);
+    --dsa-delay: 300ms;
   }
 
   .dsa-progress__track {
     @apply fill-none;
-    stroke: rgb(39 39 42);
-    stroke-width: 12;
+    stroke: color-mix(in srgb, var(--dsa-color) var(--dsa-track-mix), transparent);
+    stroke-linecap: round;
   }
 
-  .dsa-progress__segment {
+  .dsa-progress__fill {
     @apply fill-none;
-    stroke-linecap: butt;
-    transform-origin: 70px 70px;
+    stroke: var(--dsa-color);
+    stroke-linecap: round;
+    stroke-dasharray: 1 2;
+    stroke-dashoffset: 0;
+    filter: drop-shadow(0 0 var(--dsa-glow-blur) var(--dsa-color));
+    transition:
+      stroke-dashoffset var(--dsa-reveal-duration) var(--ease-lift-spring) var(--dsa-delay),
+      opacity 0.2s ease var(--dsa-delay);
   }
 
-  .dsa-progress__segment--easy {
-    stroke: var(--dsa-easy);
-  }
-
-  .dsa-progress__segment--medium {
-    stroke: var(--dsa-medium);
-  }
-
-  .dsa-progress__segment--hard {
-    stroke: var(--dsa-hard);
+  .dsa-progress[data-reveal='pending'] .dsa-progress__fill {
+    @apply opacity-0;
+    stroke-dashoffset: 1;
   }
 
   .dsa-progress__center {
@@ -880,11 +894,15 @@
   }
 
   .dsa-progress__solved {
-    @apply font-outfit text-3xl font-bold tabular-nums text-white;
+    @apply font-outfit text-3xl font-bold tabular-nums leading-none text-white;
   }
 
   .dsa-progress__total {
-    @apply text-sm tabular-nums text-zinc-400;
+    @apply mt-1 text-sm tabular-nums text-zinc-400;
+  }
+
+  .dsa-progress__caption {
+    @apply mt-0.5 text-xs uppercase tracking-wider text-zinc-500;
   }
 
   .dsa-progress__legend {
@@ -897,18 +915,8 @@
 
   .dsa-progress__swatch {
     @apply h-2.5 w-2.5 rounded-full;
-  }
-
-  .dsa-progress__swatch.dsa-progress__segment--easy {
-    background-color: var(--dsa-easy);
-  }
-
-  .dsa-progress__swatch.dsa-progress__segment--medium {
-    background-color: var(--dsa-medium);
-  }
-
-  .dsa-progress__swatch.dsa-progress__segment--hard {
-    background-color: var(--dsa-hard);
+    background-color: var(--dsa-color);
+    box-shadow: 0 0 var(--dsa-glow-blur) var(--dsa-color);
   }
 
   .dsa-progress__legend-label {
@@ -919,7 +927,17 @@
     @apply font-mono tabular-nums text-zinc-400;
   }
 
+  .dsa-progress__legend-item .dsa-progress__legend-label {
+    color: var(--dsa-color);
+  }
+
   .dsa-progress__empty {
     @apply text-sm text-zinc-400;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dsa-progress__fill {
+      transition: none;
+    }
   }
 }
