@@ -13,9 +13,9 @@
   --theme-blue: #60a5fa;
   --theme-blue-hover: #93c5fd;
 
-  /* Default theme */
-  --theme-color: var(--theme-blue);
-  --theme-color-hover: var(--theme-blue-hover);
+  /* Default theme (keep in sync with DEFAULT_THEME in src/utils/themes.ts) */
+  --theme-color: var(--theme-purple);
+  --theme-color-hover: var(--theme-purple-hover);
 
   /* Motion */
   --ease-lift: cubic-bezier(0.25, 0.1, 0.25, 1);

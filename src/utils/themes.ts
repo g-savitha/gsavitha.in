@@ -6,4 +6,4 @@
 export const THEME_NAMES = ['pink', 'purple', 'yellow', 'green', 'blue'] as const;
 export type ThemeName = (typeof THEME_NAMES)[number];
 
-export const DEFAULT_THEME: ThemeName = 'blue';
+export const DEFAULT_THEME: ThemeName = 'purple';
