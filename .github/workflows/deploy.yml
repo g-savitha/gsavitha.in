@@ -6,6 +6,8 @@ name: Deploy Astro site to Pages
 # metadata is already committed in src/data/audioManifest.json.
 
 on:
+  schedule:
+    - cron: '30 18 * * *'
   push:
     branches: ['main']
   workflow_dispatch:
