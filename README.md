@@ -99,7 +99,7 @@ Export the five R2 configuration values above before running it locally.
 
 ## Math
 
-Writings and papers can include LaTeX. It is rendered at build time with KaTeX.
+Writings can include LaTeX. It is rendered at build time with KaTeX. (Papershelf entries are link-only, so their bodies are not rendered.)
 
 - Inline math uses single dollars: `$E = mc^2$`.
 - Display math uses a `$$` fence with the formula on its own lines.
