@@ -939,3 +939,38 @@
     }
   }
 }
+
+/* KaTeX's stylesheet is unlayered, so these overrides stay unlayered too. */
+.katex {
+  color: var(--math-color);
+}
+
+.katex-display.katex-display {
+  display: block;
+  max-width: 100%;
+  margin-block: 1.5rem;
+  margin-inline: 0;
+  padding-block: 0.35rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  color: var(--math-color);
+  text-align: center;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-zinc-600) transparent;
+}
+
+.katex-display > .katex.katex {
+  display: inline-block;
+  text-align: initial;
+  white-space: nowrap;
+}
+
+.katex-display:focus-visible {
+  outline: 2px solid var(--theme-color);
+  outline-offset: 3px;
+}
+
+.katex-error {
+  color: var(--math-error);
+}
