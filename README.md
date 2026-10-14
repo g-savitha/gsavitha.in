@@ -96,3 +96,14 @@ bun run audio:upload
 
 The upload command requires the AWS CLI because R2 exposes an S3-compatible API.
 Export the five R2 configuration values above before running it locally.
+
+## Math
+
+Writings and papers can include LaTeX. It is rendered at build time with KaTeX.
+
+- Inline math uses single dollars: `$E = mc^2$`.
+- Display math uses a `$$` fence with the formula on its own lines.
+- Escape a literal dollar with a backslash. Two bare amounts in one paragraph, such as `$5 and $10`, are parsed as math, so write `\$5 and \$10`. A lone price such as `$5` is left as text.
+- Dollars inside inline code or fenced code blocks are never rendered as math.
+
+`src/content/blog/draft-math-rendering.md` is an unpublished sample (`draft: true`). Open it with `bun run dev` at `/blog/draft-math-rendering`; production builds omit drafts.

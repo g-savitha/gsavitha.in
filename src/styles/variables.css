@@ -17,6 +17,10 @@
   --theme-color: var(--theme-purple);
   --theme-color-hover: var(--theme-purple-hover);
 
+  /* KaTeX glyphs stay light on the dark surface for every accent theme */
+  --math-color: var(--color-zinc-100);
+  --math-error: var(--color-red-400);
+
   /* Motion */
   --ease-lift: cubic-bezier(0.25, 0.1, 0.25, 1);
   --ease-lift-spring: cubic-bezier(0.32, 0.72, 0, 1);
