@@ -399,6 +399,10 @@
     @apply cursor-pointer bg-zinc-900/85 backdrop-blur-sm;
   }
 
+  .mindmap__control--desktop {
+    @apply hidden lg:flex;
+  }
+
   .mindmap__control-label {
     @apply hidden sm:inline;
   }

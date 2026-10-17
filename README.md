@@ -130,4 +130,4 @@ const { Content } = await render(entry);
 </MindMapSection>
 ```
 
-The slot becomes the collapsible text outline for readers without JavaScript or the canvas. Omit it to render the map alone. Optional props: `initialExpandLevel` (default `2`, the root plus main branches), `size` (`default` or `compact`), `fallbackHint` (sentence shown when the map cannot load), and `outlineSummary` (default `Text outline`). The root follows the site accent (`--theme-color`) and main branches cycle through `--mindmap-branch-N` in `src/styles/variables.css`.
+The slot becomes the collapsible text outline for readers without JavaScript or the canvas. Omit it to render the map alone. Optional props: `initialExpandLevel` (default `2`, the root plus main branches; Collapse all returns here), `showExpandControls` (default `true`; Expand all and Collapse all appear at desktop widths, 1024px and up), `size` (`default` or `compact`), `fallbackHint` (sentence shown when the map cannot load), and `outlineSummary` (default `Text outline`). The root follows the site accent (`--theme-color`) and main branches cycle through `--mindmap-branch-N` in `src/styles/variables.css`.

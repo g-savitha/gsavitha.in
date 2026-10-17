@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
-import { LocateFixed, Maximize2, Minimize2 } from 'lucide-react';
+import { ChevronsDownUp, ChevronsUpDown, LocateFixed, Maximize2, Minimize2 } from 'lucide-react';
 import type { IMarkmapOptions, Markmap } from 'markmap-view';
 import ErrorBoundary from '../ErrorBoundary';
 import type { MindmapNode } from '../../utils/mindmap';
@@ -19,6 +19,8 @@ export interface MindMapProps {
   size?: MindMapSize;
   /** Sentence appended to the load-error message, pointing readers to an alternative. */
   fallbackHint?: string;
+  /** Show Expand all / Collapse all on desktop widths. Default true. */
+  showExpandControls?: boolean;
 }
 
 type MarkmapNode = Parameters<IMarkmapOptions['color']>[0];
@@ -61,6 +63,12 @@ async function waitForFont(element: Element): Promise<void> {
   await Promise.race([Promise.all(loads).then(() => undefined), timeout]);
 }
 
+/** Folds every node at or below `level` (1 = root), matching markmap's `initialExpandLevel`. */
+function foldFromLevel(node: MarkmapNode, level: number): void {
+  node.payload = { ...node.payload, fold: node.state.depth >= level ? 1 : 0 };
+  node.children.forEach((child) => foldFromLevel(child, level));
+}
+
 function hasNodeData(element: Element): element is Element & { __data__: MarkmapNode } {
   return '__data__' in element;
 }
@@ -86,6 +94,7 @@ function MindMapInner({
   initialExpandLevel = 2,
   size = 'default',
   fallbackHint,
+  showExpandControls = true,
 }: MindMapProps) {
   const hintId = useId();
   const figureRef = useRef<HTMLElement>(null);
@@ -102,6 +111,17 @@ function MindMapInner({
   const fit = useCallback(() => {
     void markmapRef.current?.fit();
   }, []);
+
+  const refold = async (level: number) => {
+    const markmap = markmapRef.current;
+    const data = markmap?.state.data;
+    if (!markmap || !data) return;
+    foldFromLevel(data, level);
+    await markmap.renderData();
+    await markmap.fit();
+  };
+  const expandAll = () => void refold(Number.POSITIVE_INFINITY);
+  const collapseAll = () => void refold(initialExpandLevel);
 
   useEffect(() => {
     const svg = svgRef.current;
@@ -326,6 +346,30 @@ function MindMapInner({
       />
 
       <div className="mindmap__toolbar">
+        {showExpandControls && (
+          <>
+            <button
+              type="button"
+              className="mindmap__control mindmap__control--desktop"
+              onClick={expandAll}
+              disabled={status !== 'ready'}
+              aria-label="Expand all"
+              title="Expand all"
+            >
+              <ChevronsUpDown className="mindmap__control-icon" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              className="mindmap__control mindmap__control--desktop"
+              onClick={collapseAll}
+              disabled={status !== 'ready'}
+              aria-label="Collapse all"
+              title="Collapse all"
+            >
+              <ChevronsDownUp className="mindmap__control-icon" aria-hidden="true" />
+            </button>
+          </>
+        )}
         <button
           type="button"
           className="mindmap__control"
