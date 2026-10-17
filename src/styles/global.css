@@ -296,32 +296,14 @@
   }
 
   /* Theme picker */
+  /* --swatch-color is set per [data-swatch] in virtual:theme.css */
   .theme-swatch {
+    background-color: var(--swatch-color);
     @apply block h-5 w-5 cursor-pointer rounded-full border border-white/5 shadow-inner transition-transform hover:scale-110;
   }
 
   .theme-swatch--active {
     @apply border-0 ring-2 ring-white ring-offset-2 ring-offset-[rgb(30,30,33)];
-  }
-
-  .theme-swatch--pink {
-    background-color: var(--theme-pink);
-  }
-
-  .theme-swatch--purple {
-    background-color: var(--theme-purple);
-  }
-
-  .theme-swatch--yellow {
-    background-color: var(--theme-yellow);
-  }
-
-  .theme-swatch--green {
-    background-color: var(--theme-green);
-  }
-
-  .theme-swatch--blue {
-    background-color: var(--theme-blue);
   }
 
   /* Native PDF document */

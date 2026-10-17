@@ -53,6 +53,23 @@ const rules: Rule[] = [
       ];
     },
   },
+  {
+    // cae8cee (--dsa-easy: var(--theme-color)) and 3372934 (default theme edited in two files).
+    id: 'theme-tokens-owned-by-palette',
+    files: { dir: 'src', ext: /\.css$/ },
+    check(_file, source) {
+      const found: Omit<Violation, 'file' | 'rule'>[] = [];
+      for (const match of source.matchAll(/(--(?:theme-[a-z-]+|dsa-(?:easy|medium|hard)))\s*:/g)) {
+        found.push({
+          line: lineOf(source, match.index ?? 0),
+          message:
+            `${match[1]} is declared in CSS. Theme and difficulty colours are generated from ` +
+            'src/theme/palette.ts (PALETTE, DEFAULT_THEME, DIFFICULTY_COLORS). Edit that file instead.',
+        });
+      }
+      return found;
+    },
+  },
 ];
 
 const violations: Violation[] = [];

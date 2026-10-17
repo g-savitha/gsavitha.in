@@ -4,6 +4,7 @@ import { defineConfig } from 'astro/config';
 
 import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
+import { themeCssPlugin } from './src/theme/vitePlugin.ts';
 import { buildEnvGuard } from './src/env/buildEnvGuard.ts';
 import { rehypePlugins, remarkPlugins } from './src/utils/markdownPlugins.ts';
 
@@ -21,7 +22,7 @@ export default defineConfig({
   },
 
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [themeCssPlugin(), tailwindcss()],
     optimizeDeps: {
       exclude: ['lucide-astro'],
     },
