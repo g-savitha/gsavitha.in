@@ -1,16 +1,21 @@
 ---
+import { getEntry, render } from 'astro:content';
 import PageLayout from '../../../layouts/PageLayout.astro';
+import MindMapSection from '../../../components/goodies/MindMapSection.astro';
 import { SITE_TITLE } from '../../../consts';
 import { ArrowLeft, Download, ExternalLink } from 'lucide-astro';
 
 const pdfUrl = '/gcp-ace-cheatsheet.pdf';
 const downloadFilename = 'gcp-ace-cheatsheet.pdf';
+
+const entry = await getEntry('goodies', 'gcp-ace-cheatsheet');
+if (!entry?.body) {
+  throw new Error('Missing goodies entry body: gcp-ace-cheatsheet');
+}
+const { Content } = await render(entry);
 ---
 
-<PageLayout
-  title={`GCP ACE Cheat Sheet | ${SITE_TITLE}`}
-  description="A visual mind map for the Google Cloud Associate Cloud Engineer exam."
->
+<PageLayout title={`${entry.data.title} | ${SITE_TITLE}`} description={entry.data.description}>
   <article class="pdf-document">
     <a href="/goodies" class="pdf-document__back-link hover-lift">
       <ArrowLeft class="pdf-document__action-icon" aria-hidden="true" />
@@ -19,7 +24,7 @@ const downloadFilename = 'gcp-ace-cheatsheet.pdf';
 
     <header class="pdf-document__header">
       <div>
-        <h1 class="pdf-document__title">GCP ACE Cheat Sheet</h1>
+        <h1 class="pdf-document__title">{entry.data.title}</h1>
         <p class="pdf-document__description">
           A visual mind map covering all key topics for the Google Cloud Associate Cloud Engineer
           exam.
@@ -34,51 +39,21 @@ const downloadFilename = 'gcp-ace-cheatsheet.pdf';
           class="pdf-document__action hover-lift"
         >
           <ExternalLink class="pdf-document__action-icon" aria-hidden="true" />
-          Open PDF in a new tab
+          Open PDF
         </a>
         <a href={pdfUrl} download={downloadFilename} class="pdf-document__action hover-lift">
           <Download class="pdf-document__action-icon" aria-hidden="true" />
-          Download
+          Download PDF
         </a>
       </nav>
     </header>
 
-    <div class="pdf-document__viewer-shell">
-      <object
-        class="pdf-document__viewer pdf-document__viewer--inline"
-        data={`${pdfUrl}#view=FitH`}
-        type="application/pdf"
-        aria-label="GCP ACE Cheat Sheet PDF"
-      >
-        <div class="pdf-document__fallback">
-          <p>Your browser cannot display this PDF inline.</p>
-          <a href={pdfUrl} target="_blank" rel="noopener noreferrer">Open the PDF</a>
-          <span aria-hidden="true"> or </span>
-          <a href={pdfUrl} download={downloadFilename}>download it</a>.
-        </div>
-      </object>
-
-      <div class="pdf-document__touch-fallback">
-        <p class="pdf-document__touch-fallback-message">
-          Inline PDF preview is not available on this device. Open or download the cheat sheet
-          instead.
-        </p>
-        <nav class="pdf-document__touch-fallback-actions" aria-label="PDF preview alternatives">
-          <a
-            href={pdfUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="pdf-document__action hover-lift"
-          >
-            <ExternalLink class="pdf-document__action-icon" aria-hidden="true" />
-            Open PDF
-          </a>
-          <a href={pdfUrl} download={downloadFilename} class="pdf-document__action hover-lift">
-            <Download class="pdf-document__action-icon" aria-hidden="true" />
-            Download
-          </a>
-        </nav>
-      </div>
-    </div>
+    <MindMapSection
+      markdown={entry.body}
+      label={`${entry.data.title} mind map`}
+      fallbackHint="Use the text outline below or download the PDF."
+    >
+      <Content />
+    </MindMapSection>
   </article>
 </PageLayout>
