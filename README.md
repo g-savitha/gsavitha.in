@@ -107,3 +107,27 @@ Writings can include LaTeX. It is rendered at build time with KaTeX. (Papershelf
 - Dollars inside inline code or fenced code blocks are never rendered as math.
 
 `src/content/blog/draft-math-rendering.md` is an unpublished sample (`draft: true`). Open it with `bun run dev` at `/blog/draft-math-rendering`; production builds omit drafts.
+
+## Mind maps
+
+`src/components/goodies/MindMapSection.astro` turns a Markdown nested list into an interactive mind map. The single top-level item is the root and its children are the main branches. Astro builds the tree at build time, so only `markmap-view` loads in the browser, and only once the map scrolls into view.
+
+1. Write the outline as the body of a content entry, such as `src/content/goodies/my-topic.md`.
+2. Render it from the page:
+
+```astro
+---
+import { getEntry, render } from 'astro:content';
+import MindMapSection from '../../components/goodies/MindMapSection.astro';
+
+const entry = await getEntry('goodies', 'my-topic');
+if (!entry?.body) throw new Error('Missing goodies entry body: my-topic');
+const { Content } = await render(entry);
+---
+
+<MindMapSection markdown={entry.body} label={`${entry.data.title} mind map`}>
+  <Content />
+</MindMapSection>
+```
+
+The slot becomes the collapsible text outline for readers without JavaScript or the canvas. Omit it to render the map alone. Optional props: `initialExpandLevel` (default `2`, the root plus main branches), `size` (`default` or `compact`), `fallbackHint` (sentence shown when the map cannot load), and `outlineSummary` (default `Text outline`). The root follows the site accent (`--theme-color`) and main branches cycle through `--mindmap-branch-N` in `src/styles/variables.css`.
