@@ -349,46 +349,147 @@
     @apply flex shrink-0 items-center gap-2;
   }
 
-  .pdf-document__action {
+  .pdf-document__action,
+  .mindmap__control {
     @apply flex items-center gap-1.5 rounded-lg border border-zinc-700/60 px-3 py-2 text-sm font-medium text-zinc-400 transition-colors hover:border-primary/40 hover:text-primary;
   }
 
-  .pdf-document__action-icon {
+  .pdf-document__action-icon,
+  .mindmap__control-icon {
     @apply h-3.5 w-3.5;
   }
 
-  .pdf-document__viewer-shell {
-    @apply relative;
+  /* Mind map (components/goodies/MindMapSection.astro + MindMap.tsx, rendered with markmap-view) */
+  .mindmap {
+    @apply relative h-[70svh] min-h-[26rem] w-full overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900 sm:h-[75svh] sm:min-h-[32rem];
   }
 
-  .pdf-document__viewer {
-    @apply h-[calc(100vh-14rem)] min-h-[32rem] w-full rounded-xl border border-zinc-800 bg-zinc-950;
+  .mindmap[data-size='compact'] {
+    @apply h-[50svh] min-h-[20rem] sm:h-[55svh] sm:min-h-[24rem];
   }
 
-  .pdf-document__fallback {
-    @apply flex h-full min-h-[32rem] items-center justify-center p-6 text-center text-base text-zinc-400;
+  .mindmap[data-fullscreen='true'] {
+    @apply fixed inset-0 z-50 h-auto min-h-0 rounded-none border-0;
   }
 
-  .pdf-document__touch-fallback {
-    @apply hidden h-[calc(100vh-14rem)] min-h-[32rem] flex-col items-center justify-center gap-4 rounded-xl border border-zinc-800 bg-zinc-950 p-6 text-center;
+  /* Pseudo full screen (browsers without the Fullscreen API, e.g. iPhone Safari) */
+  html[data-mindmap-fullscreen='true'] {
+    @apply overflow-hidden;
   }
 
-  .pdf-document__touch-fallback-message {
-    @apply max-w-md text-base text-zinc-400;
+  .mindmap:fullscreen {
+    @apply h-full w-full rounded-none border-0;
   }
 
-  .pdf-document__touch-fallback-actions {
-    @apply flex flex-wrap items-center justify-center gap-2;
+  .mindmap__canvas {
+    @apply block h-full w-full cursor-grab active:cursor-grabbing;
+    /* One finger scrolls the page; two-finger pan/pinch is handled in JS. */
+    touch-action: pan-x pan-y;
+  }
+
+  .mindmap[data-fullscreen='true'] .mindmap__canvas {
+    touch-action: none;
+  }
+
+  .mindmap__toolbar {
+    @apply absolute top-3 right-3 z-10 flex items-center gap-2;
+  }
+
+  .mindmap__control {
+    @apply cursor-pointer bg-zinc-900/85 backdrop-blur-sm;
+  }
+
+  .mindmap__control--desktop {
+    @apply hidden lg:flex;
+  }
+
+  .mindmap__control-label {
+    @apply hidden sm:inline;
+  }
+
+  .mindmap__hint {
+    @apply pointer-events-none absolute bottom-3 left-3 z-10 rounded-md bg-zinc-900/85 px-2 py-1 text-xs text-zinc-500 transition-colors backdrop-blur-sm;
+  }
+
+  .mindmap__hint[data-emphasis='true'] {
+    @apply text-zinc-100;
+  }
+
+  .mindmap__hint-touch {
+    @apply hidden;
   }
 
   @media (hover: none) and (pointer: coarse) {
-    .pdf-document__viewer--inline {
+    .mindmap__hint-pointer {
       @apply hidden;
     }
 
-    .pdf-document__touch-fallback {
-      @apply flex;
+    .mindmap__hint-touch {
+      @apply inline;
     }
+  }
+
+  .mindmap__status {
+    @apply absolute inset-0 flex items-center justify-center p-6 text-center text-base text-zinc-500;
+  }
+
+  .mindmap__noscript {
+    @apply mt-3 text-base text-zinc-400;
+  }
+
+  /* markmap-view node styles (its embedded global CSS is disabled so these own the look) */
+  .mindmap__canvas.markmap {
+    --markmap-max-width: 20rem;
+    --markmap-circle-open-bg: var(--color-zinc-900);
+    color: var(--color-zinc-200);
+    font: 400 1rem/1.35 var(--font-outfit);
+  }
+
+  .mindmap .markmap-link {
+    fill: none;
+  }
+
+  .mindmap .markmap-node > circle {
+    @apply cursor-pointer;
+  }
+
+  .mindmap .markmap-foreign {
+    @apply inline-block cursor-pointer;
+  }
+
+  .mindmap .markmap-foreign > div {
+    width: var(--markmap-max-width);
+    text-align: left;
+  }
+
+  .mindmap .markmap-foreign > div > div {
+    @apply inline-block;
+  }
+
+  .mindmap .markmap-foreign code {
+    @apply rounded bg-zinc-800 px-1 font-mono text-[0.875em] text-zinc-100;
+  }
+
+  /* markmap depth is 1-based: 1 = root, 2 = main branches */
+  .mindmap .markmap-node[data-depth='1'] .markmap-foreign {
+    @apply text-[1.375rem] font-bold text-primary;
+  }
+
+  .mindmap .markmap-node[data-depth='2'] .markmap-foreign {
+    @apply text-[1.0625rem] font-semibold text-zinc-100;
+  }
+
+  /* Text outline fallback (no-JS / SEO / screen readers) */
+  .mindmap-outline {
+    @apply mt-4 rounded-xl border border-zinc-800 px-4 py-3;
+  }
+
+  .mindmap-outline__summary {
+    @apply cursor-pointer font-outfit text-base font-medium text-zinc-300 hover:text-primary;
+  }
+
+  .mindmap-outline__body {
+    @apply mt-3;
   }
 
   /* Markdown document (Goodies cheat sheets): wrap long copyable prompts */
