@@ -21,7 +21,7 @@
   --math-color: var(--color-zinc-100);
   --math-error: var(--color-red-400);
 
-  /* Mind map (Goodies) main-branch palette: distinct hues that stay readable on zinc-900.
+  /* Mind map main-branch palette: distinct hues that stay readable on zinc-900.
      The root node follows --theme-color; branches cycle through these in order. */
   --mindmap-branch-1: var(--theme-purple);
   --mindmap-branch-2: var(--theme-blue);

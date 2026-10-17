@@ -1,13 +1,24 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { LocateFixed, Maximize2, Minimize2 } from 'lucide-react';
 import type { IMarkmapOptions, Markmap } from 'markmap-view';
 import ErrorBoundary from '../ErrorBoundary';
 import type { MindmapNode } from '../../utils/mindmap';
 
-interface MindMapProps {
+/** Canvas height preset. `compact` suits maps embedded in long-form writing. */
+export type MindMapSize = 'default' | 'compact';
+
+/** Props of the `MindMap` island. Every value must be serializable. */
+export interface MindMapProps {
+  /** Tree built at build time with `outlineToMindmap`. */
   root: MindmapNode;
-  /** Accessible name for the map region. */
+  /** Accessible name of the map region. */
   label: string;
+  /** Depth that starts unfolded: 1 shows only the root, 2 adds the main branches. Default 2. */
+  initialExpandLevel?: number;
+  /** Canvas height preset. Default `default`. */
+  size?: MindMapSize;
+  /** Sentence appended to the load-error message, pointing readers to an alternative. */
+  fallbackHint?: string;
 }
 
 type MarkmapNode = Parameters<IMarkmapOptions['color']>[0];
@@ -69,7 +80,14 @@ function distance(touches: TouchList): number {
   );
 }
 
-function MindMapInner({ root, label }: MindMapProps) {
+function MindMapInner({
+  root,
+  label,
+  initialExpandLevel = 2,
+  size = 'default',
+  fallbackHint,
+}: MindMapProps) {
+  const hintId = useId();
   const figureRef = useRef<HTMLElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const markmapRef = useRef<Markmap | null>(null);
@@ -85,7 +103,6 @@ function MindMapInner({ root, label }: MindMapProps) {
     void markmapRef.current?.fit();
   }, []);
 
-  // Create the map once the island is visible.
   useEffect(() => {
     const svg = svgRef.current;
     if (!svg) return;
@@ -119,8 +136,7 @@ function MindMapInner({ root, label }: MindMapProps) {
           duration: 300,
           embedGlobalCSS: false,
           fitRatio: 0.96,
-          // Root + main branches visible; everything below starts folded.
-          initialExpandLevel: 2,
+          initialExpandLevel,
           maxInitialScale: 1.1,
           maxWidth: 320,
           paddingX: 10,
@@ -171,7 +187,7 @@ function MindMapInner({ root, label }: MindMapProps) {
       markmap?.destroy();
       markmapRef.current = null;
     };
-  }, [root]);
+  }, [root, initialExpandLevel]);
 
   // Two-finger pan + pinch when embedded, so a single finger keeps scrolling the page.
   useEffect(() => {
@@ -298,12 +314,13 @@ function MindMapInner({ root, label }: MindMapProps) {
       ref={figureRef}
       className="mindmap"
       data-fullscreen={isFullscreen ? 'true' : 'false'}
+      data-size={size}
       aria-label={label}
     >
       <svg
         ref={svgRef}
         className="mindmap__canvas markmap"
-        aria-describedby="mindmap-hint"
+        aria-describedby={hintId}
         onClick={onCanvasClick}
         onWheel={onCanvasWheel}
       />
@@ -311,31 +328,27 @@ function MindMapInner({ root, label }: MindMapProps) {
       <div className="mindmap__toolbar">
         <button
           type="button"
-          className="pdf-document__action mindmap__control"
+          className="mindmap__control"
           onClick={fit}
           disabled={status !== 'ready'}
           aria-label="Fit map to screen"
         >
-          <LocateFixed className="pdf-document__action-icon" aria-hidden="true" />
+          <LocateFixed className="mindmap__control-icon" aria-hidden="true" />
           <span className="mindmap__control-label">Fit</span>
         </button>
         <button
           type="button"
-          className="pdf-document__action mindmap__control"
+          className="mindmap__control"
           onClick={() => void toggleFullscreen()}
           aria-pressed={isFullscreen}
           aria-label={fullscreenLabel}
         >
-          <FullscreenIcon className="pdf-document__action-icon" aria-hidden="true" />
+          <FullscreenIcon className="mindmap__control-icon" aria-hidden="true" />
           <span className="mindmap__control-label">{fullscreenLabel}</span>
         </button>
       </div>
 
-      <p
-        id="mindmap-hint"
-        className="mindmap__hint"
-        data-emphasis={hintEmphasis ? 'true' : 'false'}
-      >
+      <p id={hintId} className="mindmap__hint" data-emphasis={hintEmphasis ? 'true' : 'false'}>
         <span className="mindmap__hint-pointer">
           Click a topic to fold or unfold · drag to pan · Ctrl/⌘ + scroll to zoom
         </span>
@@ -351,7 +364,7 @@ function MindMapInner({ root, label }: MindMapProps) {
       )}
       {status === 'error' && (
         <p className="mindmap__status" role="alert">
-          The mind map could not load ({error}). Use the text outline below or download the PDF.
+          The mind map could not load ({error}).{fallbackHint && ` ${fallbackHint}`}
         </p>
       )}
     </figure>

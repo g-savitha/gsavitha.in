@@ -1,15 +1,15 @@
 import { Transformer } from 'markmap-lib/no-plugins';
 
 /**
- * Serializable mind-map node passed from Astro (build time) to the Markmap island.
+ * Serializable mind-map node passed from Astro (build time) to the `MindMap` island.
  * Structurally compatible with markmap's `IPureNode`.
  */
 export interface MindmapNode {
-  /** Inline HTML rendered by markdown-it (e.g. `<code>` for backticks). */
+  /** Inline HTML rendered by markdown-it, e.g. `<code>` for backticks. */
   content: string;
   children: MindmapNode[];
   payload: {
-    /** Index of the main branch this node belongs to; drives branch colours. -1 for the root. */
+    /** Index of the main branch this node belongs to, which picks its colour. -1 for the root. */
     branch: number;
   };
 }
@@ -27,9 +27,14 @@ function toMindmapNode(node: TransformedNode, branch: number): MindmapNode {
 }
 
 /**
- * Converts a nested Markdown list into a Markmap tree at build time, so only
- * `markmap-view` has to ship to the browser. Transformer bookkeeping (source
- * line numbers, tags) is dropped to keep the serialized props small.
+ * Converts a Markdown nested list into a mind-map tree. Call it at build time so only
+ * `markmap-view` ships to the browser.
+ *
+ * A single top-level list item becomes the root and its children become the main branches.
+ * Transformer bookkeeping (source lines, tags) is dropped to keep island props small.
+ *
+ * @example
+ * outlineToMindmap('- Kitchen\n  - Knives\n  - Pans').children.length; // 2
  */
 export function outlineToMindmap(markdown: string): MindmapNode {
   const { root } = transformer.transform(markdown);
@@ -38,9 +43,4 @@ export function outlineToMindmap(markdown: string): MindmapNode {
     children: root.children.map((child, index) => toMindmapNode(child, index)),
     payload: { branch: -1 },
   };
-}
-
-/** Total number of nodes in a mind-map tree, including the root. */
-export function countMindmapNodes(node: MindmapNode): number {
-  return node.children.reduce((total, child) => total + countMindmapNodes(child), 1);
 }

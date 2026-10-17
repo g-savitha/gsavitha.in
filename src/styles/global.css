@@ -349,17 +349,23 @@
     @apply flex shrink-0 items-center gap-2;
   }
 
-  .pdf-document__action {
+  .pdf-document__action,
+  .mindmap__control {
     @apply flex items-center gap-1.5 rounded-lg border border-zinc-700/60 px-3 py-2 text-sm font-medium text-zinc-400 transition-colors hover:border-primary/40 hover:text-primary;
   }
 
-  .pdf-document__action-icon {
+  .pdf-document__action-icon,
+  .mindmap__control-icon {
     @apply h-3.5 w-3.5;
   }
 
-  /* Interactive mind map (Goodies: GCP ACE cheat sheet, rendered with markmap-view) */
+  /* Mind map (components/goodies/MindMapSection.astro + MindMap.tsx, rendered with markmap-view) */
   .mindmap {
     @apply relative h-[70svh] min-h-[26rem] w-full overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900 sm:h-[75svh] sm:min-h-[32rem];
+  }
+
+  .mindmap[data-size='compact'] {
+    @apply h-[50svh] min-h-[20rem] sm:h-[55svh] sm:min-h-[24rem];
   }
 
   .mindmap[data-fullscreen='true'] {

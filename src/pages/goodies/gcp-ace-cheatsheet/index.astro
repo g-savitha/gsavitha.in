@@ -1,9 +1,8 @@
 ---
 import { getEntry, render } from 'astro:content';
 import PageLayout from '../../../layouts/PageLayout.astro';
-import MindMap from '../../../components/goodies/MindMap';
+import MindMapSection from '../../../components/goodies/MindMapSection.astro';
 import { SITE_TITLE } from '../../../consts';
-import { outlineToMindmap } from '../../../utils/mindmap';
 import { ArrowLeft, Download, ExternalLink } from 'lucide-astro';
 
 const pdfUrl = '/gcp-ace-cheatsheet.pdf';
@@ -14,8 +13,6 @@ if (!entry?.body) {
   throw new Error('Missing goodies entry body: gcp-ace-cheatsheet');
 }
 const { Content } = await render(entry);
-// Markdown outline -> markmap tree at build time; only markmap-view ships to the browser.
-const mindmap = outlineToMindmap(entry.body);
 ---
 
 <PageLayout title={`${entry.data.title} | ${SITE_TITLE}`} description={entry.data.description}>
@@ -51,18 +48,12 @@ const mindmap = outlineToMindmap(entry.body);
       </nav>
     </header>
 
-    <MindMap client:visible root={mindmap} label={`${entry.data.title} mind map`} />
-    <noscript>
-      <p class="mindmap__noscript">
-        The interactive map needs JavaScript. The full outline is below, or download the PDF.
-      </p>
-    </noscript>
-
-    <details class="mindmap-outline">
-      <summary class="mindmap-outline__summary">Text outline</summary>
-      <div class="markdown-document prose mindmap-outline__body">
-        <Content />
-      </div>
-    </details>
+    <MindMapSection
+      markdown={entry.body}
+      label={`${entry.data.title} mind map`}
+      fallbackHint="Use the text outline below or download the PDF."
+    >
+      <Content />
+    </MindMapSection>
   </article>
 </PageLayout>
