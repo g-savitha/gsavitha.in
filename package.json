@@ -19,8 +19,13 @@
     "audio:enable-published": "bun scripts/audio/enable-published.ts",
     "test:audio": "node --experimental-strip-types --test scripts/audio/lib/narration.test.ts scripts/audio/lib/cache.test.ts",
     "test:markdown": "node --experimental-strip-types --test src/utils/markdownPlugins.test.ts",
+    "test": "node --experimental-strip-types --test \"src/**/*.test.ts\" \"scripts/**/*.test.ts\"",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "lint:repo": "bun scripts/lint/repoRules.ts",
+    "verify:fast": "bun run format:check && bun run lint:repo && astro check && bun run test",
+    "verify": "bun run verify:fast && bun run build",
+    "prepare": "git config core.hooksPath .githooks || true"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",
@@ -60,5 +65,6 @@
     "@types/node": "^26.0.0",
     "prettier": "^3.8.4",
     "prettier-plugin-astro": "^0.14.1"
-  }
+  },
+  "packageManager": "bun@1.4.2"
 }
