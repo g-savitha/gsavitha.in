@@ -558,8 +558,10 @@
     @apply font-outfit text-sm font-medium text-primary no-underline transition-colors hover:text-primary-hover;
   }
 
+  /* row-reverse anchors the scroll origin at the right edge, so the newest weeks are in view
+     on first paint with no JS (dc5f45a needed a scrollLeft effect for this). */
   .consistency-heatmap__scroll {
-    @apply -mx-1 overflow-x-auto pb-2;
+    @apply -mx-1 flex flex-row-reverse overflow-x-auto pb-2;
     container-type: inline-size;
     container-name: heatmap;
   }
