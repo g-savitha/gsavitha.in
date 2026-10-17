@@ -8,7 +8,9 @@ export interface NavigationLink {
   icon: IconName;
 }
 
-export type SocialLink = NavigationLink;
+export interface SocialLink extends NavigationLink {
+  href: `https://${string}` | `mailto:${string}` | `/${string}`;
+}
 
 export const SITE_TITLE = 'Savitha Gollamudi';
 export const SITE_DESCRIPTION = "Savitha's Digital Garden";
@@ -31,7 +33,12 @@ export const LINKEDIN_RECOMMENDATIONS_URL =
 export const SOCIAL_LINKS = [
   { href: 'https://github.com/g-savitha', label: 'GitHub', icon: 'Github' },
   { href: 'https://www.linkedin.com/in/g-savitha/', label: 'LinkedIn', icon: 'Linkedin' },
-  { href: 'https://takeuforward.org/profile/gsavitha', label: 'TakeUForward', icon: 'Terminal' },
+  { href: 'https://leetcode.com/u/g-savitha/', label: 'LeetCode', icon: 'LeetCode' },
+  {
+    href: 'https://takeuforward.org/profile/gsavitha',
+    label: 'TakeUForward',
+    icon: 'TakeUForward',
+  },
   { href: 'mailto:gsavitha@protonmail.com', label: 'Email', icon: 'Mail' },
   { href: '/rss.xml', label: 'RSS Feed', icon: 'Rss' },
 ] as const satisfies readonly SocialLink[];

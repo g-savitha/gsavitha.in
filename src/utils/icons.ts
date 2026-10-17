@@ -12,18 +12,22 @@ import {
   Terminal,
   User,
 } from 'lucide-astro';
+import LeetCode from '../components/icons/LeetCode.astro';
+import TakeUForward from '../components/icons/TakeUForward.astro';
 
 export const ICONS = {
   Award,
   BookOpen,
   FolderGit2,
   Github,
+  LeetCode,
   Linkedin,
   Mail,
   Map,
   PenTool,
   Rss,
   Sparkles,
+  TakeUForward,
   Terminal,
   User,
 } as const;
