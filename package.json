@@ -21,8 +21,14 @@
     "test:markdown": "node --experimental-strip-types --test src/utils/markdownPlugins.test.ts",
     "test:mindmap": "node --experimental-strip-types --test src/utils/mindmap.test.ts",
     "test:social": "node --experimental-strip-types --test src/consts.test.ts",
+    "test": "node --experimental-strip-types --test \"src/**/*.test.ts\" \"scripts/**/*.test.ts\"",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "lint:repo": "bun scripts/lint/repoRules.ts",
+    "verify:fast": "bun run format:check && bun run lint:repo && astro check && bun run test",
+    "verify": "bun run verify:fast && bun run build && bun run test:browser",
+    "prepare": "git config core.hooksPath .githooks || true",
+    "test:browser": "node --experimental-strip-types --test \"tests/browser/*.browser.ts\""
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",
@@ -62,7 +68,9 @@
   },
   "devDependencies": {
     "@types/node": "^26.0.0",
+    "playwright-core": "1",
     "prettier": "^3.8.4",
     "prettier-plugin-astro": "^0.14.1"
-  }
+  },
+  "packageManager": "bun@1.4.2"
 }
