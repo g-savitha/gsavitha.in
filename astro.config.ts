@@ -4,13 +4,14 @@ import { defineConfig } from 'astro/config';
 
 import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
+import { buildEnvGuard } from './src/env/buildEnvGuard.ts';
 import { rehypePlugins, remarkPlugins } from './src/utils/markdownPlugins.ts';
 
 // https://astro.build/config
 export default defineConfig({
   site: 'https://gsavitha.in',
   base: '/',
-  integrations: [mdx(), sitemap(), react()],
+  integrations: [buildEnvGuard(), mdx(), sitemap(), react()],
   markdown: {
     remarkPlugins,
     rehypePlugins,
