@@ -281,6 +281,38 @@
     transform: translateX(0);
   }
 
+  .site-footer {
+    @apply mt-auto px-6 py-10 lg:px-12;
+  }
+
+  .site-footer__bar {
+    @apply flex flex-col gap-6 border-t border-zinc-800/80 pt-8;
+  }
+
+  .site-footer__meta {
+    @apply flex flex-col items-center gap-1 text-center md:flex-row md:justify-between md:text-left;
+  }
+
+  .site-footer__copyright {
+    @apply text-base text-zinc-500;
+  }
+
+  .site-footer__credit {
+    @apply text-base font-medium text-zinc-600;
+  }
+
+  .social-links {
+    @apply flex flex-wrap items-center justify-center gap-1 md:-ml-3 md:justify-start;
+  }
+
+  .social-links__link {
+    @apply flex h-11 w-11 items-center justify-center rounded-xl text-zinc-400 hover:text-primary focus-visible:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary;
+  }
+
+  .social-links__icon {
+    @apply h-5 w-5;
+  }
+
   /* Sidebar name typing animation */
   @keyframes typing-reveal {
     0% {
