@@ -386,16 +386,18 @@ date: 2024-12-28
             - Customer managed encryption key
           - Client side (optional)
         - Signed URL
+          - See IAM → Remember
         - Static Website
-    - Remember
-      - key-value
-      - objects are stored in buckets
-      - supports all file types
-      - partial update on objects is not allowed
-      - bucket names are globally unique
-      - Object versioning prevents accidental deletion & provides history
-      - Object life cycle management:
-        - change from one storage class to another
+          - See IAM → Remember
+      - Remember
+        - key-value
+        - objects are stored in buckets
+        - supports all file types
+        - partial update on objects is not allowed
+        - bucket names are globally unique
+        - Object versioning prevents accidental deletion & provides history
+        - Object life cycle management:
+          - change from one storage class to another
   - Pub/Sub
     - Use cases
       - Event Ingestion
