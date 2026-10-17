@@ -8,6 +8,21 @@
   --math-color: var(--color-zinc-100);
   --math-error: var(--color-red-400);
 
+  /* Mind map main-branch palette: distinct hues that stay readable on zinc-900.
+     The root node follows --theme-color; branches cycle through these in order. */
+  --mindmap-branch-1: var(--theme-purple);
+  --mindmap-branch-2: var(--theme-blue);
+  --mindmap-branch-3: var(--theme-green);
+  --mindmap-branch-4: var(--theme-yellow);
+  --mindmap-branch-5: var(--theme-pink);
+  --mindmap-branch-6: #fb923c;
+  --mindmap-branch-7: #2dd4bf;
+  --mindmap-branch-8: #f87171;
+  --mindmap-branch-9: #818cf8;
+  --mindmap-branch-10: #a3e635;
+  --mindmap-branch-11: #38bdf8;
+  --mindmap-branch-12: #e879f9;
+
   /* Motion */
   --ease-lift: cubic-bezier(0.25, 0.1, 0.25, 1);
   --ease-lift-spring: cubic-bezier(0.32, 0.72, 0, 1);
