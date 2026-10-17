@@ -391,6 +391,11 @@
     }
   }
 
+  /* Markdown document (Goodies cheat sheets): wrap long copyable prompts */
+  .markdown-document pre {
+    @apply break-words whitespace-pre-wrap;
+  }
+
   /* Projects showcase grid with ambient glow */
   .projects-showcase {
     position: relative;
