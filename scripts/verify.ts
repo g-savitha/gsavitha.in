@@ -13,7 +13,7 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import path from 'node:path';
 import { chromium, type Browser, type Page } from 'playwright-core';
 import { parse as parseYaml } from 'yaml';
-import { DEFAULT_THEME, THEME_NAMES } from '../src/utils/themes.ts';
+import { DEFAULT_THEME, PALETTE, THEME_NAMES } from '../src/theme/palette.ts';
 
 const ROOT = process.cwd();
 const DIST = path.join(ROOT, 'dist');
@@ -185,22 +185,24 @@ async function visit(browser: Browser, route: string): Promise<{ page: Page; err
   return { page, errors };
 }
 
+/** Resolved accent. `--theme-color` is `var(--theme-<name>)`, so read the used colour, not the alias. */
 const themeColor = (page: Page) =>
-  page.evaluate(() =>
-    getComputedStyle(document.documentElement)
-      .getPropertyValue('--theme-color')
-      .trim()
-      .toLowerCase(),
-  );
+  page.evaluate(() => {
+    const probe = document.createElement('span');
+    probe.style.color = 'var(--theme-color)';
+    document.documentElement.appendChild(probe);
+    const computed = getComputedStyle(probe).color;
+    probe.remove();
+    const match = computed.match(/rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)/);
+    if (!match) return computed.trim().toLowerCase();
+    const hex = [match[1], match[2], match[3]]
+      .map((channel) => Number(channel).toString(16).padStart(2, '0'))
+      .join('');
+    return `#${hex}`;
+  });
 
 function themeHexes(): Record<string, string> {
-  const css = readFileSync(path.join(ROOT, 'src/styles/variables.css'), 'utf8');
-  return Object.fromEntries(
-    THEME_NAMES.map((name) => [
-      name,
-      css.match(new RegExp(`--theme-${name}:\\s*(#[0-9a-f]+)`, 'i'))?.[1].toLowerCase() ?? '',
-    ]),
-  );
+  return Object.fromEntries(THEME_NAMES.map((name) => [name, PALETTE[name].base.toLowerCase()]));
 }
 
 /** Settles fonts and CSS transitions first so screenshots show the final state, not a fade. */

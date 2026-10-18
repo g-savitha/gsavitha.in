@@ -24,6 +24,5 @@ Preconditions: fresh `bun run build`.
 
 ## Gotchas
 
-- Entries without `date` sort last and never count as "newest".
-- `url` is optional; a missing one renders `href="#"`.
+- `url` and `date` are required. The `linkOnly` loader drops the body, so the page is titles and links.
 - Search filtering is not scripted yet; check it by hand if you change `SearchableList.tsx`.

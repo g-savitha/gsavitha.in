@@ -259,6 +259,19 @@
       "url": "https://audio.gsavitha.in/audio/blog/kafka-explained-like-you-are-5/f7aa9ccfdfa751feb0e4dd98868a2c793f77f5f4518d557d7d06896b29047c05/en.mp3"
     }
   },
+  "making-coding-agents-trustworthy": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 1086.23,
+      "bytes": 8690304,
+      "hash": "b6aa5444104cfd44aec711cab6478f641f47221b53050a5e21b85faf5cfbdddc",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-10-18T14:59:16.411Z",
+      "url": "https://audio.gsavitha.in/audio/blog/making-coding-agents-trustworthy/b6aa5444104cfd44aec711cab6478f641f47221b53050a5e21b85faf5cfbdddc/en.mp3"
+    }
+  },
   "sync-fork-with-original-git": {
     "en": {
       "label": "English",

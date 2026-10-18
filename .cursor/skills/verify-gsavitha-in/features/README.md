@@ -24,19 +24,19 @@ Navigation and social links live in `src/consts.ts` (`NAV_LINKS`, rendered by `S
 
 ## Content collections (`src/content.config.ts`)
 
-| Collection       | Folder                               | Frontmatter                                                                                                 |
-| ---------------- | ------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
-| `blog`           | `src/content/blog/*.md(x)`           | `title`, `date`, optional `description`, `tags`, `categories`, `draft`, `updatedDate`, `heroImage`, `audio` |
-| `papers`         | `src/content/papers/*.md(x)`         | `title`, optional `url`, `date`, `tags`, `categories` (link-only; body not rendered)                        |
-| `goodies`        | `src/content/goodies/*.md(x)`        | `title`, `description`, `href`, optional `icon` (Lucide name), `date`                                       |
-| `certifications` | `src/content/certifications/*.md(x)` | `title`, `issuer`, optional `url`, `date`, `thumbnail`, `thumbnailUrl`                                      |
+| Collection       | Folder                               | Frontmatter                                                                                                     |
+| ---------------- | ------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| `blog`           | `src/content/blog/*.md(x)`           | `title`, `date`, optional `description`, `tags`, `categories`, `draft`, `updatedDate`, `heroImage`, `audio`     |
+| `papers`         | `src/content/papers/*.md(x)`         | `title`, required `url` and `date`, optional `tags`, `categories` (link-only via `linkOnly`; body not rendered) |
+| `goodies`        | `src/content/goodies/*.md(x)`        | `title`, `description`, `href`, optional `icon` (Lucide name), `date`                                           |
+| `certifications` | `src/content/certifications/*.md(x)` | `title`, `issuer`, optional `url`, `date`, `thumbnail`, `thumbnailUrl`                                          |
 
 ## Key components
 
 - `ThemePicker.tsx` (in `Sidebar.astro`, desktop and mobile copies, `client:load`): button
   `aria-label="Theme picker"`, items `Select <name> theme`. Sets `html[data-theme]` and
-  `localStorage['theme-color']`; `BaseHead.astro` re-applies it before paint. Themes and default
-  (`purple`) in `src/utils/themes.ts`; colours in `src/styles/variables.css` (`--theme-color`).
+  `localStorage['theme-color']`; `BaseHead.astro` re-applies it before paint. Themes, the default
+  (`purple`), and accent colours live in `src/theme/palette.ts` (`PALETTE`, `DEFAULT_THEME`).
 - `goodies/MindMapSection.astro` + `MindMap.tsx`: Markdown nested list to markmap SVG
   (`.mindmap__canvas`, `client:visible`), with a text-outline fallback. See README "Mind maps".
 - `practice/ConsistencyHeatmap.tsx` and `practice/DsaProgress.tsx`: Home practice row.

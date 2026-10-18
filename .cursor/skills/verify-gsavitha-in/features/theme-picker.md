@@ -27,4 +27,5 @@ Preconditions: fresh profile (the script uses a new browser context).
 ## Gotchas
 
 - Two pickers exist in the DOM (desktop and mobile); target the `:visible` one.
-- Compare computed `--theme-color` against `variables.css`, not hardcoded hex values.
+- Compare the resolved `--theme-color` against `PALETTE` in `src/theme/palette.ts`, not a hardcoded
+  hex. The custom property is `var(--theme-<name>)`; resolve the used colour before comparing.

@@ -1,3 +1,4 @@
+import { readBuildEnv } from '../env/buildEnv.ts';
 import type { ConsistencyDay } from './consistency';
 
 const GITHUB_GRAPHQL = 'https://api.github.com/graphql';
@@ -21,16 +22,6 @@ interface GithubCalendarResponse {
   errors?: { message: string }[];
 }
 
-function getGithubToken(): string | undefined {
-  const fromImport = import.meta.env.GITHUB_TOKEN;
-  if (typeof fromImport === 'string' && fromImport.trim()) return fromImport.trim();
-
-  const fromProcess = process.env.GITHUB_TOKEN;
-  if (typeof fromProcess === 'string' && fromProcess.trim()) return fromProcess.trim();
-
-  return undefined;
-}
-
 /**
  * Fetch the authenticated-visible contribution calendar for a public user.
  * Returns an empty series when `GITHUB_TOKEN` is missing or the API fails.
@@ -38,7 +29,7 @@ function getGithubToken(): string | undefined {
 export async function fetchGithubContributionDays(
   username: string,
 ): Promise<{ days: ConsistencyDay[]; total: number; available: boolean }> {
-  const token = getGithubToken();
+  const token = readBuildEnv('GITHUB_TOKEN', { ...process.env, ...import.meta.env });
   if (!token) {
     console.warn('GITHUB_TOKEN missing — GitHub contribution heatmap will be empty.');
     return { days: [], total: 0, available: false };

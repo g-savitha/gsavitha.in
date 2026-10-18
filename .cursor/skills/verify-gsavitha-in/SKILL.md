@@ -34,11 +34,15 @@ on any failure; the build step fails first on Astro or content-schema errors.
   `/goodies/gcp-ace-cheatsheet`, `/goodies/pstack-cheatsheet` return 200 with no console errors,
   uncaught exceptions, or same-origin 4xx/5xx. Home starts dark with the `DEFAULT_THEME` (purple)
   `--theme-color`; the GCP ACE mind map draws markmap nodes; clicking `Theme picker` then
-  `Select pink theme` sets `data-theme`, changes `--theme-color` to the hex in `variables.css`, and
+  `Select pink theme` sets `data-theme`, changes `--theme-color` to that theme's hex, and
   survives a reload.
 
-Expected colours and theme names come from `src/styles/variables.css` and `src/utils/themes.ts`, so
-the script follows palette changes without edits.
+Expected colours and theme names come from `src/theme/palette.ts` (`PALETTE`, `DEFAULT_THEME`,
+`THEME_NAMES`). `--theme-color` is an alias (`var(--theme-<name>)`); the script resolves the used
+colour and compares it to `PALETTE`, so palette changes need no script edits.
+
+`bun run verify` is a separate check (format, repo rules, `astro check`, unit tests, build, and
+`tests/browser`). This skill's command is `bun run verify:site`.
 
 ## Evidence
 
