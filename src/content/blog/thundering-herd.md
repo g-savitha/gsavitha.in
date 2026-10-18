@@ -152,9 +152,9 @@ flowchart TD
     F --> G["DB slows further\nMore timeouts, more retries"]
     G --> H["💀 Full system failure\nManual intervention required"]
 
-    style C fill:#f6c9a8,stroke:#c99a7a,color:#111111
-    style D fill:#e8a0ad,stroke:#b8737f,color:#111111
-    style H fill:#7a2e3e,stroke:#a85a6a,color:#ffffff
+    style C fill:#fdba74,color:#000
+    style D fill:#fb7185,color:#000
+    style H fill:#9f1239,color:#fff
 ```
 
 The retry death spiral is what turns "our site was slow for 30 seconds" into "we were down for 2 hours." Every second of failure generates more load than the second before it. The system stops recovering on its own.
@@ -380,9 +380,9 @@ flowchart LR
     App --> Cache["Cache (Redis)"]
     Cache --> DB["Database\n(protected)"]
 
-    class LB primary
-    class Drop danger
-    class DB success
+    style LB fill:#1565c0,color:#fff
+    style Drop fill:#9f1239,color:#fff
+    style DB fill:#2e7d32,color:#fff
 ```
 
 **Rate limiting alone doesn't prevent the thundering herd** - it just caps the blast radius. The herd still arrives; you're turning it away at the door rather than letting it flood the DB. The clients that get rejected need exponential backoff with jitter (technique 3) so they don't immediately form another synchronized retry wave.
@@ -408,8 +408,8 @@ flowchart LR
     Cache --> DB["💀 Database\n(overloaded)"]
     App -->|"All hit DB directly"| DB
 
-    class Cache danger
-    class DB danger
+    style Cache fill:#9f1239,color:#fff
+    style DB fill:#9f1239,color:#fff
 ```
 
 With techniques layered together:
@@ -430,9 +430,9 @@ flowchart TD
     DB -->|"Result + TTL jitter"| CacheWrite["Cache repopulated\n(staggered expiry)"]
     CacheWrite --> Broadcast["All waiting\nrequests served"]
 
-    class RL primary
-    class DB success
-    class Response success
+    style RL fill:#1565c0,color:#fff
+    style DB fill:#2e7d32,color:#fff
+    style Response fill:#2e7d32,color:#fff
 ```
 
 Every layer has a job. Rate limiter caps volume. Single-flight ensures one DB query per miss. Jitter prevents the next synchronized expiry. Backoff with jitter prevents retry storms from forming.

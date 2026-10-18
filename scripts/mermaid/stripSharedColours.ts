@@ -5,8 +5,8 @@
  *   node --experimental-strip-types scripts/mermaid/stripSharedColours.ts           # rewrite posts
  *   node --experimental-strip-types scripts/mermaid/stripSharedColours.ts --check   # report only
  *
- * Per diagram: `classDef <shared name> fill:<equivalent>` lines are dropped and
- * `style <id> fill:<equivalent>` becomes `class <id> <name>`. A diagram with any colour this
+ * Per diagram: a `classDef <shared name>` or `style <id>` whose fill, stroke and text colour all
+ * equal a shared class is dropped (classDef) or becomes `class <id> <name>` (style). A diagram with any colour this
  * script does not recognise is treated as intentional one-off styling and left untouched.
  * Safe to rerun; it exits 1 in --check mode while anything is still strippable.
  */
@@ -17,24 +17,23 @@ import type { SharedClassName } from '../../src/theme/mermaid.ts';
 
 const CONTENT_DIR = 'src/content';
 
-/** Fills hand-written in posts before the shared theme, and the shared class that replaces each. */
-const EQUIVALENT_FILLS: Record<string, SharedClassName> = {
-  '#2563eb': 'primary',
-  '#1565c0': 'primary',
-  '#7c3aed': 'accent',
-  '#0891b2': 'info',
-  '#059669': 'success',
-  '#2e7d32': 'success',
-  '#d97706': 'warning',
-  '#b71c1c': 'danger',
-  '#334155': 'neutral',
-};
+/** A colour line is redundant only when fill, border and text all match a shared class exactly. */
+function colourKey(fill: string, stroke: string, text: string): string {
+  return [fill, stroke, text].map((c) => c.toLowerCase()).join('|');
+}
+
+const EQUIVALENT: Map<string, SharedClassName> = new Map(
+  SHARED_CLASS_NAMES.map((name) => {
+    const { fill, stroke, text } = sharedClassSwatch(name);
+    return [colourKey(fill, stroke, text), name] as const;
+  }).reverse(), // first-listed name wins for swatches shared by aliases
+);
 
 const COLOUR_LINE = /^(\s*)(classDef|style)\s+(\S+)\s+(.*)$/;
 const FENCE = /^```mermaid\s*$([\s\S]*?)^```\s*$/gm;
 
-function fillOf(props: string): string | undefined {
-  return props.match(/fill:\s*(#[0-9a-f]{3,8})/i)?.[1].toLowerCase();
+function colourOf(props: string, key: string): string {
+  return props.match(new RegExp(`${key}:\\s*(#[0-9a-f]{3,8})`, 'i'))?.[1] ?? '';
 }
 
 function isShared(name: string): name is SharedClassName {
@@ -44,8 +43,12 @@ function isShared(name: string): name is SharedClassName {
 /** Replacement for one colour line: '' to drop it, a string to swap it, null if it is a one-off. */
 function replacement(line: string): string | null {
   const [, indent, keyword, target, props] = line.match(COLOUR_LINE) ?? [];
-  const fill = fillOf(props ?? '');
-  const equivalent = fill ? EQUIVALENT_FILLS[fill] : undefined;
+  const key = colourKey(
+    colourOf(props ?? '', 'fill'),
+    colourOf(props ?? '', 'stroke'),
+    colourOf(props ?? '', 'color'),
+  );
+  const equivalent = EQUIVALENT.get(key);
   if (!equivalent) return null;
   if (keyword === 'style') return `${indent}class ${target} ${equivalent}`;
   if (!isShared(target)) return null;

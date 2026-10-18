@@ -103,24 +103,24 @@ Export the five R2 configuration values above before running it locally.
 
 ## Mermaid diagrams
 
-Write diagrams with no colours. Every diagram already uses the shared muted dark palette from
-[`src/theme/mermaid.ts`](src/theme/mermaid.ts), the one place to edit diagram colours. Do not
-add `%%{init}%%` theme blocks, `style` lines, or `classDef` lines with hex colours.
+Diagrams use the shared palette in [`src/theme/mermaid.ts`](src/theme/mermaid.ts), the one place
+to edit shared diagram colours, on Mermaid's `dark` theme. Do not add `%%{init}%%` theme blocks.
 
 To highlight nodes in a `flowchart`/`graph`, use a shared class. They are available in every
 flowchart without declaring them:
 
-| Class                  | Use for                                |
-| ---------------------- | -------------------------------------- |
-| `hit` / `success`      | good path, cache hit, done (green)     |
-| `miss` / `danger`      | failure, cache miss, rejected (maroon) |
-| `warning` / `decision` | caution, decision points (soft amber)  |
-| `neutral` / `content`  | plain inputs, background steps         |
-| `accent`               | the thing the diagram is about         |
-| `primary`              | main services, key steps (blue)        |
-| `info` / `storage`     | stores, caches, queues (teal)          |
-
-`secondary` is kept as an alias of `neutral` for older posts.
+| Class                   | Use for                                 |
+| ----------------------- | --------------------------------------- |
+| `hit` / `success`       | good path, cache hit, done (green)      |
+| `miss` / `danger`       | failure, cache miss, rejected (rose)    |
+| `warning`               | caution (orange)                        |
+| `decision`              | decision points (amber)                 |
+| `neutral` / `secondary` | plain inputs, background steps (grey)   |
+| `content`               | authored content (slate)                |
+| `accent`                | the thing the diagram is about (yellow) |
+| `primary`               | main services, key steps (blue)         |
+| `info`                  | services, caches (cyan)                 |
+| `storage`               | stores, buckets (teal)                  |
 
 ````md
 ```mermaid
@@ -134,12 +134,11 @@ flowchart LR
 `class A,B accent` assigns a class to several nodes at once. Use `<br/>` for a line break inside a
 label or note (`A["First line<br/>second line"]`).
 
-Unclassed nodes get a quiet slate style, and sequence diagrams, notes, subgraphs, timelines and
-charts are themed too. Fills are muted (no bright, saturated colours); dark fills take white text
-and light/pastel fills take near-black `#111111` text, and all text meets WCAG AA
-(`src/theme/mermaid.test.ts` checks the shared palette and every post's own `style`/`classDef`
-colours against these rules). For a true one-off, a post can still add its own `classDef`/`style`;
-it overrides the shared class.
+Unclassed nodes, subgraphs, notes and sequence diagrams use Mermaid's own dark theme. Dark fills
+take white text and light fills (yellow, rose, mint, cyan) take black text, and all text meets WCAG
+AA (`src/theme/mermaid.test.ts` checks the shared palette and every post's own `style`/`classDef`
+colours against these rules). A post can still add its own `classDef`/`style` for hand-picked
+one-offs (the audio-player and thundering-herd posts do); it overrides the shared class.
 `node --experimental-strip-types scripts/mermaid/stripSharedColours.ts --check` lists hand-written
 diagram colours that the shared theme already covers (drop `--check` to remove them).
 
