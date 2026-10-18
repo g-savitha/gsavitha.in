@@ -15,7 +15,7 @@
   --mindmap-branch-3: var(--theme-green);
   --mindmap-branch-4: var(--theme-yellow);
   --mindmap-branch-5: var(--theme-pink);
-  --mindmap-branch-6: #fb923c;
+  --mindmap-branch-6: var(--theme-orange);
   --mindmap-branch-7: #2dd4bf;
   --mindmap-branch-8: #f87171;
   --mindmap-branch-9: #818cf8;

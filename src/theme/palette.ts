@@ -21,6 +21,7 @@ export const PALETTE = {
   yellow: { base: '#facc15', hover: '#fde047' },
   green: { base: '#4ade80', hover: '#86efac' },
   blue: { base: '#60a5fa', hover: '#93c5fd' },
+  orange: { base: '#fb923c', hover: '#fdba74' },
 } as const satisfies Record<string, Swatch>;
 
 export type ThemeName = keyof typeof PALETTE;
