@@ -12,6 +12,19 @@
       "url": "https://audio.gsavitha.in/audio/blog/async-await/3531938d54079c2cab3e310a04b1495dd6d76dd6b685aa7a3348f25c7bf7b3ba/en.mp3"
     }
   },
+  "making-coding-agents-trustworthy": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 1071.71,
+      "bytes": 8574144,
+      "hash": "70d8de8ea196af35cafe243ef240df314f5526d3163b3b9d979349f4447be1da",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-10-18T10:02:31.465Z",
+      "url": "https://audio.gsavitha.in/audio/blog/making-coding-agents-trustworthy/70d8de8ea196af35cafe243ef240df314f5526d3163b3b9d979349f4447be1da/en.mp3"
+    }
+  },
   "host-react-on-gh-pages": {
     "en": {
       "label": "English",
