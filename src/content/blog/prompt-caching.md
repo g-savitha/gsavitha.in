@@ -4,6 +4,7 @@ description: "What prompt caching is, what happens inside the model, how five pr
 date: 2026-10-19
 tags: ["llm", "prompt-caching", "ai-engineering", "backend"]
 draft: false
+heroImage: "../../assets/prompt-caching-hero.jpg"
 ---
 
 Every time you call an LLM API, you send the whole prompt again. The tool definitions, the system prompt, the conversation so far, and then the one new message at the end.
