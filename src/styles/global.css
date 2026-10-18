@@ -116,6 +116,32 @@
     font-size: 1rem;
   }
 
+  /* Inline code: a quiet pill instead of Typography's literal backticks */
+  .prose :not(pre) > code::before,
+  .prose :not(pre) > code::after {
+    content: none;
+  }
+
+  .prose :not(pre) > code {
+    @apply rounded bg-zinc-800/70 px-1.5 py-0.5 font-normal;
+  }
+
+  /* Tables: scroll inside their own region (rehypeTableScroll) instead of widening the page */
+  .prose .table-scroll {
+    @apply my-6 max-w-full overflow-x-auto rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-zinc-600) transparent;
+  }
+
+  .prose .table-scroll > table {
+    @apply my-0;
+  }
+
+  .prose :is(td, th) code {
+    overflow-wrap: anywhere;
+  }
+
   /* Inline and text links — lighter lift than block targets */
   .hover-lift-link {
     display: inline-block;

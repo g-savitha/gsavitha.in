@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createMarkdownProcessor } from '@astrojs/markdown-remark';
 import { compile } from '@mdx-js/mdx';
+import remarkGfm from 'remark-gfm';
 import { rehypePlugins, remarkPlugins } from './markdownPlugins.ts';
 
 const processor = await createMarkdownProcessor({
@@ -89,6 +90,23 @@ test('keeps <br/> and other markup in mermaid source as text', async () => {
     mermaidTextContent(html),
     'flowchart TB\n  A["One<br/>Two"] --> B["x < y && y > z<br>end"]',
   );
+});
+
+test('wraps tables in a focusable horizontal scroll region', async () => {
+  const html = await renderMarkdown('| a | b |\n| --- | --- |\n| `x` | y |\n');
+  assert.match(
+    html,
+    /<div class="table-scroll" tabindex="0" role="region" aria-label="Table">\s*<table>[\s\S]*<\/table><\/div>/,
+  );
+  assert.match(html, /<td><code>x<\/code><\/td>/);
+});
+
+test('wraps tables in MDX too', async () => {
+  const compiled = await compile('| a | b |\n| --- | --- |\n| x | y |\n', {
+    remarkPlugins: [remarkGfm, ...remarkPlugins],
+    rehypePlugins,
+  });
+  assert.match(String(compiled.value), /table-scroll/);
 });
 
 test('renders math in MDX with the same plugins', async () => {
