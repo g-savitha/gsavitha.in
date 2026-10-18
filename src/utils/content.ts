@@ -78,3 +78,9 @@ export function getRecentPosts(
 ): CollectionEntry<'blog'>[] {
   return sortByDate(posts.filter((p) => p.id !== currentPostId)).slice(0, limit);
 }
+
+/** Papershelf entries, newest first. The one way pages read the papers collection. */
+export async function getPapers(limit?: number): Promise<CollectionEntry<'papers'>[]> {
+  const papers = sortByDate(await getCollection('papers'));
+  return limit === undefined ? papers : papers.slice(0, limit);
+}

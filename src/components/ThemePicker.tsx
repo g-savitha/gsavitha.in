@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { PaintBucket } from 'lucide-react';
-import { THEME_NAMES, type ThemeName } from '../utils/themes';
+import { isThemeName, THEME_NAMES, type ThemeName } from '../theme/palette';
 import ErrorBoundary from './ErrorBoundary';
 
 function ThemePickerInner() {
@@ -11,8 +11,8 @@ function ThemePickerInner() {
   useEffect(() => {
     // Initialize theme from localStorage if the user has previously selected one
     const saved = localStorage.getItem('theme-color');
-    if (saved && THEME_NAMES.includes(saved as ThemeName)) {
-      setActiveTheme(saved as ThemeName);
+    if (isThemeName(saved)) {
+      setActiveTheme(saved);
     }
 
     const handleClickOutside = (e: MouseEvent) => {
@@ -70,7 +70,8 @@ function ThemePickerInner() {
               <li key={name} role="none">
                 <button
                   onClick={() => setTheme(name)}
-                  className={`theme-swatch theme-swatch--${name} ${activeTheme === name ? 'theme-swatch--active' : ''}`}
+                  data-swatch={name}
+                  className={`theme-swatch ${activeTheme === name ? 'theme-swatch--active' : ''}`}
                   aria-label={`Select ${name} theme`}
                   role="menuitem"
                 />

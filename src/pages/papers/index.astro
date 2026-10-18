@@ -1,17 +1,15 @@
 ---
-import { getCollection } from 'astro:content';
 import PageLayout from '../../layouts/PageLayout.astro';
 import SearchableList from '../../components/SearchableList';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+import { getPapers } from '../../utils/content';
 
-const papers = (await getCollection('papers')).sort(
-  (a, b) => (b.data.date?.valueOf() || 0) - (a.data.date?.valueOf() || 0),
-);
+const papers = await getPapers();
 
 const items = papers.map((paper) => ({
   title: paper.data.title,
-  href: paper.data.url ?? '#',
-  date: paper.data.date?.toISOString(),
+  href: paper.data.url,
+  date: paper.data.date.toISOString(),
   tags: paper.data.tags,
   categories: paper.data.categories,
   external: true,

@@ -8,15 +8,13 @@ import ConsistencyHeatmap from '../components/practice/ConsistencyHeatmap';
 import DsaProgress from '../components/practice/DsaProgress';
 import { ChevronRight, ExternalLink, FileText, PenBox, User } from 'lucide-astro';
 
-import { getRecentPosts, filterDrafts } from '../utils/content';
+import { getRecentPosts, filterDrafts, getPapers } from '../utils/content';
 import { fetchPracticeSnapshot } from '../utils/practice';
 
 const allPosts = await getCollection('blog');
 const posts = getRecentPosts(filterDrafts(allPosts), undefined, 5);
 
-const papers = (await getCollection('papers'))
-  .sort((a, b) => (b.data.date?.valueOf() || 0) - (a.data.date?.valueOf() || 0))
-  .slice(0, 5);
+const papers = await getPapers(5);
 
 const practice = await fetchPracticeSnapshot();
 ---

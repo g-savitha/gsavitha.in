@@ -1,6 +1,7 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { linkOnly } from './content-schema/linkOnly';
 import { isIconName } from './utils/icons';
 
 const blog = defineCollection({
@@ -31,12 +32,13 @@ const blog = defineCollection({
     }),
 });
 
+/** Papershelf: link-only entries. Required url/date so the list never renders a dead link. */
 const papers = defineCollection({
-  loader: glob({ base: './src/content/papers', pattern: '**/*.{md,mdx}' }),
+  loader: linkOnly(glob({ base: './src/content/papers', pattern: '**/*.{md,mdx}' })),
   schema: z.object({
     title: z.string(),
-    url: z.string().url().optional(),
-    date: z.coerce.date().optional(),
+    url: z.url(),
+    date: z.coerce.date(),
     tags: z.array(z.string()).optional(),
     categories: z.array(z.string()).optional(),
   }),
