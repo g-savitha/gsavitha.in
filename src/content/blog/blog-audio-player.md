@@ -100,13 +100,6 @@ flowchart TD
 
     INPUT --> EXTRACT
     PLAYER -->|"stream MP3 from CDN"| R2
-
-    classDef primary fill:#2563eb,stroke:#93c5fd,color:#ffffff
-    classDef accent fill:#7c3aed,stroke:#c4b5fd,color:#ffffff
-    classDef success fill:#059669,stroke:#6ee7b7,color:#ffffff
-    classDef decision fill:#d97706,stroke:#fcd34d,color:#111827
-    classDef storage fill:#0891b2,stroke:#67e8f9,color:#ffffff
-    classDef content fill:#334155,stroke:#94a3b8,color:#ffffff
 ```
 
 ---
@@ -165,12 +158,6 @@ flowchart TD
     FOUND -->|"yes"| OUT
     FOUND -->|"no"| FALLBACK["Use section heading\nas fallback"]:::primary
     FALLBACK --> OUT
-
-    classDef primary fill:#2563eb,stroke:#93c5fd,color:#ffffff
-    classDef info fill:#0891b2,stroke:#67e8f9,color:#ffffff
-    classDef success fill:#059669,stroke:#6ee7b7,color:#ffffff
-    classDef warning fill:#d97706,stroke:#fcd34d,color:#111827
-    classDef content fill:#334155,stroke:#94a3b8,color:#ffffff
 ```
 
 For each code block, the contextual engine looks for the most useful clue it can find: a leading comment, semantic structure, command names, selectors, or meaningful symbols. It skips generic names that do not help a listener and turns the useful parts into a short sentence:
@@ -237,11 +224,6 @@ flowchart TD
     INPUTS["Narration segments\n+ model · dtype · voice · speed"]:::content --> HASH["SHA-256\nnarration hash"]:::primary
     HASH --> URL["CDN path\nslug/hash/lang.mp3"]:::accent
     HASH --> ENTRY["Manifest\nentry"]:::success
-
-    classDef primary fill:#2563eb,stroke:#93c5fd,color:#ffffff
-    classDef accent fill:#7c3aed,stroke:#c4b5fd,color:#ffffff
-    classDef success fill:#059669,stroke:#6ee7b7,color:#ffffff
-    classDef content fill:#334155,stroke:#94a3b8,color:#ffffff
 ```
 
 The hash goes into the storage key itself, not just the metadata:
@@ -305,13 +287,6 @@ flowchart TD
     TTS --> WRITE["Write Float32\nto disk"]:::info
     READ --> ENCODE["Stream into\nMP3 encoder"]:::primary
     WRITE --> ENCODE
-
-    classDef primary fill:#2563eb,stroke:#93c5fd,color:#ffffff
-    classDef accent fill:#7c3aed,stroke:#c4b5fd,color:#ffffff
-    classDef success fill:#059669,stroke:#6ee7b7,color:#ffffff
-    classDef warning fill:#d97706,stroke:#fcd34d,color:#111827
-    classDef info fill:#0891b2,stroke:#67e8f9,color:#ffffff
-    classDef content fill:#334155,stroke:#94a3b8,color:#ffffff
 ```
 
 The chunk hash covers the text, model, quantization dtype, voice, and speed — every input that affects the synthesized audio. That means the same paragraph text synthesized with two different voices produces two different cache keys, so changing a voice in frontmatter correctly triggers re-synthesis.
@@ -331,12 +306,6 @@ flowchart TD
     WORKERS --> RESULTS["Validated result files\nserve as recovery checkpoints"]:::info
     RESULTS --> MERGE["Merge results"]:::success
     MERGE --> INDEX["Generated index"]:::success
-
-    classDef primary fill:#2563eb,stroke:#93c5fd,color:#ffffff
-    classDef accent fill:#7c3aed,stroke:#c4b5fd,color:#ffffff
-    classDef success fill:#059669,stroke:#6ee7b7,color:#ffffff
-    classDef info fill:#0891b2,stroke:#67e8f9,color:#ffffff
-    classDef content fill:#334155,stroke:#94a3b8,color:#ffffff
 ```
 
 Each worker handles one post. It loads the model, hits the segment cache, synthesizes whatever's missing, and writes a result file before it exits. Workers don't share state — they run independently and write separate files.
@@ -405,13 +374,6 @@ flowchart TD
     end
 
     DEPLOY --> BUILD --> PAGES
-
-    classDef primary fill:#2563eb,stroke:#93c5fd,color:#ffffff
-    classDef accent fill:#7c3aed,stroke:#c4b5fd,color:#ffffff
-    classDef success fill:#059669,stroke:#6ee7b7,color:#ffffff
-    classDef warning fill:#d97706,stroke:#fcd34d,color:#111827
-    classDef info fill:#0891b2,stroke:#67e8f9,color:#ffffff
-    classDef content fill:#334155,stroke:#94a3b8,color:#ffffff
 ```
 
 `deploy.yml` builds and ships the site. It runs on every push to main, touches no audio at all, and simply trusts whatever is already committed in the manifest. Styling, logic, and prose changes go live in well under a minute.
@@ -442,13 +404,6 @@ flowchart TD
     TTS --> ASSEMBLE
     ASSEMBLE --> UPLOAD["Validate + upload\nprune stale R2 objects"]:::primary
     UPLOAD --> MANIFEST["Update manifest"]:::success
-
-    classDef primary fill:#2563eb,stroke:#93c5fd,color:#ffffff
-    classDef accent fill:#7c3aed,stroke:#c4b5fd,color:#ffffff
-    classDef success fill:#059669,stroke:#6ee7b7,color:#ffffff
-    classDef decision fill:#d97706,stroke:#fcd34d,color:#111827
-    classDef info fill:#0891b2,stroke:#67e8f9,color:#ffffff
-    classDef content fill:#334155,stroke:#94a3b8,color:#ffffff
 ```
 
 **1. Parallel workers.** One post at a time wasted idle CPU cores. The orchestrator now fans out across up to four child processes; result files double as crash-recovery checkpoints.

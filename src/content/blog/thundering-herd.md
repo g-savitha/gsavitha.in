@@ -380,9 +380,9 @@ flowchart LR
     App --> Cache["Cache (Redis)"]
     Cache --> DB["Database\n(protected)"]
 
-    style LB fill:#1565c0,color:#fff
-    style Drop fill:#b71c1c,color:#fff
-    style DB fill:#2e7d32,color:#fff
+    class LB primary
+    class Drop danger
+    class DB success
 ```
 
 **Rate limiting alone doesn't prevent the thundering herd** - it just caps the blast radius. The herd still arrives; you're turning it away at the door rather than letting it flood the DB. The clients that get rejected need exponential backoff with jitter (technique 3) so they don't immediately form another synchronized retry wave.
@@ -408,8 +408,8 @@ flowchart LR
     Cache --> DB["💀 Database\n(overloaded)"]
     App -->|"All hit DB directly"| DB
 
-    style Cache fill:#b71c1c,color:#fff
-    style DB fill:#b71c1c,color:#fff
+    class Cache danger
+    class DB danger
 ```
 
 With techniques layered together:
@@ -430,9 +430,9 @@ flowchart TD
     DB -->|"Result + TTL jitter"| CacheWrite["Cache repopulated\n(staggered expiry)"]
     CacheWrite --> Broadcast["All waiting\nrequests served"]
 
-    style RL fill:#1565c0,color:#fff
-    style DB fill:#2e7d32,color:#fff
-    style Response fill:#2e7d32,color:#fff
+    class RL primary
+    class DB success
+    class Response success
 ```
 
 Every layer has a job. Rate limiter caps volume. Single-flight ensures one DB query per miss. Jitter prevents the next synchronized expiry. Backoff with jitter prevents retry storms from forming.

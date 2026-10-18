@@ -1,25 +1,5 @@
 import mermaid from 'mermaid';
-
-const CLASS_DEF_BLOCK = [
-  'classDef primary fill:#3b82f6,stroke:#2563eb,stroke-width:2px,color:#ffffff',
-  'classDef secondary fill:#4b5563,stroke:#374151,stroke-width:2px,color:#ffffff',
-  'classDef accent fill:#eab308,stroke:#ca8a04,stroke-width:2px,color:#000000',
-  'classDef info fill:#06b6d4,stroke:#0891b2,stroke-width:2px,color:#000000',
-  'classDef success fill:#22c55e,stroke:#16a34a,stroke-width:2px,color:#000000',
-  'classDef warning fill:#f97316,stroke:#ea580c,stroke-width:2px,color:#000000',
-  'classDef danger fill:#ef4444,stroke:#dc2626,stroke-width:2px,color:#ffffff',
-].join('\n');
-
-function prepareMermaidContent(raw: string): string {
-  const content = raw.trim();
-  if (!/\b(flowchart|graph)\b/.test(content)) return content;
-  if (content.includes('classDef')) return content;
-  if (!content.includes(':::')) return content;
-
-  const lines = content.split('\n');
-  lines.splice(1, 0, CLASS_DEF_BLOCK);
-  return lines.join('\n');
-}
+import { MERMAID_THEME_VARIABLES, withSharedClassDefs } from '../theme/mermaid.ts';
 
 function getSource(el: HTMLElement): string {
   return el.dataset.mermaidSource ?? el.textContent?.trim() ?? '';
@@ -30,10 +10,8 @@ let renderQueue = Promise.resolve();
 async function renderMermaid() {
   mermaid.initialize({
     startOnLoad: false,
-    theme: 'dark',
-    themeVariables: {
-      fontFamily: 'Dank Mono, ui-monospace, monospace',
-    },
+    theme: 'base',
+    themeVariables: MERMAID_THEME_VARIABLES,
     securityLevel: 'loose',
   });
 
@@ -45,7 +23,7 @@ async function renderMermaid() {
     if (!el.dataset.mermaidSource) {
       el.dataset.mermaidSource = raw;
     }
-    el.textContent = prepareMermaidContent(raw);
+    el.textContent = withSharedClassDefs(raw);
   });
 
   await mermaid.run({ nodes: [...nodes] });

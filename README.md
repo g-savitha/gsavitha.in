@@ -101,6 +101,44 @@ bun run audio:upload
 The upload command requires the AWS CLI because R2 exposes an S3-compatible API.
 Export the five R2 configuration values above before running it locally.
 
+## Mermaid diagrams
+
+Write diagrams with no colours. Every diagram already uses the shared dark palette from
+[`src/theme/mermaid.ts`](src/theme/mermaid.ts), the one place to edit diagram colours. Do not
+add `%%{init}%%` theme blocks, `style` lines, or `classDef` lines with hex colours.
+
+To highlight nodes in a `flowchart`/`graph`, use a shared class. They are available in every
+flowchart without declaring them:
+
+| Class                  | Use for                             |
+| ---------------------- | ----------------------------------- |
+| `hit` / `success`      | good path, cache hit, done (green)  |
+| `miss` / `danger`      | failure, cache miss, rejected (red) |
+| `warning` / `decision` | caution, decision points (amber)    |
+| `neutral` / `content`  | plain inputs, background steps      |
+| `accent`               | the thing the diagram is about      |
+| `primary`              | main services, key steps (blue)     |
+| `info` / `storage`     | stores, caches, queues (teal)       |
+
+`secondary` is kept as an alias of `neutral` for older posts.
+
+````md
+```mermaid
+flowchart LR
+    Req["Request"]:::neutral --> Cache{"In cache?"}:::decision
+    Cache -->|"yes"| Hit["Serve from cache"]:::hit
+    Cache -->|"no"| Miss["Query database"]:::miss
+```
+````
+
+`class A,B accent` assigns a class to several nodes at once.
+
+Unclassed nodes get a quiet slate style, and sequence diagrams, notes, subgraphs, timelines and
+charts are themed too. All text meets WCAG AA (`src/theme/mermaid.test.ts` checks it). For a true
+one-off, a post can still add its own `classDef`/`style`; it overrides the shared class.
+`node --experimental-strip-types scripts/mermaid/stripSharedColours.ts --check` lists hand-written
+diagram colours that the shared theme already covers (drop `--check` to remove them).
+
 ## Math
 
 Writings can include LaTeX. It is rendered at build time with KaTeX. (Papershelf entries are link-only, so their bodies are not rendered.)
