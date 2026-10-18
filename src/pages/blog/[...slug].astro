@@ -1,5 +1,6 @@
 ---
 import { type CollectionEntry, getCollection, render } from 'astro:content';
+import Embed from '../../components/Embed.astro';
 import BlogPost from '../../layouts/BlogPost.astro';
 
 import { filterDrafts, sortByDate, getRelatedPosts, getRecentPosts } from '../../utils/content';
@@ -43,5 +44,5 @@ const recentPosts = related.length > 0 ? related : getRecentPosts(filteredPosts,
   nextPost={nextPost}
   recentPosts={recentPosts}
 >
-  <Content />
+  <Content components={{ Embed }} />
 </BlogPost>

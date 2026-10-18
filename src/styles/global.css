@@ -191,6 +191,33 @@
 }
 
 @layer components {
+  /* Embedded media from <Embed /> (src/components/Embed.astro) */
+  .embed {
+    @apply mx-auto my-8 flex w-full max-w-2xl flex-col items-center gap-3;
+  }
+
+  .embed-video {
+    @apply w-full overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900;
+    aspect-ratio: 16 / 9;
+  }
+
+  .embed-video__frame {
+    @apply block h-full w-full border-0;
+  }
+
+  /* Fallback card until X's widget script swaps it for the post iframe */
+  .embed-post {
+    @apply w-full max-w-[550px] rounded-xl border border-zinc-800 bg-zinc-900 p-4 text-zinc-300;
+  }
+
+  .embed-post a {
+    color: var(--color-primary);
+  }
+
+  .embed-caption {
+    @apply text-center text-sm text-zinc-400;
+  }
+
   .header-link {
     @apply inline-block no-underline;
   }
