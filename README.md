@@ -108,6 +108,33 @@ Writings can include LaTeX. It is rendered at build time with KaTeX. (Papershelf
 
 `src/content/blog/draft-math-rendering.md` is an unpublished sample (`draft: true`). Open it with `bun run dev` at `/blog/draft-math-rendering`; production builds omit drafts.
 
+## Embeds
+
+`src/components/Embed.astro` embeds an X post or a YouTube video from its URL. The provider is detected from the URL, and an unsupported or malformed URL fails the build.
+
+1. Write the post as `.mdx` (rename `my-post.md` to `my-post.mdx`; the slug, URL and audio stay the same).
+2. Use the tag as its own block. No import is needed: the blog route passes `Embed` to every post, and the audio narration skips it.
+
+```mdx
+<Embed
+  url="https://x.com/poteto/status/2102050467505430555"
+  title="poteto on shipping 2,500 PRs a month"
+/>
+
+<Embed
+  url="https://www.youtube.com/watch?v=MN9dGgmLyso"
+  title="Matt Pocock interviews poteto"
+  caption="Optional caption"
+/>
+```
+
+- `url`: an X post (`x.com` or `twitter.com`, `/<user>/status/<id>`) or a YouTube link (`watch?v=`, `youtu.be`, `embed`, `live`, `shorts`; `t=` or `start=` is kept).
+- `title`: required. It is the iframe title for YouTube and the fallback text for X.
+- X posts render as a dark, do-not-track `blockquote.twitter-tweet` with a link fallback. `widgets.js` loads once per page, and only on pages with an X post.
+- YouTube renders a lazy, 16:9 `youtube-nocookie.com` iframe.
+- MDX does not allow HTML comments, so an `.mdx` post cannot use `<!-- audio-summary: ... -->`; keep `codeSummaryMode: contextual` or stay in `.md` if you need them.
+- URL parsing lives in `src/utils/embed.ts`; run `bun run test:embed`.
+
 ## Mind maps
 
 `src/components/goodies/MindMapSection.astro` turns a Markdown nested list into an interactive mind map. The single top-level item is the root and its children are the main branches. Astro builds the tree at build time, so only `markmap-view` loads in the browser, and only once the map scrolls into view.
