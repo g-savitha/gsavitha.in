@@ -66,6 +66,31 @@ test('keeps mermaid fences for the existing remark plugin', async () => {
   assert.equal(html.includes('katex'), false);
 });
 
+const MERMAID_WITH_MARKUP =
+  '```mermaid\nflowchart TB\n  A["One<br/>Two"] --> B["x < y && y > z<br>end"]\n```\n';
+
+/** What `src/scripts/mermaid.ts` reads: the element's text, with HTML entities decoded. */
+function mermaidTextContent(html: string): string {
+  const inner = html.match(/<div class="mermaid not-prose">([\s\S]*?)<\/div>/)?.[1] ?? '';
+  assert.equal(
+    /<[a-z]/i.test(inner),
+    false,
+    'mermaid source must not contain parsed HTML elements',
+  );
+  return inner
+    .replace(/&#x3C;|&#60;|&lt;/gi, '<')
+    .replace(/&#x3E;|&#62;|&gt;/gi, '>')
+    .replace(/&#x26;|&#38;|&amp;/gi, '&');
+}
+
+test('keeps <br/> and other markup in mermaid source as text', async () => {
+  const html = await renderMarkdown(MERMAID_WITH_MARKUP);
+  assert.equal(
+    mermaidTextContent(html),
+    'flowchart TB\n  A["One<br/>Two"] --> B["x < y && y > z<br>end"]',
+  );
+});
+
 test('renders math in MDX with the same plugins', async () => {
   const compiled = await compile('Energy $E=mc^2$.\n\n```js\nconst x = "$E=mc^2$";\n```\n', {
     remarkPlugins,

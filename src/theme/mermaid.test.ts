@@ -1,9 +1,13 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { readdirSync, readFileSync } from 'node:fs';
+import path from 'node:path';
 import {
   MERMAID_SURFACE,
   MERMAID_THEME_VARIABLES,
+  NEAR_BLACK,
   SHARED_CLASS_NAMES,
+  WHITE,
   sharedClassSwatch,
   withSharedClassDefs,
 } from './mermaid.ts';
@@ -24,17 +28,70 @@ function assertAA(text: string, fill: string, label: string) {
   assert.ok(ratio >= 4.5, `${label}: ${text} on ${fill} is ${ratio.toFixed(2)}:1 (< 4.5)`);
 }
 
+/** Spread between the strongest and weakest RGB channel, 0..1. Bright reds like #b91c1c are ~0.6. */
+function chroma(hex: string): number {
+  const channels = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
+  return Math.max(...channels) - Math.min(...channels);
+}
+
+const MAX_CHROMA = 0.45;
+
+/** Dark fills take white text, light/pastel fills near-black: whichever contrasts more. */
+function expectedText(fill: string): string {
+  return contrast(WHITE, fill) >= contrast(NEAR_BLACK, fill) ? WHITE : NEAR_BLACK;
+}
+
+function assertSwatch(fill: string, text: string, label: string) {
+  assertAA(text, fill, label);
+  assert.equal(
+    text.toLowerCase(),
+    expectedText(fill),
+    `${label}: ${fill} needs ${expectedText(fill)} text`,
+  );
+  assert.ok(chroma(fill) <= MAX_CHROMA, `${label}: ${fill} is too saturated`);
+}
+
+/** `style`/`classDef` lines with their own fill and text colour in any blog post. */
+function postColourLines(): { label: string; fill: string; text: string }[] {
+  const dir = 'src/content/blog';
+  return readdirSync(dir)
+    .filter((file) => /\.mdx?$/.test(file))
+    .flatMap((file) =>
+      readFileSync(path.join(dir, file), 'utf8')
+        .split('\n')
+        .flatMap((line, i) => {
+          if (!/^\s*(style|classDef)\s/.test(line)) return [];
+          const fill = line.match(/fill:\s*(#[0-9a-f]{6})/i)?.[1];
+          const text = line.match(/color:\s*(#[0-9a-f]{6})/i)?.[1];
+          return fill && text ? [{ label: `${file}:${i + 1}`, fill, text }] : [];
+        }),
+    );
+}
+
 test('requested shared classes exist', () => {
   for (const name of ['hit', 'miss', 'neutral', 'accent']) {
     assert.ok((SHARED_CLASS_NAMES as string[]).includes(name), name);
   }
 });
 
-test('every shared class has AA text contrast on its fill', () => {
+test('every shared class is muted, AA, and uses white text on dark / near-black on light', () => {
   for (const name of SHARED_CLASS_NAMES) {
     const { text, fill } = sharedClassSwatch(name);
-    assertAA(text, fill, name);
+    assertSwatch(fill, text, name);
   }
+});
+
+test('light fills get near-black text and dark fills get white text', () => {
+  assert.equal(expectedText('#f2d28b'), NEAR_BLACK);
+  assert.equal(expectedText('#7a2e3e'), WHITE);
+  assert.equal(sharedClassSwatch('warning').text, NEAR_BLACK);
+  assert.equal(sharedClassSwatch('miss').text, WHITE);
+});
+
+test('one-off colours in posts follow the same rules', () => {
+  const lines = postColourLines();
+  assert.ok(lines.length > 0, 'expected the thundering-herd death-spiral styles');
+  for (const { label, fill, text } of lines) assertSwatch(fill, text, label);
 });
 
 test('theme text colours are AA on their backgrounds', () => {

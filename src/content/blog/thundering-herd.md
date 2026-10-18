@@ -152,9 +152,9 @@ flowchart TD
     F --> G["DB slows further\nMore timeouts, more retries"]
     G --> H["💀 Full system failure\nManual intervention required"]
 
-    style C fill:#ff9800,color:#000
-    style D fill:#f44336,color:#fff
-    style H fill:#b71c1c,color:#fff
+    style C fill:#f6c9a8,stroke:#c99a7a,color:#111111
+    style D fill:#e8a0ad,stroke:#b8737f,color:#111111
+    style H fill:#7a2e3e,stroke:#a85a6a,color:#ffffff
 ```
 
 The retry death spiral is what turns "our site was slow for 30 seconds" into "we were down for 2 hours." Every second of failure generates more load than the second before it. The system stops recovering on its own.

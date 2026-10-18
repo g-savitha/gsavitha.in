@@ -3,9 +3,10 @@
  *
  * Mermaid derives shades from `themeVariables` with its own colour maths, so it needs literal hex
  * values (CSS custom properties do not work here). The palette is standalone, tuned for the dark
- * page surface, and does not follow the site accent. Swatch fills are the Tailwind 600/700 tones
- * first hand-written in `blog-audio-player.md`; `mermaid.test.ts` keeps every text/fill pair at
- * WCAG AA (>= 4.5:1).
+ * page surface, and does not follow the site accent. Swatch fills are muted, low-saturation tones
+ * (maroon rather than bright red) with subtle borders. Dark fills take white text and light/pastel
+ * fills take near-black text; `mermaid.test.ts` enforces that rule, low saturation, and WCAG AA
+ * (>= 4.5:1) for every text/fill pair.
  *
  * Posts never declare colours: flowcharts get `SHARED_CLASS_NAMES` injected by
  * `withSharedClassDefs`, so `A:::hit` or `class A,B miss` just works. See README "Mermaid diagrams".
@@ -18,17 +19,21 @@ interface Swatch {
   text: Hex;
 }
 
+/** Node text: white on dark fills, near-black on light/pastel fills (see `mermaid.test.ts`). */
+export const WHITE: Hex = '#ffffff';
+export const NEAR_BLACK: Hex = '#111111';
+
 /** Dark surface diagrams sit on (page background, zinc-900). */
 export const MERMAID_SURFACE: Hex = '#18181b';
 
 const SWATCHES = {
-  primary: { fill: '#2563eb', stroke: '#93c5fd', text: '#ffffff' },
-  accent: { fill: '#7c3aed', stroke: '#c4b5fd', text: '#ffffff' },
-  info: { fill: '#0e7490', stroke: '#67e8f9', text: '#ffffff' },
-  success: { fill: '#047857', stroke: '#6ee7b7', text: '#ffffff' },
-  warning: { fill: '#d97706', stroke: '#fcd34d', text: '#111827' },
-  danger: { fill: '#b91c1c', stroke: '#fca5a5', text: '#ffffff' },
-  neutral: { fill: '#334155', stroke: '#94a3b8', text: '#ffffff' },
+  primary: { fill: '#34508a', stroke: '#6b85b8', text: WHITE },
+  accent: { fill: '#5e4b8b', stroke: '#8f7fb8', text: WHITE },
+  info: { fill: '#2c6472', stroke: '#5f95a3', text: WHITE },
+  success: { fill: '#2f6b4f', stroke: '#5f9a7e', text: WHITE },
+  warning: { fill: '#f2d28b', stroke: '#c9a85e', text: NEAR_BLACK },
+  danger: { fill: '#7a2e3e', stroke: '#a85a6a', text: WHITE },
+  neutral: { fill: '#3f4b5c', stroke: '#6b7789', text: WHITE },
 } as const satisfies Record<string, Swatch>;
 
 type SwatchName = keyof typeof SWATCHES;
@@ -82,7 +87,7 @@ export const MERMAID_THEME_VARIABLES = {
   primaryColor: SLATE[800],
   primaryTextColor: SLATE[50],
   primaryBorderColor: SLATE[400],
-  secondaryColor: '#2e1065',
+  secondaryColor: '#2e2840',
   secondaryTextColor: SLATE[50],
   secondaryBorderColor: SWATCHES.accent.stroke,
   tertiaryColor: '#172033',
@@ -143,7 +148,7 @@ export const MERMAID_THEME_VARIABLES = {
 
 const SHARED_CLASS_DEFS = SHARED_CLASS_NAMES.map((name) => {
   const { fill, stroke, text } = sharedClassSwatch(name);
-  return `classDef ${name} fill:${fill},stroke:${stroke},stroke-width:1.5px,color:${text}`;
+  return `classDef ${name} fill:${fill},stroke:${stroke},stroke-width:1px,color:${text}`;
 });
 
 const FLOWCHART_HEADER = /^\s*(flowchart|graph)\b/;
