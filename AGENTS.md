@@ -127,6 +127,9 @@ repository. Preserve existing behavior unless a change is explicitly requested.
 
 ## Verification
 
+- For page, component, style, or content changes, run `bun run verify:site` and follow
+  `.cursor/skills/verify-gsavitha-in/SKILL.md`. The site layout and where to add content are in
+  `.cursor/skills/verify-gsavitha-in/features/README.md`.
 - Run the smallest relevant checks while developing, then run the broader project checks before a
   step is committed.
 - For source changes, normally run `bun run format:check`, `bunx astro check`, and `bun run build`.
