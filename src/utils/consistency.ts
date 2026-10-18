@@ -166,10 +166,21 @@ const MONTH_LABELS = [
 ] as const;
 
 /** Month label for the first week that introduces a new month. */
-export function monthLabelsForWeeks(weeks: HeatmapCell[][]): (string | null)[] {
+export interface MonthLabel {
+  name: string;
+  /** Calendar month, 1-12. */
+  number: number;
+  /** Fewer than MIN_LABEL_WEEKS columns before the next label (or grid end). */
+  crowded: boolean;
+}
+
+/** Columns a label needs to stay legible when the grid is squeezed to phone width. */
+const MIN_LABEL_WEEKS = 3;
+
+export function monthLabelsForWeeks(weeks: HeatmapCell[][]): (MonthLabel | null)[] {
   let lastMonth = -1;
 
-  return weeks.map((week) => {
+  const months = weeks.map((week) => {
     const firstDated = week.find((cell) => cell.date !== null);
     if (!firstDated?.date) return null;
 
@@ -177,7 +188,15 @@ export function monthLabelsForWeeks(weeks: HeatmapCell[][]): (string | null)[] {
     if (month === lastMonth) return null;
 
     lastMonth = month;
-    return MONTH_LABELS[month];
+    return month;
+  });
+
+  return months.map((month, index) => {
+    if (month === null) return null;
+
+    const next = months.findIndex((other, otherIndex) => otherIndex > index && other !== null);
+    const room = (next === -1 ? months.length : next) - index;
+    return { name: MONTH_LABELS[month], number: month + 1, crowded: room < MIN_LABEL_WEEKS };
   });
 }
 

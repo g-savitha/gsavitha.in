@@ -108,8 +108,17 @@ export default function ConsistencyHeatmap({ platforms, rangeMonths }: Consisten
             <div className="consistency-heatmap__body">
               <div className="consistency-heatmap__months" aria-hidden="true">
                 {monthLabels.map((label, index) => (
-                  <span key={index} className="consistency-heatmap__month">
-                    {label ?? ''}
+                  <span
+                    key={index}
+                    className="consistency-heatmap__month"
+                    data-crowded={label?.crowded}
+                  >
+                    {label && (
+                      <>
+                        <span className="consistency-heatmap__month-name">{label.name}</span>
+                        <span className="consistency-heatmap__month-number">{label.number}</span>
+                      </>
+                    )}
                   </span>
                 ))}
               </div>

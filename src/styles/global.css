@@ -896,10 +896,6 @@
       font-size: 0.625rem;
     }
 
-    .consistency-heatmap__month {
-      overflow: hidden;
-    }
-
     .consistency-heatmap__grid {
       width: 100%;
       gap: var(--hm-gap);
@@ -914,6 +910,29 @@
     .consistency-heatmap__cell:not(.consistency-heatmap__cell--legend) {
       width: var(--hm-cell);
       height: var(--hm-cell);
+    }
+  }
+
+  /*
+   * Phones: month names no longer fit their squeezed week columns, so swap them
+   * for month numbers and hide labels too close to their neighbour.
+   */
+  .consistency-heatmap__month-number {
+    @apply hidden;
+  }
+
+  @media (max-width: 639px) {
+    .consistency-heatmap__month-name {
+      @apply hidden;
+    }
+
+    /* invisible, not hidden: the span still holds its week column */
+    .consistency-heatmap__month[data-crowded='true'] {
+      @apply invisible;
+    }
+
+    .consistency-heatmap__month-number {
+      @apply inline tabular-nums;
     }
   }
 
