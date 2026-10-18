@@ -6,6 +6,10 @@ Welcome to my digital garden! 🪴
 
 Built with [Astro](https://astro.build) 🚀
 
+## Verify changes
+
+`bun run verify:site` builds the site, then checks the newest papers, goodies, and posts, internal links, console errors, and the theme picker in headless Chrome, saving screenshots to `verify-artifacts/`. Details: [`.cursor/skills/verify-gsavitha-in/SKILL.md`](.cursor/skills/verify-gsavitha-in/SKILL.md). Site map and where to add content: [`features/README.md`](.cursor/skills/verify-gsavitha-in/features/README.md).
+
 ## Article audio
 
 Audio narration is opt-in. Add this to a blog post's frontmatter:

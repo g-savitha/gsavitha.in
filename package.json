@@ -28,6 +28,7 @@
     "lint:repo": "bun scripts/lint/repoRules.ts",
     "verify:fast": "bun run format:check && bun run lint:repo && astro check && bun run test",
     "verify": "bun run verify:fast && bun run build && bun run test:browser",
+    "verify:site": "bun run build && node --experimental-strip-types scripts/verify.ts",
     "prepare": "git config core.hooksPath .githooks || true",
     "test:browser": "node --experimental-strip-types --test \"tests/browser/*.browser.ts\""
   },

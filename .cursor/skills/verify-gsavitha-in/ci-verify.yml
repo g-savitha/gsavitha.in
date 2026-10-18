@@ -1,0 +1,38 @@
+# Suggested CI job. Not active: copy to .github/workflows/verify.yml to enable (pushing it needs a
+# token with the `workflow` scope).
+name: Verify site
+
+# Builds the site and runs scripts/verify.ts (rendered pages, console errors, internal links,
+# theme picker) in headless Chrome. Screenshots are uploaded as an artifact.
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - name: Build and verify
+        run: bun run verify:site
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CHROME_PATH: /usr/bin/google-chrome
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verify-artifacts
+          path: verify-artifacts/

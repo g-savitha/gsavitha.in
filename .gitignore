@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # local API caches
 .cache/
+
+# verification evidence (scripts/verify.ts)
+verify-artifacts/
