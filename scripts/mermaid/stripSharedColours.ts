@@ -7,8 +7,11 @@
  *
  * Per diagram: a `classDef <shared name>` or `style <id>` whose fill, stroke and text colour all
  * equal a shared class is dropped (classDef) or becomes `class <id> <name>` (style). A diagram with any colour this
- * script does not recognise is treated as intentional one-off styling and left untouched.
- * Safe to rerun; it exits 1 in --check mode while anything is still strippable.
+ * script does not recognise is left untouched and reported.
+ *
+ * Posts must not contain hex colours in Mermaid blocks at all: add a named entry to `PALETTE` in
+ * `src/theme/mermaid.ts` instead. `--check` exits 1 while anything is strippable or any Mermaid
+ * block still contains a hex colour.
  */
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -24,11 +27,12 @@ function colourKey(fill: string, stroke: string, text: string): string {
 
 const EQUIVALENT: Map<string, SharedClassName> = new Map(
   SHARED_CLASS_NAMES.map((name) => {
-    const { fill, stroke, text } = sharedClassSwatch(name);
-    return [colourKey(fill, stroke, text), name] as const;
+    const { fill, border, text } = sharedClassSwatch(name);
+    return [colourKey(fill, border, text), name] as const;
   }).reverse(), // first-listed name wins for swatches shared by aliases
 );
 
+const HEX_COLOUR = /#[0-9a-f]{3,8}\b/i;
 const COLOUR_LINE = /^(\s*)(classDef|style)\s+(\S+)\s+(.*)$/;
 const FENCE = /^```mermaid\s*$([\s\S]*?)^```\s*$/gm;
 
@@ -87,6 +91,7 @@ async function posts(dir: string): Promise<string[]> {
 
 const check = process.argv.includes('--check');
 let pending = 0;
+let hexLines = 0;
 for (const file of await posts(CONTENT_DIR)) {
   const source = await readFile(file, 'utf8');
   let changed = 0;
@@ -103,5 +108,14 @@ for (const file of await posts(CONTENT_DIR)) {
     if (!check) await writeFile(file, next);
   }
   for (const line of oneOffs) console.log(`kept one-off: ${file}: ${line.trim()}`);
+  for (const [, body] of next.matchAll(FENCE)) {
+    for (const line of body.split('\n').filter((l) => HEX_COLOUR.test(l))) {
+      hexLines += 1;
+      console.error(`hex colour in mermaid block: ${file}: ${line.trim()}`);
+    }
+  }
 }
-if (check && pending > 0) process.exitCode = 1;
+if (hexLines > 0) {
+  console.error(`${hexLines} line(s) use hex colours; use a named PALETTE class instead.`);
+}
+if (check && (pending > 0 || hexLines > 0)) process.exitCode = 1;

@@ -5,11 +5,13 @@ import path from 'node:path';
 import {
   BLACK,
   MERMAID_THEME,
+  PALETTE,
   SHARED_CLASS_NAMES,
   WHITE,
   sharedClassSwatch,
   withSharedClassDefs,
 } from './mermaid.ts';
+import type { Swatch } from './mermaid.ts';
 
 /** `#abc` -> `#aabbcc`, lower case. */
 function normalise(hex: string): string {
@@ -50,22 +52,17 @@ function assertSwatch(fill: string, text: string, label: string) {
   }
 }
 
-/** `style`/`classDef` lines with their own fill and text colour in any blog post. */
-function postColourLines(): { label: string; fill: string; text: string }[] {
+/** Every line inside a Mermaid block of any blog post. */
+function mermaidLines(): { label: string; line: string }[] {
   const dir = 'src/content/blog';
-  const hex = '(#[0-9a-f]{6}|#[0-9a-f]{3})\\b';
   return readdirSync(dir)
     .filter((file) => /\.mdx?$/.test(file))
-    .flatMap((file) =>
-      readFileSync(path.join(dir, file), 'utf8')
-        .split('\n')
-        .flatMap((line, i) => {
-          if (!/^\s*(style|classDef)\s/.test(line)) return [];
-          const fill = line.match(new RegExp(`fill:\\s*${hex}`, 'i'))?.[1];
-          const text = line.match(new RegExp(`color:\\s*${hex}`, 'i'))?.[1];
-          return fill && text ? [{ label: `${file}:${i + 1}`, fill, text }] : [];
-        }),
-    );
+    .flatMap((file) => {
+      const source = readFileSync(path.join(dir, file), 'utf8');
+      return [...source.matchAll(/^```mermaid\s*$([\s\S]*?)^```\s*$/gm)].flatMap(([, body]) =>
+        body.split('\n').map((line) => ({ label: file, line })),
+      );
+    });
 }
 
 test('requested shared classes exist', () => {
@@ -74,11 +71,13 @@ test('requested shared classes exist', () => {
   }
 });
 
-test('every shared class is AA and uses white text on dark fills, black on light', () => {
-  for (const name of SHARED_CLASS_NAMES) {
-    const { text, fill } = sharedClassSwatch(name);
-    assertSwatch(fill, text, name);
-  }
+test('every palette entry is AA and uses white text on dark fills, black on light', () => {
+  for (const [name, { text, fill }] of Object.entries(PALETTE)) assertSwatch(fill, text, name);
+});
+
+test('every class name resolves to a palette entry', () => {
+  const swatches = new Set<Swatch>(Object.values(PALETTE));
+  for (const name of SHARED_CLASS_NAMES) assert.ok(swatches.has(sharedClassSwatch(name)), name);
 });
 
 test('the text rule picks black for light fills and white for dark fills', () => {
@@ -90,10 +89,26 @@ test('the text rule picks black for light fills and white for dark fills', () =>
   assert.equal(sharedClassSwatch('primary').text, WHITE);
 });
 
-test('one-off colours in posts follow the same rules', () => {
-  const lines = postColourLines();
-  assert.ok(lines.length > 0, 'expected the audio-player and thundering-herd colours');
-  for (const { label, fill, text } of lines) assertSwatch(fill, text, label);
+test('posts contain no hex colours in Mermaid blocks', () => {
+  const lines = mermaidLines();
+  assert.ok(lines.length > 0, 'expected Mermaid blocks in posts');
+  const offenders = lines.filter(({ line }) => /#[0-9a-f]{3,8}\b/i.test(line));
+  assert.deepEqual(
+    offenders.map(({ label, line }) => `${label}: ${line.trim()}`),
+    [],
+    'use a named PALETTE class instead of a hex colour',
+  );
+});
+
+test('every class a post uses exists in the palette', () => {
+  const known = new Set<string>(SHARED_CLASS_NAMES);
+  for (const { label, line } of mermaidLines()) {
+    const used = [
+      ...[...line.matchAll(/:::(\w+)/g)].map((m) => m[1]),
+      ...(line.match(/^\s*class\s+\S+\s+(\w+)\s*$/)?.slice(1) ?? []),
+    ];
+    for (const name of used) assert.ok(known.has(name), `${label}: unknown class ${name}`);
+  }
 });
 
 test('miss and danger are not a harsh bright red', () => {
