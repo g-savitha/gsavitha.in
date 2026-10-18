@@ -32,6 +32,15 @@ test('every difficulty colour is visible on the dark surface (WCAG 1.4.11, >= 3:
   }
 });
 
+test('every accent is AA as text on the dark surface and under dark text (>= 4.5:1)', () => {
+  for (const name of THEME_NAMES) {
+    for (const [variant, hex] of Object.entries(PALETTE[name])) {
+      const ratio = contrast(hex, SURFACE);
+      assert.ok(ratio >= 4.5, `${name}.${variant} ${hex} contrast ${ratio.toFixed(2)} < 4.5`);
+    }
+  }
+});
+
 test('difficulty colours never follow the accent', () => {
   const css = themeCss();
   for (const line of css.split('\n').filter((l) => l.includes('--dsa-'))) {

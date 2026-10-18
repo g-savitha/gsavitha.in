@@ -1,7 +1,7 @@
 # Theme picker
 
 The paint-bucket button in the sidebar switches the accent colour (pink, purple, yellow, green,
-blue) on a dark surface; purple is the default and the choice persists.
+blue, orange) on a dark surface; purple is the default and the choice persists.
 
 ## Sub-features
 
