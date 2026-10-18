@@ -152,9 +152,9 @@ flowchart TD
     F --> G["DB slows further\nMore timeouts, more retries"]
     G --> H["💀 Full system failure\nManual intervention required"]
 
-    style C fill:#ff9800,color:#000
-    style D fill:#f44336,color:#fff
-    style H fill:#b71c1c,color:#fff
+    class C severity1
+    class D severity2
+    class H severity3
 ```
 
 The retry death spiral is what turns "our site was slow for 30 seconds" into "we were down for 2 hours." Every second of failure generates more load than the second before it. The system stops recovering on its own.
@@ -380,9 +380,9 @@ flowchart LR
     App --> Cache["Cache (Redis)"]
     Cache --> DB["Database\n(protected)"]
 
-    class LB primary
-    class Drop danger
-    class DB success
+    class LB cobalt
+    class Drop maroon
+    class DB forest
 ```
 
 **Rate limiting alone doesn't prevent the thundering herd** - it just caps the blast radius. The herd still arrives; you're turning it away at the door rather than letting it flood the DB. The clients that get rejected need exponential backoff with jitter (technique 3) so they don't immediately form another synchronized retry wave.
@@ -408,8 +408,8 @@ flowchart LR
     Cache --> DB["💀 Database\n(overloaded)"]
     App -->|"All hit DB directly"| DB
 
-    class Cache danger
-    class DB danger
+    class Cache maroon
+    class DB maroon
 ```
 
 With techniques layered together:
@@ -430,9 +430,9 @@ flowchart TD
     DB -->|"Result + TTL jitter"| CacheWrite["Cache repopulated\n(staggered expiry)"]
     CacheWrite --> Broadcast["All waiting\nrequests served"]
 
-    class RL primary
-    class DB success
-    class Response success
+    class RL cobalt
+    class DB forest
+    class Response forest
 ```
 
 Every layer has a job. Rate limiter caps volume. Single-flight ensures one DB query per miss. Jitter prevents the next synchronized expiry. Backoff with jitter prevents retry storms from forming.

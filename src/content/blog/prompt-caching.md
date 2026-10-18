@@ -4,6 +4,7 @@ description: "What prompt caching is, what happens inside the model, how five pr
 date: 2026-10-19
 tags: ["llm", "prompt-caching", "ai-engineering", "backend"]
 draft: false
+heroImage: "../../assets/prompt-caching-hero.jpg"
 ---
 
 Every time you call an LLM API, you send the whole prompt again. The tool definitions, the system prompt, the conversation so far, and then the one new message at the end.
@@ -64,34 +65,15 @@ Here's the idea in one picture. The first request computes everything. The secon
 flowchart TB
     subgraph R1["Request 1: nothing cached yet"]
         direction LR
-        A1["`System prompt
-        computed`"]
-        A2["`Docs
-        computed`"]
-        A3["`History
-        computed`"]
-        A4["`Message A
-        computed`"]
-        A1 --> A2 --> A3 --> A4
+        A1["System prompt<br/>computed"] --> A2["Docs<br/>computed"] --> A3["History<br/>computed"] --> A4["Message A<br/>computed"]
     end
     subgraph R2["Request 2: same start"]
         direction LR
-        B1["`System prompt
-        reused`"]
-        B2["`Docs
-        reused`"]
-        B3["`History
-        reused`"]
-        B4["`Message B
-        computed`"]
-        B1 --> B2 --> B3 --> B4
+        B1["System prompt<br/>reused"] --> B2["Docs<br/>reused"] --> B3["History<br/>reused"] --> B4["Message B<br/>computed"]
     end
     R1 -->|"start is saved"| R2
     class A1,A2,A3,A4,B4 miss
     class B1,B2,B3 hit
-    %% Temporary: remove these classDefs once PR #25 (shared mermaid theme) is merged.
-    classDef hit fill:#047857,stroke:#6ee7b7,stroke-width:1.5px,color:#ffffff
-    classDef miss fill:#b91c1c,stroke:#fca5a5,stroke-width:1.5px,color:#ffffff
 ```
 
 ## Why only the start can be reused
@@ -116,16 +98,11 @@ flowchart TB
     end
     subgraph BOT["From the change on: recomputed"]
         direction LR
-        B5["`Block 5
-        CHANGED`"]
-        B5 --> B6["Block 6"] --> B7["Block 7"] --> B8["Block 8"]
+        B5["Block 5<br/>CHANGED"] --> B6["Block 6"] --> B7["Block 7"] --> B8["Block 8"]
     end
     TOP --> BOT
     class B1,B2,B3,B4 hit
     class B5,B6,B7,B8 miss
-    %% Temporary: remove these classDefs once PR #25 (shared mermaid theme) is merged.
-    classDef hit fill:#047857,stroke:#6ee7b7,stroke-width:1.5px,color:#ffffff
-    classDef miss fill:#b91c1c,stroke:#fca5a5,stroke-width:1.5px,color:#ffffff
 ```
 
 ## Blocks, hashes and routing
@@ -196,10 +173,6 @@ flowchart TB
     class T,S,D hit
     class H,BP neutral
     class M miss
-    %% Temporary: remove these classDefs once PR #25 (shared mermaid theme) is merged.
-    classDef hit fill:#047857,stroke:#6ee7b7,stroke-width:1.5px,color:#ffffff
-    classDef miss fill:#b91c1c,stroke:#fca5a5,stroke-width:1.5px,color:#ffffff
-    classDef neutral fill:#334155,stroke:#94a3b8,stroke-width:1.5px,color:#ffffff
 ```
 
 ## Dos and don'ts, straight from the providers

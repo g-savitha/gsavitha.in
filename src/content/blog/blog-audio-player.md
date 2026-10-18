@@ -70,18 +70,18 @@ flowchart TD
     end
 
     subgraph Build["2 · Audio pipeline · GitHub Actions"]
-        EXTRACT["Parse Markdown AST\ninto narration segments"]:::primary
-        HASH["Hash content +\nvoice settings"]:::primary
+        EXTRACT["Parse Markdown AST\ninto narration segments"]:::royal
+        HASH["Hash content +\nvoice settings"]:::royal
         CHANGED{"Audio already\npublished?"}:::decision
-        GENERATE["Chunk text · reuse segment cache\nKokoro-82M synthesis · MP3 encoding"]:::accent
-        UPLOAD["Validate + upload\ncontent-addressed MP3"]:::accent
+        GENERATE["Chunk text · reuse segment cache\nKokoro-82M synthesis · MP3 encoding"]:::violet
+        UPLOAD["Validate + upload\ncontent-addressed MP3"]:::violet
 
         EXTRACT --> HASH --> CHANGED
         CHANGED -->|"no · generate"| GENERATE --> UPLOAD
     end
 
     subgraph Contract["3 · Published contract"]
-        MANIFEST["Committed audio manifest\nslug → URL · label · duration"]:::success
+        MANIFEST["Committed audio manifest\nslug → URL · label · duration"]:::emerald
         R2[("Cloudflare R2\nimmutable MP3s")]:::storage
         UPLOAD --> R2
         UPLOAD --> MANIFEST
@@ -89,9 +89,9 @@ flowchart TD
     end
 
     subgraph Delivery["4 · Build and playback"]
-        ASTRO["Astro build\nresolve audio by slug"]:::primary
+        ASTRO["Astro build\nresolve audio by slug"]:::royal
         PAGE["Static blog page"]:::content
-        PLAYER["React audio player\nseek · speed · voice"]:::success
+        PLAYER["React audio player\nseek · speed · voice"]:::emerald
         PROGRESS[("localStorage\nplayback position")]:::storage
 
         MANIFEST --> ASTRO --> PAGE --> PLAYER
@@ -151,12 +151,12 @@ The system handles code blocks in two ways. You can place an explicit `<!-- audi
 
 ```mermaid
 flowchart TD
-    CB["Code block"]:::content --> EXPLICIT{"Explicit\naudio-summary?"}:::warning
-    EXPLICIT -->|"yes"| OUT["Narration text"]:::success
-    EXPLICIT -->|"no"| ANALYZE["Contextual analysis\ncomments · semantic tags · selectors\ncommands · functions · classes"]:::info
-    ANALYZE --> FOUND{"Useful context\nfound?"}:::warning
+    CB["Code block"]:::content --> EXPLICIT{"Explicit\naudio-summary?"}:::amber
+    EXPLICIT -->|"yes"| OUT["Narration text"]:::emerald
+    EXPLICIT -->|"no"| ANALYZE["Contextual analysis\ncomments · semantic tags · selectors\ncommands · functions · classes"]:::teal
+    ANALYZE --> FOUND{"Useful context\nfound?"}:::amber
     FOUND -->|"yes"| OUT
-    FOUND -->|"no"| FALLBACK["Use section heading\nas fallback"]:::primary
+    FOUND -->|"no"| FALLBACK["Use section heading\nas fallback"]:::royal
     FALLBACK --> OUT
 ```
 
@@ -221,9 +221,9 @@ Every decision in the pipeline — synthesize or skip, upload or skip, re-run or
 
 ```mermaid
 flowchart TD
-    INPUTS["Narration segments\n+ model · dtype · voice · speed"]:::content --> HASH["SHA-256\nnarration hash"]:::primary
-    HASH --> URL["CDN path\nslug/hash/lang.mp3"]:::accent
-    HASH --> ENTRY["Manifest\nentry"]:::success
+    INPUTS["Narration segments\n+ model · dtype · voice · speed"]:::content --> HASH["SHA-256\nnarration hash"]:::royal
+    HASH --> URL["CDN path\nslug/hash/lang.mp3"]:::violet
+    HASH --> ENTRY["Manifest\nentry"]:::emerald
 ```
 
 The hash goes into the storage key itself, not just the metadata:
@@ -280,12 +280,12 @@ Every synthesized chunk is stored as a raw `Float32LE` file on disk, keyed by a 
 
 ```mermaid
 flowchart TD
-    CHUNK["Speech chunk\n+ voice settings"]:::content --> CHASH["Chunk hash\nSHA-256"]:::primary
-    CHASH --> HIT{"Cached audio\non disk?"}:::warning
-    HIT -->|"yes"| READ["Read Float32\nfrom disk"]:::success
-    HIT -->|"no"| TTS["Run Kokoro\nTTS model"]:::accent
-    TTS --> WRITE["Write Float32\nto disk"]:::info
-    READ --> ENCODE["Stream into\nMP3 encoder"]:::primary
+    CHUNK["Speech chunk\n+ voice settings"]:::content --> CHASH["Chunk hash\nSHA-256"]:::royal
+    CHASH --> HIT{"Cached audio\non disk?"}:::amber
+    HIT -->|"yes"| READ["Read Float32\nfrom disk"]:::emerald
+    HIT -->|"no"| TTS["Run Kokoro\nTTS model"]:::violet
+    TTS --> WRITE["Write Float32\nto disk"]:::teal
+    READ --> ENCODE["Stream into\nMP3 encoder"]:::royal
     WRITE --> ENCODE
 ```
 
@@ -301,11 +301,11 @@ With one post to generate, running serially is fine. With dozens, it wastes the 
 
 ```mermaid
 flowchart TD
-    ORCH["Orchestrator"]:::primary --> QUEUE["Pending posts"]:::content
-    QUEUE --> WORKERS["Up to four isolated workers\none post per worker"]:::accent
-    WORKERS --> RESULTS["Validated result files\nserve as recovery checkpoints"]:::info
-    RESULTS --> MERGE["Merge results"]:::success
-    MERGE --> INDEX["Generated index"]:::success
+    ORCH["Orchestrator"]:::royal --> QUEUE["Pending posts"]:::content
+    QUEUE --> WORKERS["Up to four isolated workers\none post per worker"]:::violet
+    WORKERS --> RESULTS["Validated result files\nserve as recovery checkpoints"]:::teal
+    RESULTS --> MERGE["Merge results"]:::emerald
+    MERGE --> INDEX["Generated index"]:::emerald
 ```
 
 Each worker handles one post. It loads the model, hits the segment cache, synthesizes whatever's missing, and writes a result file before it exits. Workers don't share state — they run independently and write separate files.
@@ -354,23 +354,23 @@ For a while, every push to main ran the whole thing — generate, upload, commit
 
 ```mermaid
 flowchart TD
-    PUSH["Push to main"]:::content --> Q{"What changed?"}:::warning
-    Q -->|"blog content or\naudio scripts"| AUDIO["audio.yml"]:::accent
-    Q -->|"anything"| DEPLOY["deploy.yml"]:::primary
+    PUSH["Push to main"]:::content --> Q{"What changed?"}:::amber
+    Q -->|"blog content or\naudio scripts"| AUDIO["audio.yml"]:::violet
+    Q -->|"anything"| DEPLOY["deploy.yml"]:::royal
 
     subgraph AudioJob["audio.yml — its own concurrency group"]
-        GEN["Generate only\nchanged audio"]:::accent
-        UP["Upload to R2\n+ prune old files"]:::accent
-        REC["Reconcile manifest\nagainst R2"]:::info
-        COMMIT["Commit manifest\nto main (rebase first)"]:::success
+        GEN["Generate only\nchanged audio"]:::violet
+        UP["Upload to R2\n+ prune old files"]:::violet
+        REC["Reconcile manifest\nagainst R2"]:::teal
+        COMMIT["Commit manifest\nto main (rebase first)"]:::emerald
     end
 
     AUDIO --> GEN --> UP --> REC --> COMMIT
     COMMIT -->|"triggers a deploy"| DEPLOY
 
     subgraph DeployJob["deploy.yml — fast path"]
-        BUILD["Astro build\nreads committed manifest"]:::primary
-        PAGES["Deploy to Pages"]:::success
+        BUILD["Astro build\nreads committed manifest"]:::royal
+        PAGES["Deploy to Pages"]:::emerald
     end
 
     DEPLOY --> BUILD --> PAGES
@@ -395,15 +395,15 @@ The first version worked but was painfully slow — a single edit could trigger 
 ```mermaid
 flowchart TD
     POST["Post + voice settings"]:::content --> M{"Manifest hash\nmatches?"}:::decision
-    M -->|"yes"| SKIP["Skip entirely\naudio already in R2"]:::success
-    M -->|"no"| WORKERS["Parallel workers\nup to four posts at once"]:::accent
-    WORKERS --> CHUNKS["Build speech chunks\nfor this post only"]:::primary
+    M -->|"yes"| SKIP["Skip entirely\naudio already in R2"]:::emerald
+    M -->|"no"| WORKERS["Parallel workers\nup to four posts at once"]:::violet
+    WORKERS --> CHUNKS["Build speech chunks\nfor this post only"]:::royal
     CHUNKS --> CACHE{"Segment cache\nhit per chunk?"}:::decision
-    CACHE -->|"yes"| ASSEMBLE["Assemble from disk"]:::info
-    CACHE -->|"no"| TTS["Synthesize\nthis chunk only"]:::accent
+    CACHE -->|"yes"| ASSEMBLE["Assemble from disk"]:::teal
+    CACHE -->|"no"| TTS["Synthesize\nthis chunk only"]:::violet
     TTS --> ASSEMBLE
-    ASSEMBLE --> UPLOAD["Validate + upload\nprune stale R2 objects"]:::primary
-    UPLOAD --> MANIFEST["Update manifest"]:::success
+    ASSEMBLE --> UPLOAD["Validate + upload\nprune stale R2 objects"]:::royal
+    UPLOAD --> MANIFEST["Update manifest"]:::emerald
 ```
 
 **1. Parallel workers.** One post at a time wasted idle CPU cores. The orchestrator now fans out across up to four child processes; result files double as crash-recovery checkpoints.

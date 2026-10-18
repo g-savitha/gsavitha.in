@@ -103,24 +103,31 @@ Export the five R2 configuration values above before running it locally.
 
 ## Mermaid diagrams
 
-Write diagrams with no colours. Every diagram already uses the shared dark palette from
-[`src/theme/mermaid.ts`](src/theme/mermaid.ts), the one place to edit diagram colours. Do not
-add `%%{init}%%` theme blocks, `style` lines, or `classDef` lines with hex colours.
+Diagram colours live in one place: the `PALETTE` object in
+[`src/theme/mermaid.ts`](src/theme/mermaid.ts) (name -> fill / text / border / border width).
+Diagrams render on Mermaid's `dark` theme. Posts contain no hex colours: do not add `classDef`,
+`style` or `%%{init}%%` lines. To restyle every diagram, edit the `PALETTE` entries; to add a
+colour, add an entry there and use its name as a class.
 
 To highlight nodes in a `flowchart`/`graph`, use a shared class. They are available in every
 flowchart without declaring them:
 
-| Class                  | Use for                             |
-| ---------------------- | ----------------------------------- |
-| `hit` / `success`      | good path, cache hit, done (green)  |
-| `miss` / `danger`      | failure, cache miss, rejected (red) |
-| `warning` / `decision` | caution, decision points (amber)    |
-| `neutral` / `content`  | plain inputs, background steps      |
-| `accent`               | the thing the diagram is about      |
-| `primary`              | main services, key steps (blue)     |
-| `info` / `storage`     | stores, caches, queues (teal)       |
+| Class                                   | Use for                                 |
+| --------------------------------------- | --------------------------------------- |
+| `hit` / `success`                       | good path, cache hit, done (green)      |
+| `miss` / `danger`                       | failure, cache miss, rejected (rose)    |
+| `warning`                               | caution (orange)                        |
+| `decision`                              | decision points (amber)                 |
+| `neutral` / `secondary`                 | plain inputs, background steps (grey)   |
+| `content`                               | authored content (slate)                |
+| `accent`                                | the thing the diagram is about (yellow) |
+| `primary`                               | main services, key steps (blue)         |
+| `info`                                  | services, caches (cyan)                 |
+| `storage`                               | stores, buckets (teal)                  |
+| `severity1` / `severity2` / `severity3` | rising severity (peach, rose, maroon)   |
 
-`secondary` is kept as an alias of `neutral` for older posts.
+Every palette entry name is a class too, for example `royal`, `violet`, `emerald`, `teal`, `amber`
+(the audio-player post's light-border set) and `cobalt`, `forest`, `maroon` (thundering-herd).
 
 ````md
 ```mermaid
@@ -131,13 +138,15 @@ flowchart LR
 ```
 ````
 
-`class A,B accent` assigns a class to several nodes at once.
+`class A,B accent` assigns a class to several nodes at once. Use `<br/>` for a line break inside a
+label or note (`A["First line<br/>second line"]`).
 
-Unclassed nodes get a quiet slate style, and sequence diagrams, notes, subgraphs, timelines and
-charts are themed too. All text meets WCAG AA (`src/theme/mermaid.test.ts` checks it). For a true
-one-off, a post can still add its own `classDef`/`style`; it overrides the shared class.
-`node --experimental-strip-types scripts/mermaid/stripSharedColours.ts --check` lists hand-written
-diagram colours that the shared theme already covers (drop `--check` to remove them).
+Unclassed nodes, subgraphs, notes and sequence diagrams use Mermaid's own dark theme. Dark fills
+take white text and light fills (yellow, rose, peach, mint, cyan) take black text, and all text
+meets WCAG AA. `src/theme/mermaid.test.ts` checks every palette entry against these rules and fails
+if a post has a hex colour in a Mermaid block or uses an unknown class.
+`node --experimental-strip-types scripts/mermaid/stripSharedColours.ts --check` also fails on hex
+colours in Mermaid blocks (without `--check` it removes lines that exactly match a shared class).
 
 ## Math
 
