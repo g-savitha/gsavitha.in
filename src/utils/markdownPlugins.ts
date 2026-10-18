@@ -3,6 +3,7 @@ import remarkGemoji from 'remark-gemoji';
 import remarkMath from 'remark-math';
 import { remarkMermaid } from '../../remark-mermaid.ts';
 import { rehypeKatexDisplay } from './rehypeKatexDisplay.ts';
+import { rehypeTableScroll } from './rehypeTableScroll.ts';
 import { remarkProtectCurrency } from './remarkProtectCurrency.ts';
 
 /**
@@ -22,4 +23,8 @@ function withOptions<Plugin, Options>(plugin: Plugin, options: Options): [Plugin
 
 export const remarkPlugins = [remarkGemoji, remarkMermaid, remarkMath, remarkProtectCurrency];
 
-export const rehypePlugins = [withOptions(rehypeKatex, katexOptions), rehypeKatexDisplay];
+export const rehypePlugins = [
+  withOptions(rehypeKatex, katexOptions),
+  rehypeKatexDisplay,
+  rehypeTableScroll,
+];
