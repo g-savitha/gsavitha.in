@@ -272,6 +272,19 @@
       "url": "https://audio.gsavitha.in/audio/blog/making-coding-agents-trustworthy/b6aa5444104cfd44aec711cab6478f641f47221b53050a5e21b85faf5cfbdddc/en.mp3"
     }
   },
+  "prompt-caching": {
+    "en": {
+      "label": "English",
+      "language": "en",
+      "duration": 641.59,
+      "bytes": 5133120,
+      "hash": "e20d4628be57c2c659babcfd812424ee19ce8c1b45ce79bb29eda096c3c82ee1",
+      "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
+      "voice": "af_heart",
+      "generatedAt": "2026-10-19T15:41:45.876Z",
+      "url": "https://audio.gsavitha.in/audio/blog/prompt-caching/e20d4628be57c2c659babcfd812424ee19ce8c1b45ce79bb29eda096c3c82ee1/en.mp3"
+    }
+  },
   "sync-fork-with-original-git": {
     "en": {
       "label": "English",
