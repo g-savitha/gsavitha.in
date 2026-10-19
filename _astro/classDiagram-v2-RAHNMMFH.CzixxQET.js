@@ -1,0 +1,1 @@
+import{s as r,c as s,a as e,C as t}from"./chunk-WL4C6EOR.CVPT-dFN.js";import{_ as l}from"./BlogPost.astro_astro_type_script_index_0_lang.D0fZkVlq.js";import"./transform.BjnKP4GC.js";var m={parser:e,get db(){return new t},renderer:s,styles:r,init:l(a=>{a.class||(a.class={}),a.class.arrowMarkerAbsolute=a.arrowMarkerAbsolute},"init")};export{m as diagram};

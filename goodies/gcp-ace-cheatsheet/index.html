@@ -1,0 +1,842 @@
+<!DOCTYPE html><html lang="en"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Savitha Gollamudi" href="https://gsavitha.in/rss.xml"><meta name="generator" content="Astro v6.0.6"><!-- Canonical URL --><link rel="canonical" href="https://gsavitha.in/goodies/gcp-ace-cheatsheet/"><!-- Primary Meta Tags --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Overlock:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Sacramento&display=swap" rel="stylesheet"><title>GCP ACE Cheat Sheet | Savitha Gollamudi</title><script>(function(){const themeNames = ["pink","purple","yellow","green","blue","orange"];
+
+  (function () {
+    try {
+      const saved = localStorage.getItem('theme-color');
+      if (saved && themeNames.includes(saved)) {
+        document.documentElement.dataset.theme = saved;
+      }
+    } catch (e) {}
+  })();
+})();</script><meta name="title" content="GCP ACE Cheat Sheet | Savitha Gollamudi"><meta name="description" content="A visual mind map for the Google Cloud Associate Cloud Engineer exam covering all key topics."><!-- Open Graph / Facebook --><meta property="og:type" content="website"><meta property="og:url" content="https://gsavitha.in/goodies/gcp-ace-cheatsheet/"><meta property="og:title" content="GCP ACE Cheat Sheet | Savitha Gollamudi"><meta property="og:description" content="A visual mind map for the Google Cloud Associate Cloud Engineer exam covering all key topics."><meta property="og:image" content="https://gsavitha.in/_astro/blog-placeholder-about.BtEdEmGp.jpg"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://gsavitha.in/goodies/gcp-ace-cheatsheet/"><meta property="twitter:title" content="GCP ACE Cheat Sheet | Savitha Gollamudi"><meta property="twitter:description" content="A visual mind map for the Google Cloud Associate Cloud Engineer exam covering all key topics."><meta property="twitter:image" content="https://gsavitha.in/_astro/blog-placeholder-about.BtEdEmGp.jpg"><link rel="stylesheet" href="/_astro/PageLayout.Db-EQRQi.css"></head> <body class="min-h-screen bg-zinc-900 text-zinc-300 antialiased"> <div class="max-w-[1440px] mx-auto block lg:flex lg:flex-row min-h-screen relative"> <aside class="lg:w-64 xl:w-72 lg:shrink-0 bg-zinc-900 lg:h-screen lg:sticky lg:top-0 lg:flex lg:flex-col hidden relative before:hidden lg:before:block before:absolute before:inset-y-8 before:right-0 before:w-px before:bg-zinc-800/80"> <!-- Desktop Sidebar Content --> <div class="space-y-8 flex-1 overflow-y-auto py-6 px-6 lg:py-10 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"> <div class="flex items-center gap-3 px-1"> <a href="/" class="text-2xl font-bold pb-1 font-sacramento text-white hover:text-primary transition-colors flex-grow truncate inline-block ">Savitha Gollamudi</a> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>Number.POSITIVE_INFINITY*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="23czGk" prefix="r3" component-url="/_astro/ThemePicker.BP1oUYey.js" component-export="default" renderer-url="/_astro/client.DIQWfPlE.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ThemePicker&quot;,&quot;value&quot;:true}" await-children><div class="relative"><button class="flex items-center justify-center w-7 h-7 focus:outline-none focus:ring-2 focus:ring-primary/50 rounded-full cursor-pointer hover-lift transition-colors text-zinc-200 hover:text-primary" aria-label="Theme picker" aria-haspopup="true" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-paint-bucket" aria-hidden="true"><path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11Z"></path><path d="m5 2 5 5"></path><path d="M2 13h15"></path><path d="M22 20a2 2 0 1 1-4 0c0-1.6 1.7-2.4 2-4 .3 1.6 2 2.4 2 4Z"></path></svg></button></div><!--astro:end--></astro-island> </div> <div class="h-px bg-zinc-800/50 mx-4"></div> <div class="px-1"> <p class="text-base text-zinc-400 leading-relaxed pr-2">
+I'm <a href="/"><span class="text-primary font-medium">Savitha</span></a>, a passionate and
+        curious developer from India. Welcome to my digital garden 🌱.
+</p> </div> <div class="h-px bg-zinc-800/50 mx-4"></div> <!-- Main Navigation --> <nav> <ul class="space-y-2 font-medium text-base text-zinc-300"> <li><a href="/blog" class="flex items-center rounded-xl font-medium hover-lift group gap-3 px-4 py-2.5 -mx-4 text-zinc-300 hover:text-primary"><svg xmlns="http://www.w3.org/2000/svg" stroke-width="2" width="24" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" aria-hidden="true" class="lucide lucide-pen-tool shrink-0 transition-colors h-5 w-5 text-zinc-500 group-hover:text-primary">  <path d="M15.707 21.293a1 1 0 0 1-1.414 0l-1.586-1.586a1 1 0 0 1 0-1.414l5.586-5.586a1 1 0 0 1 1.414 0l1.586 1.586a1 1 0 0 1 0 1.414z"></path> <path d="m18 13-1.375-6.874a1 1 0 0 0-.746-.776L3.235 2.028a1 1 0 0 0-1.207 1.207L5.35 15.879a1 1 0 0 0 .776.746L13 18"></path> <path d="m2.3 2.3 7.286 7.286"></path> <circle cx="11" cy="11" r="2"></circle>  </svg>Blog</a></li><li><a href="/projects" class="flex items-center rounded-xl font-medium hover-lift group gap-3 px-4 py-2.5 -mx-4 text-zinc-300 hover:text-primary"><svg xmlns="http://www.w3.org/2000/svg" stroke-width="2" width="24" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" aria-hidden="true" class="lucide lucide-folder-git-2 shrink-0 transition-colors h-5 w-5 text-zinc-500 group-hover:text-primary">  <path d="M18 19a5 5 0 0 1-5-5v8"></path> <path d="M9 20H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H20a2 2 0 0 1 2 2v5"></path> <circle cx="13" cy="12" r="2"></circle> <circle cx="20" cy="19" r="2"></circle>  </svg>Projects</a></li><li><a href="/papers" class="flex items-center rounded-xl font-medium hover-lift group gap-3 px-4 py-2.5 -mx-4 text-zinc-300 hover:text-primary"><svg xmlns="http://www.w3.org/2000/svg" stroke-width="2" width="24" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" aria-hidden="true" class="lucide lucide-book-open shrink-0 transition-colors h-5 w-5 text-zinc-500 group-hover:text-primary">  <path d="M12 7v14"></path> <path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path>  </svg>Papershelf</a></li><li><a href="/certifications" class="flex items-center rounded-xl font-medium hover-lift group gap-3 px-4 py-2.5 -mx-4 text-zinc-300 hover:text-primary"><svg xmlns="http://www.w3.org/2000/svg" stroke-width="2" width="24" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" aria-hidden="true" class="lucide lucide-award shrink-0 transition-colors h-5 w-5 text-zinc-500 group-hover:text-primary">  <path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"></path> <circle cx="12" cy="8" r="6"></circle>  </svg>Certifications</a></li><li><a href="/goodies" class="flex items-center rounded-xl font-medium hover-lift group gap-3 px-4 py-2.5 -mx-4 text-primary bg-zinc-800/30"><svg xmlns="http://www.w3.org/2000/svg" stroke-width="2" width="24" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" aria-hidden="true" class="lucide lucide-sparkles shrink-0 transition-colors h-5 w-5 text-primary">  <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path> <path d="M20 2v4"></path> <path d="M22 4h-4"></path> <circle cx="4" cy="20" r="2"></circle>  </svg>Goodies</a></li><li><a href="/about" class="flex items-center rounded-xl font-medium hover-lift group gap-3 px-4 py-2.5 -mx-4 text-zinc-300 hover:text-primary"><svg xmlns="http://www.w3.org/2000/svg" stroke-width="2" width="24" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" aria-hidden="true" class="lucide lucide-user shrink-0 transition-colors h-5 w-5 text-zinc-500 group-hover:text-primary">  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path> <circle cx="12" cy="7" r="4"></circle>  </svg>About Me</a></li> </ul> </nav> </div> </aside> <!-- Mobile Header (Visible on small screens) --> <div class="lg:hidden flex items-center justify-between p-4 border-b border-zinc-800 bg-zinc-900/60 backdrop-blur-md sticky top-0 z-40 shadow-sm"> <div class="flex items-center gap-3 shrink-0"> <a href="/" class="font-bold text-zinc-100 flex items-center gap-2"> <span class="truncate max-w-[200px] font-sacramento text-2xl pt-1 pr-1 ">Savitha Gollamudi</span> </a> </div> <div class="flex items-center gap-3 shrink-0"> <astro-island uid="23czGk" prefix="r4" component-url="/_astro/ThemePicker.BP1oUYey.js" component-export="default" renderer-url="/_astro/client.DIQWfPlE.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ThemePicker&quot;,&quot;value&quot;:true}" await-children><div class="relative"><button class="flex items-center justify-center w-7 h-7 focus:outline-none focus:ring-2 focus:ring-primary/50 rounded-full cursor-pointer hover-lift transition-colors text-zinc-200 hover:text-primary" aria-label="Theme picker" aria-haspopup="true" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-paint-bucket" aria-hidden="true"><path d="m19 11-8-8-8.6 8.6a2 2 0 0 0 0 2.8l5.2 5.2c.8.8 2 .8 2.8 0L19 11Z"></path><path d="m5 2 5 5"></path><path d="M2 13h15"></path><path d="M22 20a2 2 0 1 1-4 0c0-1.6 1.7-2.4 2-4 .3 1.6 2 2.4 2 4Z"></path></svg></button></div><!--astro:end--></astro-island> <button id="mobile-menu-btn" aria-label="Open menu" aria-expanded="false" class="w-8 h-8 flex items-center justify-center text-zinc-400 hover:text-white rounded-xl hover-lift"> <svg xmlns="http://www.w3.org/2000/svg" stroke-width="2" width="24" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" id="hamburger-icon" aria-hidden="true" class="lucide lucide-menu w-5 h-5">  <path d="M4 5h16"></path> <path d="M4 12h16"></path> <path d="M4 19h16"></path>  </svg> <svg xmlns="http://www.w3.org/2000/svg" stroke-width="2" width="24" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" id="close-icon" aria-hidden="true" class="lucide lucide-x w-5 h-5 hidden">  <path d="M18 6 6 18"></path> <path d="m6 6 12 12"></path>  </svg> </button> </div> </div> <!-- Mobile Drawer Navigation --> <div id="mobile-drawer" class="lg:hidden hidden border-b border-zinc-800 bg-zinc-900/95 backdrop-blur sticky top-[57px] z-30 px-4 py-3 flex flex-col gap-1"> <a href="/blog" class="flex items-center rounded-xl font-medium hover-lift group gap-3 px-3 py-2.5 text-base text-zinc-300 hover:text-primary"><svg xmlns="http://www.w3.org/2000/svg" stroke-width="2" width="24" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" aria-hidden="true" class="lucide lucide-pen-tool shrink-0 transition-colors h-4 w-4 text-zinc-500 group-hover:text-primary">  <path d="M15.707 21.293a1 1 0 0 1-1.414 0l-1.586-1.586a1 1 0 0 1 0-1.414l5.586-5.586a1 1 0 0 1 1.414 0l1.586 1.586a1 1 0 0 1 0 1.414z"></path> <path d="m18 13-1.375-6.874a1 1 0 0 0-.746-.776L3.235 2.028a1 1 0 0 0-1.207 1.207L5.35 15.879a1 1 0 0 0 .776.746L13 18"></path> <path d="m2.3 2.3 7.286 7.286"></path> <circle cx="11" cy="11" r="2"></circle>  </svg>Blog</a><a href="/projects" class="flex items-center rounded-xl font-medium hover-lift group gap-3 px-3 py-2.5 text-base text-zinc-300 hover:text-primary"><svg xmlns="http://www.w3.org/2000/svg" stroke-width="2" width="24" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" aria-hidden="true" class="lucide lucide-folder-git-2 shrink-0 transition-colors h-4 w-4 text-zinc-500 group-hover:text-primary">  <path d="M18 19a5 5 0 0 1-5-5v8"></path> <path d="M9 20H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H20a2 2 0 0 1 2 2v5"></path> <circle cx="13" cy="12" r="2"></circle> <circle cx="20" cy="19" r="2"></circle>  </svg>Projects</a><a href="/papers" class="flex items-center rounded-xl font-medium hover-lift group gap-3 px-3 py-2.5 text-base text-zinc-300 hover:text-primary"><svg xmlns="http://www.w3.org/2000/svg" stroke-width="2" width="24" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" aria-hidden="true" class="lucide lucide-book-open shrink-0 transition-colors h-4 w-4 text-zinc-500 group-hover:text-primary">  <path d="M12 7v14"></path> <path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path>  </svg>Papershelf</a><a href="/certifications" class="flex items-center rounded-xl font-medium hover-lift group gap-3 px-3 py-2.5 text-base text-zinc-300 hover:text-primary"><svg xmlns="http://www.w3.org/2000/svg" stroke-width="2" width="24" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" aria-hidden="true" class="lucide lucide-award shrink-0 transition-colors h-4 w-4 text-zinc-500 group-hover:text-primary">  <path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"></path> <circle cx="12" cy="8" r="6"></circle>  </svg>Certifications</a><a href="/goodies" class="flex items-center rounded-xl font-medium hover-lift group gap-3 px-3 py-2.5 text-base text-primary bg-zinc-800/30"><svg xmlns="http://www.w3.org/2000/svg" stroke-width="2" width="24" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" aria-hidden="true" class="lucide lucide-sparkles shrink-0 transition-colors h-4 w-4 text-primary">  <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path> <path d="M20 2v4"></path> <path d="M22 4h-4"></path> <circle cx="4" cy="20" r="2"></circle>  </svg>Goodies</a><a href="/about" class="flex items-center rounded-xl font-medium hover-lift group gap-3 px-3 py-2.5 text-base text-zinc-300 hover:text-primary"><svg xmlns="http://www.w3.org/2000/svg" stroke-width="2" width="24" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" aria-hidden="true" class="lucide lucide-user shrink-0 transition-colors h-4 w-4 text-zinc-500 group-hover:text-primary">  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path> <circle cx="12" cy="7" r="4"></circle>  </svg>About Me</a> </div> <script type="module">const n=document.getElementById("mobile-menu-btn"),t=document.getElementById("mobile-drawer"),d=document.getElementById("hamburger-icon"),s=document.getElementById("close-icon");n?.addEventListener("click",()=>{const e=!t?.classList.contains("hidden");t?.classList.toggle("hidden",e),d?.classList.toggle("hidden",!e),s?.classList.toggle("hidden",e),n.setAttribute("aria-expanded",String(!e))});t?.querySelectorAll("a").forEach(e=>{e.addEventListener("click",()=>{t.classList.add("hidden"),d?.classList.remove("hidden"),s?.classList.add("hidden"),n?.setAttribute("aria-expanded","false")})});</script> <div class="flex-1 min-w-0 flex flex-col"> <main class="flex-grow w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-12 pt-6 lg:pt-24 pb-24">  <article class="pdf-document"> <a href="/goodies" class="pdf-document__back-link hover-lift"> <svg xmlns="http://www.w3.org/2000/svg" stroke-width="2" width="24" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" aria-hidden="true" class="lucide lucide-arrow-left pdf-document__action-icon">  <path d="m12 19-7-7 7-7"></path> <path d="M19 12H5"></path>  </svg>
+Goodies
+</a> <header class="pdf-document__header"> <div> <h1 class="pdf-document__title">GCP ACE Cheat Sheet</h1> <p class="pdf-document__description">
+A visual mind map covering all key topics for the Google Cloud Associate Cloud Engineer
+          exam.
+</p> </div> <nav class="pdf-document__actions" aria-label="PDF actions"> <a href="/gcp-ace-cheatsheet.pdf" target="_blank" rel="noopener noreferrer" class="pdf-document__action hover-lift"> <svg xmlns="http://www.w3.org/2000/svg" stroke-width="2" width="24" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" aria-hidden="true" class="lucide lucide-external-link pdf-document__action-icon">  <path d="M15 3h6v6"></path> <path d="M10 14 21 3"></path> <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>  </svg>
+Open PDF
+</a> <a href="/gcp-ace-cheatsheet.pdf" download="gcp-ace-cheatsheet.pdf" class="pdf-document__action hover-lift"> <svg xmlns="http://www.w3.org/2000/svg" stroke-width="2" width="24" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" aria-hidden="true" class="lucide lucide-download pdf-document__action-icon">  <path d="M12 15V3"></path> <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path> <path d="m7 10 5 5 5-5"></path>  </svg>
+Download PDF
+</a> </nav> </header> <script>(()=>{var a=(s,i,o)=>{let r=async()=>{await(await s())()},t=typeof i.value=="object"?i.value:void 0,c={rootMargin:t==null?void 0:t.rootMargin},n=new IntersectionObserver(e=>{for(let l of e)if(l.isIntersecting){n.disconnect(),r();break}},c);for(let e of o.children)n.observe(e)};(self.Astro||(self.Astro={})).visible=a;window.dispatchEvent(new Event("astro:visible"));})();</script><astro-island uid="Z1UkuoD" prefix="r5" component-url="/_astro/MindMap.3lSfg9Se.js" component-export="default" renderer-url="/_astro/client.DIQWfPlE.js" props="{&quot;root&quot;:[0,{&quot;content&quot;:[0,&quot;GCP Services&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Organising GCP Resources&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Resource Hierarchy&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Domain (cloud level)&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Organisation&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Billing Account&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,0]}]}],[0,{&quot;content&quot;:[0,&quot;Folders&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Projects&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Resources&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,0]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,0]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,0]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,0]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,0]}]}],[0,{&quot;content&quot;:[0,&quot;Payments Profile&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,0]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,0]}]}],[0,{&quot;content&quot;:[0,&quot;Billing Accounts&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Managing Budget, Alerts and Exports&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,0]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,0]}]}],[0,{&quot;content&quot;:[0,&quot;Corporate Directory Federation&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,0]}]}],[0,{&quot;content&quot;:[0,&quot;Organisation Policy Service&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,0]}]}],[0,{&quot;content&quot;:[0,&quot;Resource Hierarchy and IAM policy&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,0]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,0]}]}],[0,{&quot;content&quot;:[0,&quot;Hybrid Cloud&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Cloud VPN&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;HA VPN&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,1]}]}],[0,{&quot;content&quot;:[0,&quot;Classic VPN&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,1]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,1]}]}],[0,{&quot;content&quot;:[0,&quot;Cloud Interconnect&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Dedicated Interconnect&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,1]}]}],[0,{&quot;content&quot;:[0,&quot;Partner Interconnect&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,1]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,1]}]}],[0,{&quot;content&quot;:[0,&quot;Direct Peering (NOT RECOMMENDED)&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,1]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,1]}]}],[0,{&quot;content&quot;:[0,&quot;Managed Services&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;IAAS&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Server&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Compute Engine&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,2]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,2]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,2]}]}],[0,{&quot;content&quot;:[0,&quot;PAAS&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Server&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;App Engine&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,2]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,2]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,2]}]}],[0,{&quot;content&quot;:[0,&quot;CAAS&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Server&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;GKE&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,2]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,2]}]}],[0,{&quot;content&quot;:[0,&quot;Serverless&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;App Engine Flexible&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,2]}]}],[0,{&quot;content&quot;:[0,&quot;Cloud Run&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,2]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,2]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,2]}]}],[0,{&quot;content&quot;:[0,&quot;FAAS&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Serverless&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Cloud Functions&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,2]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,2]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,2]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,2]}]}],[0,{&quot;content&quot;:[0,&quot;Discounts&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Sustained&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,3]}]}],[0,{&quot;content&quot;:[0,&quot;Committed&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,3]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,3]}]}],[0,{&quot;content&quot;:[0,&quot;Cloud DataProc&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;managed Spark and Hadoop service&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,4]}]}],[0,{&quot;content&quot;:[0,&quot;data analysis platform&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,4]}]}],[0,{&quot;content&quot;:[0,&quot;alternative: BigQuery&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,4]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,4]}]}],[0,{&quot;content&quot;:[0,&quot;Cloud DataFlow&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;pipelines&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,5]}]}],[0,{&quot;content&quot;:[0,&quot;streaming &amp;amp; batch use cases&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,5]}]}],[0,{&quot;content&quot;:[0,&quot;serverless&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,5]}]}],[0,{&quot;content&quot;:[0,&quot;auto scaling&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,5]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,5]}]}],[0,{&quot;content&quot;:[0,&quot;Cloud DNS&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;global DNS&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,6]}]}],[0,{&quot;content&quot;:[0,&quot;set up your DNS routing of your website&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,6]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,6]}]}],[0,{&quot;content&quot;:[0,&quot;Market Place / Cloud Launcher&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Central repo of easily deployable apps and datasets&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,7]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,7]}]}],[0,{&quot;content&quot;:[0,&quot;Deployment Manager&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;automate provisions of your infra&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,8]}]}],[0,{&quot;content&quot;:[0,&quot;version control for your envs&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,8]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,8]}]}],[0,{&quot;content&quot;:[0,&quot;Pricing Calculator&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;estimate the cost of your gcp solution&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,9]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,9]}]}],[0,{&quot;content&quot;:[0,&quot;Gcloud Operations Suite / Stackdriver&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Cloud Logging&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Audit &amp;amp; Security logs&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Access Transparency logs&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,10]}]}],[0,{&quot;content&quot;:[0,&quot;Cloud Audit Logs&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Admin activity logs&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,10]}]}],[0,{&quot;content&quot;:[0,&quot;Data access logs&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,10]}]}],[0,{&quot;content&quot;:[0,&quot;System event audit logs&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,10]}]}],[0,{&quot;content&quot;:[0,&quot;Policy denied audit logs&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,10]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,10]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,10]}]}],[0,{&quot;content&quot;:[0,&quot;Collection&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,10]}]}],[0,{&quot;content&quot;:[0,&quot;Controlling &amp;amp; Routing&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Types of log buckets&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;_Required&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,10]}]}],[0,{&quot;content&quot;:[0,&quot;_Default&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,10]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,10]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,10]}]}],[0,{&quot;content&quot;:[0,&quot;Export - (create sinks)&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Use cases&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Troubleshoot using VM logs&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,10]}]}],[0,{&quot;content&quot;:[0,&quot;Export VM logs to BigQuery for querying using SQL like queries&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,10]}]}],[0,{&quot;content&quot;:[0,&quot;You want to retain audit logs for external auditors at minimum&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,10]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,10]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,10]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,10]}]}],[0,{&quot;content&quot;:[0,&quot;Cloud Trace&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,10]}]}],[0,{&quot;content&quot;:[0,&quot;Cloud Monitoring&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Workspace&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,10]}]}],[0,{&quot;content&quot;:[0,&quot;Virtual Machines&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,10]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,10]}]}],[0,{&quot;content&quot;:[0,&quot;Cloud Debugger&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,10]}]}],[0,{&quot;content&quot;:[0,&quot;Cloud Profiler&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,10]}]}],[0,{&quot;content&quot;:[0,&quot;Error Reporting&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,10]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,10]}]}],[0,{&quot;content&quot;:[0,&quot;VPC&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;VPC Subnets&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,11]}]}],[0,{&quot;content&quot;:[0,&quot;Types&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Auto mode VPC n/w&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,11]}]}],[0,{&quot;content&quot;:[0,&quot;Custom mode VPC n/w (Recommended for PROD)&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,11]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,11]}]}],[0,{&quot;content&quot;:[0,&quot;CIDR&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,11]}]}],[0,{&quot;content&quot;:[0,&quot;Firewall Rules&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Ingress&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,11]}]}],[0,{&quot;content&quot;:[0,&quot;Egress&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,11]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,11]}]}],[0,{&quot;content&quot;:[0,&quot;Shared VPC&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,11]}]}],[0,{&quot;content&quot;:[0,&quot;VPC Peering&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,11]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,11]}]}],[0,{&quot;content&quot;:[0,&quot;Databases&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Relational&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;OLAP - Analytics&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;BigQuery (bq) - GLOBAL&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;data warehouse&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}],[0,{&quot;content&quot;:[0,&quot;automatically expire data&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}],[0,{&quot;content&quot;:[0,&quot;expensive&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}],[0,{&quot;content&quot;:[0,&quot;OLTP - Transactional&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Cloud SQL - REGIONAL&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Point in time recovery: binary logging&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}],[0,{&quot;content&quot;:[0,&quot;Export data from console UI&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}],[0,{&quot;content&quot;:[0,&quot;High availability and failover:&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Standby with automatic failover.&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Pre reqs: automated backup, binary-logging&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}],[0,{&quot;content&quot;:[0,&quot;High availability setup CANNOT be used as Read Replica&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}],[0,{&quot;content&quot;:[0,&quot;Not Serverless&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}],[0,{&quot;content&quot;:[0,&quot;Cloud Spanner - GLOBAL&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Expensive&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}],[0,{&quot;content&quot;:[0,&quot;Data Export: use cloud console, DataFlow to automate export. No gcloud export option&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}],[0,{&quot;content&quot;:[0,&quot;Import and Export&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}],[0,{&quot;content&quot;:[0,&quot;Non relational&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;DataStore/FireStore - REGIONAL&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;NoSQL doc DB with SQL like queries&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}],[0,{&quot;content&quot;:[0,&quot;Export data only from gcloud (NOT from cloud console)&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}],[0,{&quot;content&quot;:[0,&quot;Cloud BigTable (cbt) - GLOBAL&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;cbt command line tool&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}],[0,{&quot;content&quot;:[0,&quot;CANNOT export data using cloud console or gcloud&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;either use a java application or use HBASE commands&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}],[0,{&quot;content&quot;:[0,&quot;wide column DB&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}],[0,{&quot;content&quot;:[0,&quot;IOT Streams, graph data, real-time analytics&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}],[0,{&quot;content&quot;:[0,&quot;Memory Store&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Not Serverless&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}],[0,{&quot;content&quot;:[0,&quot;Import and Export&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}],[0,{&quot;content&quot;:[0,&quot;Summary&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;BigQuery, Datastore, firebase doesnt need a VM config, where as CloudSQL, BigTable need VM Config (they use compute Engine VMs)&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}],[0,{&quot;content&quot;:[0,&quot;Relational DB:&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Small Local DB - Cloud SQL&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}],[0,{&quot;content&quot;:[0,&quot;Highly scalable global DB - Cloud Spanner&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}],[0,{&quot;content&quot;:[0,&quot;Datawarehouse - BigQuery&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}],[0,{&quot;content&quot;:[0,&quot;NoSQL DB:&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Transactional DB for few TBs of data - Cloud DataStore&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}],[0,{&quot;content&quot;:[0,&quot;Huge Volumes of IOT or stream analytics data - BigTable&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,12]}]}],[0,{&quot;content&quot;:[0,&quot;IAM&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Roles&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Basic&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Viewer&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;Editor&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;Owner&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;Predefined Roles (Recommended)&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;Custom Roles&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;Policy&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;Service Accounts (Recommended)&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Default&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;User Managed (Recommended)&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;Google managed Service accounts&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;Use cases&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;VM to Cloud Storage&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;On Prem to Cloud Storage (long lived)&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;On Prem to Gcloud APIs (short lived)&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;Access Control Lists&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Uniform&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;Fine grained&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;Best Practices&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Principle of Least Privilege&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;Separation of duties&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;Constant Monitoring&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;Use Groups when Possible&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;Remember&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Roles: set of permissions&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;Policy: assign permissions to members (assign role to a member)&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;Don&amp;apos;t use basic roles in prod&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;Service accounts:&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Default service account has Editor role by default (Not recommended)&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;ACL:&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;IAM for common permissions to all objects in the bucket&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;ACL custom access to individual objects&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;use Uniform access when all users have same level of access across all objects in a bucket&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;Cloud Storage - SignedURL&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Allow user a limited access time&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;Cloud Storage - Static Website&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;bucket name same as website name&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;add allUsers and grant Storage Object Viewer&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;allow public access&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,13]}]}],[0,{&quot;content&quot;:[0,&quot;Compute Engine&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Image &amp;amp; Machine Types&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Custom Image&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Hardened Images&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}],[0,{&quot;content&quot;:[0,&quot;Machine Image&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;disk backups, instance cloning, replication&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}],[0,{&quot;content&quot;:[0,&quot;IP Address&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Static IP address&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}],[0,{&quot;content&quot;:[0,&quot;Instance Templates&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}],[0,{&quot;content&quot;:[0,&quot;Instance Groups&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Managed Instance Group&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Releases&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Rolling updates&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}],[0,{&quot;content&quot;:[0,&quot;Canary Deployments&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}],[0,{&quot;content&quot;:[0,&quot;MIG Features&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Auto Healing&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}],[0,{&quot;content&quot;:[0,&quot;Auto Scaling&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}],[0,{&quot;content&quot;:[0,&quot;Load Balancer to distribute load&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}],[0,{&quot;content&quot;:[0,&quot;Unmanaged (Not recommended)&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}],[0,{&quot;content&quot;:[0,&quot;Virtual Machines / Instances&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Temporary VMs&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Preemptible VM&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}],[0,{&quot;content&quot;:[0,&quot;Spot VM&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}],[0,{&quot;content&quot;:[0,&quot;Remember&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Live Migration&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}],[0,{&quot;content&quot;:[0,&quot;Availability Policy&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;On host maintenance - Migrate and Terminate&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}],[0,{&quot;content&quot;:[0,&quot;Automatic Restart&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}],[0,{&quot;content&quot;:[0,&quot;You will be billed if the storage is attached even if compute engine instance is turned off&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}],[0,{&quot;content&quot;:[0,&quot;IAAS&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,14]}]}],[0,{&quot;content&quot;:[0,&quot;Kubernetes Engine&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Kubernetes&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Deployment&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;Service&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;ClusterIP&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;Load Balancer&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;NodePort&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;Pods&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Pod Status&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Pending/Running/Succeeded/Failed/Unknown/Waiting&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;Ephemeral IP&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;One or more containers&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;N/w, storage, IP address, Ports, Vols (are shared b/w pods)&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;Replica Set&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;Secrets&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;Config Map&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;Cluster&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Master Node (Control Plane)&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;API Server&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;Scheduler&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;Control Manager&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;etcd&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;Worker Nodes&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;kubelet&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;Types of Clusters&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Zonal&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;Regional&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;Private&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;Alpha&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;Node pools&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;nodeSelector&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;deployment.yaml&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;Clusters&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Standard&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;AutoPilot&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;Container Registry (gcr)&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;Remember&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Replicate master nodes across zones - HA&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;Supports Stateful deployments&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;StatefulSet&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;DaemonSet - background job - logs, metrics&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;GKE cluster management: &lt;code&gt;gcloud container clusters&lt;/code&gt;&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;GKE workload management: &lt;code&gt;kubectl&lt;/code&gt;&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;Features - K8s:&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Auto Scaling&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;Service Discovery&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;Load Balancer&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;Self Healing&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;0 downtime deployments&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;HPA&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;VPA&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,15]}]}],[0,{&quot;content&quot;:[0,&quot;App Engine - REGIONAL&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Environments&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Standard&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}],[0,{&quot;content&quot;:[0,&quot;Flexible&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}],[0,{&quot;content&quot;:[0,&quot;Go for standard if you want to scale down to 0&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}],[0,{&quot;content&quot;:[0,&quot;Application Component Hierarchy&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Application - One Per Project&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}],[0,{&quot;content&quot;:[0,&quot;Services(s) - Multiple micro services&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}],[0,{&quot;content&quot;:[0,&quot;Versions - associated with config and code&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}],[0,{&quot;content&quot;:[0,&quot;Scaling Instances&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Automatic - auto scale based on load&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}],[0,{&quot;content&quot;:[0,&quot;Basic - adhoc workloads&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}],[0,{&quot;content&quot;:[0,&quot;Manual&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}],[0,{&quot;content&quot;:[0,&quot;Request Routing&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;With URLs&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}],[0,{&quot;content&quot;:[0,&quot;dispatch.yaml&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}],[0,{&quot;content&quot;:[0,&quot;Cloud load balancing&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}],[0,{&quot;content&quot;:[0,&quot;Traffic Splitting&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;IP Splitting&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}],[0,{&quot;content&quot;:[0,&quot;Cookie Splitting&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}],[0,{&quot;content&quot;:[0,&quot;Random&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}],[0,{&quot;content&quot;:[0,&quot;Cron Job - cron.yaml&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}],[0,{&quot;content&quot;:[0,&quot;queue.yaml&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}],[0,{&quot;content&quot;:[0,&quot;Remember&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Automatic Load balancing &amp;amp; Auto Scaling&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}],[0,{&quot;content&quot;:[0,&quot;Manages Platform Updates &amp;amp; Application&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}],[0,{&quot;content&quot;:[0,&quot;Health Monitoring&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}],[0,{&quot;content&quot;:[0,&quot;Application Versioning&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}],[0,{&quot;content&quot;:[0,&quot;Traffic Splitting&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}],[0,{&quot;content&quot;:[0,&quot;App Engine Flexible can be CAAS but is expensive compared to Cloud Run.&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}],[0,{&quot;content&quot;:[0,&quot;One app per project&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}],[0,{&quot;content&quot;:[0,&quot;PAAS&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,16]}]}],[0,{&quot;content&quot;:[0,&quot;Load Balancing&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;SSL/TLS Termination/ Offloading&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,17]}]}],[0,{&quot;content&quot;:[0,&quot;External&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;HTTP/HTTPS Traffic&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;External HTTP(S) Loadbalancer (Global)&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,17]}]}],[0,{&quot;content&quot;:[0,&quot;Regional External loadbalancer&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,17]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,17]}]}],[0,{&quot;content&quot;:[0,&quot;TCP Traffic&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;TCP Proxy (Global)&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,17]}]}],[0,{&quot;content&quot;:[0,&quot;SSL Offload ?&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;SSL Proxy&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,17]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,17]}]}],[0,{&quot;content&quot;:[0,&quot;External N/w loadbalancing&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,17]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,17]}]}],[0,{&quot;content&quot;:[0,&quot;UDP Traffic&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;External N/w loadbalancing&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,17]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,17]}]}],[0,{&quot;content&quot;:[0,&quot;ESP/ICMP traffic&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;External N/w loadbalancing&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,17]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,17]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,17]}]}],[0,{&quot;content&quot;:[0,&quot;Internal&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;TCP Traffic&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Internal TCP/UDP Loadbalancing&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,17]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,17]}]}],[0,{&quot;content&quot;:[0,&quot;UDP Traffic&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Internal TCP/UDP Loadbalancing&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,17]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,17]}]}],[0,{&quot;content&quot;:[0,&quot;HTTP/HTTPS&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Internal HTTP(S) loadbalancing&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,17]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,17]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,17]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,17]}]}],[0,{&quot;content&quot;:[0,&quot;Cloud Functions&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;gen1&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,18]}]}],[0,{&quot;content&quot;:[0,&quot;gen2&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Concurrency&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,18]}]}],[0,{&quot;content&quot;:[0,&quot;Longer req timeout&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,18]}]}],[0,{&quot;content&quot;:[0,&quot;Multiple fn revisions&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,18]}]}],[0,{&quot;content&quot;:[0,&quot;Traffic splitting&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,18]}]}],[0,{&quot;content&quot;:[0,&quot;EventArc&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,18]}]}],[0,{&quot;content&quot;:[0,&quot;Larger Instance sizes&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,18]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,18]}]}],[0,{&quot;content&quot;:[0,&quot;Remember&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Serverless&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,18]}]}],[0,{&quot;content&quot;:[0,&quot;Pay only for what you use&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,18]}]}],[0,{&quot;content&quot;:[0,&quot;Horizontally Scaled&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,18]}]}],[0,{&quot;content&quot;:[0,&quot;Responds to Events&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,18]}]}],[0,{&quot;content&quot;:[0,&quot;Auto Scaling&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,18]}]}],[0,{&quot;content&quot;:[0,&quot;&lt;code&gt;gcloud functions&lt;/code&gt;&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,18]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,18]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,18]}]}],[0,{&quot;content&quot;:[0,&quot;Cloud Run&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Anthos&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,19]}]}],[0,{&quot;content&quot;:[0,&quot;Remember&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Serverless&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,19]}]}],[0,{&quot;content&quot;:[0,&quot;Pay per use&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,19]}]}],[0,{&quot;content&quot;:[0,&quot;Anthos - Run k8s clusters anywhere&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,19]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,19]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,19]}]}],[0,{&quot;content&quot;:[0,&quot;KMS&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Google managed key&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,20]}]}],[0,{&quot;content&quot;:[0,&quot;Customer managed key&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,20]}]}],[0,{&quot;content&quot;:[0,&quot;Customer supplied key&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,20]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,20]}]}],[0,{&quot;content&quot;:[0,&quot;Storage&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Block Storage&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Persistent disks - N/w Storage&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Standard&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;Balanced&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;SSD&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;Snapshots - incremental&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;incremental&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;snapshot from disk &amp;gt; snapshot from image&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;disk from image &amp;gt; disk from snapshot&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;snapshot scheduling&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;Options&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Regional&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;Zonal&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;Local SSDs - Physically attached - Ephemeral storage&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;File Storage&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;FileStore&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;high performance&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;fileshare, media workflows, content management&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;Object Storage&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Cloud Storage - gsutil&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Storage Classes&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Standard&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;Nearline&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;Coldline&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;Archive&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;Uploading and downloading objects&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;Object Versioning&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;Object Lifecycle management&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Actions&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;setStorageClass&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;Deletion&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;Encryption&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Server side&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Google managed encryption key&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;Customer managed encryption key&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;Client side (optional)&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;Signed URL&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;See IAM &amp;#x2192; Remember&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;Static Website&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;See IAM &amp;#x2192; Remember&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;Remember&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;key-value&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;objects are stored in buckets&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;supports all file types&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;partial update on objects is not allowed&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;bucket names are globally unique&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;Object versioning prevents accidental deletion &amp;amp; provides history&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;Object life cycle management:&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;change from one storage class to another&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,21]}]}],[0,{&quot;content&quot;:[0,&quot;Pub/Sub&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Use cases&quot;],&quot;children&quot;:[1,[[0,{&quot;content&quot;:[0,&quot;Event Ingestion&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,22]}]}],[0,{&quot;content&quot;:[0,&quot;Delivery of streaming analytics pipelines&quot;],&quot;children&quot;:[1,[]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,22]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,22]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,22]}]}]]],&quot;payload&quot;:[0,{&quot;branch&quot;:[0,-1]}]}],&quot;fallbackHint&quot;:[0,&quot;Use the text outline below or download the PDF.&quot;],&quot;label&quot;:[0,&quot;GCP ACE Cheat Sheet mind map&quot;]}" ssr client="visible" opts="{&quot;name&quot;:&quot;MindMap&quot;,&quot;value&quot;:true}" await-children><figure class="mindmap" data-fullscreen="false" data-size="default" aria-label="GCP ACE Cheat Sheet mind map"><svg class="mindmap__canvas markmap" aria-describedby="_r5R_0_"></svg><div class="mindmap__toolbar"><button type="button" class="mindmap__control mindmap__control--desktop" disabled="" aria-label="Expand all" title="Expand all"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevrons-up-down mindmap__control-icon" aria-hidden="true"><path d="m7 15 5 5 5-5"></path><path d="m7 9 5-5 5 5"></path></svg></button><button type="button" class="mindmap__control mindmap__control--desktop" disabled="" aria-label="Collapse all" title="Collapse all"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevrons-down-up mindmap__control-icon" aria-hidden="true"><path d="m7 20 5-5 5 5"></path><path d="m7 4 5 5 5-5"></path></svg></button><button type="button" class="mindmap__control" disabled="" aria-label="Fit map to screen"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-locate-fixed mindmap__control-icon" aria-hidden="true"><line x1="2" x2="5" y1="12" y2="12"></line><line x1="19" x2="22" y1="12" y2="12"></line><line x1="12" x2="12" y1="2" y2="5"></line><line x1="12" x2="12" y1="19" y2="22"></line><circle cx="12" cy="12" r="7"></circle><circle cx="12" cy="12" r="3"></circle></svg><span class="mindmap__control-label">Fit</span></button><button type="button" class="mindmap__control" aria-pressed="false" aria-label="Full screen"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-maximize2 lucide-maximize-2 mindmap__control-icon" aria-hidden="true"><path d="M15 3h6v6"></path><path d="m21 3-7 7"></path><path d="m3 21 7-7"></path><path d="M9 21H3v-6"></path></svg><span class="mindmap__control-label">Full screen</span></button></div><p id="_r5R_0_" class="mindmap__hint" data-emphasis="false"><span class="mindmap__hint-pointer">Click a topic to fold or unfold · drag to pan · Ctrl/⌘ + scroll to zoom</span><span class="mindmap__hint-touch">Tap a topic to fold or unfold · two fingers to pan and zoom</span></p><p class="mindmap__status" role="status">Loading mind map…</p></figure><!--astro:end--></astro-island> <noscript> <p class="mindmap__noscript">The interactive map needs JavaScript. Use the text outline below or download the PDF.</p> </noscript> <details class="mindmap-outline"> <summary class="mindmap-outline__summary">Text outline</summary> <div class="markdown-document prose mindmap-outline__body">  <ul>
+<li>GCP Services
+<ul>
+<li>Organising GCP Resources
+<ul>
+<li>Resource Hierarchy
+<ul>
+<li>Domain (cloud level)
+<ul>
+<li>Organisation
+<ul>
+<li>Billing Account</li>
+<li>Folders
+<ul>
+<li>Projects
+<ul>
+<li>Resources</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Payments Profile</li>
+</ul>
+</li>
+<li>Billing Accounts
+<ul>
+<li>Managing Budget, Alerts and Exports</li>
+</ul>
+</li>
+<li>Corporate Directory Federation</li>
+<li>Organisation Policy Service</li>
+<li>Resource Hierarchy and IAM policy</li>
+</ul>
+</li>
+<li>Hybrid Cloud
+<ul>
+<li>Cloud VPN
+<ul>
+<li>HA VPN</li>
+<li>Classic VPN</li>
+</ul>
+</li>
+<li>Cloud Interconnect
+<ul>
+<li>Dedicated Interconnect</li>
+<li>Partner Interconnect</li>
+</ul>
+</li>
+<li>Direct Peering (NOT RECOMMENDED)</li>
+</ul>
+</li>
+<li>Managed Services
+<ul>
+<li>IAAS
+<ul>
+<li>Server
+<ul>
+<li>Compute Engine</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>PAAS
+<ul>
+<li>Server
+<ul>
+<li>App Engine</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>CAAS
+<ul>
+<li>Server
+<ul>
+<li>GKE</li>
+</ul>
+</li>
+<li>Serverless
+<ul>
+<li>App Engine Flexible</li>
+<li>Cloud Run</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>FAAS
+<ul>
+<li>Serverless
+<ul>
+<li>Cloud Functions</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Discounts
+<ul>
+<li>Sustained</li>
+<li>Committed</li>
+</ul>
+</li>
+<li>Cloud DataProc
+<ul>
+<li>managed Spark and Hadoop service</li>
+<li>data analysis platform</li>
+<li>alternative: BigQuery</li>
+</ul>
+</li>
+<li>Cloud DataFlow
+<ul>
+<li>pipelines</li>
+<li>streaming &#x26; batch use cases</li>
+<li>serverless</li>
+<li>auto scaling</li>
+</ul>
+</li>
+<li>Cloud DNS
+<ul>
+<li>global DNS</li>
+<li>set up your DNS routing of your website</li>
+</ul>
+</li>
+<li>Market Place / Cloud Launcher
+<ul>
+<li>Central repo of easily deployable apps and datasets</li>
+</ul>
+</li>
+<li>Deployment Manager
+<ul>
+<li>automate provisions of your infra</li>
+<li>version control for your envs</li>
+</ul>
+</li>
+<li>Pricing Calculator
+<ul>
+<li>estimate the cost of your gcp solution</li>
+</ul>
+</li>
+<li>Gcloud Operations Suite / Stackdriver
+<ul>
+<li>Cloud Logging
+<ul>
+<li>Audit &#x26; Security logs
+<ul>
+<li>Access Transparency logs</li>
+<li>Cloud Audit Logs
+<ul>
+<li>Admin activity logs</li>
+<li>Data access logs</li>
+<li>System event audit logs</li>
+<li>Policy denied audit logs</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Collection</li>
+<li>Controlling &#x26; Routing
+<ul>
+<li>Types of log buckets
+<ul>
+<li>_Required</li>
+<li>_Default</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Export - (create sinks)
+<ul>
+<li>Use cases
+<ul>
+<li>Troubleshoot using VM logs</li>
+<li>Export VM logs to BigQuery for querying using SQL like queries</li>
+<li>You want to retain audit logs for external auditors at minimum</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Cloud Trace</li>
+<li>Cloud Monitoring
+<ul>
+<li>Workspace</li>
+<li>Virtual Machines</li>
+</ul>
+</li>
+<li>Cloud Debugger</li>
+<li>Cloud Profiler</li>
+<li>Error Reporting</li>
+</ul>
+</li>
+<li>VPC
+<ul>
+<li>VPC Subnets</li>
+<li>Types
+<ul>
+<li>Auto mode VPC n/w</li>
+<li>Custom mode VPC n/w (Recommended for PROD)</li>
+</ul>
+</li>
+<li>CIDR</li>
+<li>Firewall Rules
+<ul>
+<li>Ingress</li>
+<li>Egress</li>
+</ul>
+</li>
+<li>Shared VPC</li>
+<li>VPC Peering</li>
+</ul>
+</li>
+<li>Databases
+<ul>
+<li>Relational
+<ul>
+<li>OLAP - Analytics
+<ul>
+<li>BigQuery (bq) - GLOBAL
+<ul>
+<li>data warehouse</li>
+<li>automatically expire data</li>
+<li>expensive</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>OLTP - Transactional
+<ul>
+<li>Cloud SQL - REGIONAL
+<ul>
+<li>Point in time recovery: binary logging</li>
+<li>Export data from console UI</li>
+<li>High availability and failover:
+<ul>
+<li>Standby with automatic failover.
+<ul>
+<li>Pre reqs: automated backup, binary-logging</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>High availability setup CANNOT be used as Read Replica</li>
+<li>Not Serverless</li>
+</ul>
+</li>
+<li>Cloud Spanner - GLOBAL
+<ul>
+<li>Expensive</li>
+<li>Data Export: use cloud console, DataFlow to automate export. No gcloud export option</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Import and Export</li>
+</ul>
+</li>
+<li>Non relational
+<ul>
+<li>DataStore/FireStore - REGIONAL
+<ul>
+<li>NoSQL doc DB with SQL like queries</li>
+<li>Export data only from gcloud (NOT from cloud console)</li>
+</ul>
+</li>
+<li>Cloud BigTable (cbt) - GLOBAL
+<ul>
+<li>cbt command line tool</li>
+<li>CANNOT export data using cloud console or gcloud
+<ul>
+<li>either use a java application or use HBASE commands</li>
+</ul>
+</li>
+<li>wide column DB</li>
+<li>IOT Streams, graph data, real-time analytics</li>
+</ul>
+</li>
+<li>Memory Store
+<ul>
+<li>Not Serverless</li>
+</ul>
+</li>
+<li>Import and Export</li>
+</ul>
+</li>
+<li>Summary
+<ul>
+<li>BigQuery, Datastore, firebase doesnt need a VM config, where as CloudSQL, BigTable need VM Config (they use compute Engine VMs)</li>
+<li>Relational DB:
+<ul>
+<li>Small Local DB - Cloud SQL</li>
+<li>Highly scalable global DB - Cloud Spanner</li>
+<li>Datawarehouse - BigQuery</li>
+</ul>
+</li>
+<li>NoSQL DB:
+<ul>
+<li>Transactional DB for few TBs of data - Cloud DataStore</li>
+<li>Huge Volumes of IOT or stream analytics data - BigTable</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>IAM
+<ul>
+<li>Roles
+<ul>
+<li>Basic
+<ul>
+<li>Viewer</li>
+<li>Editor</li>
+<li>Owner</li>
+</ul>
+</li>
+<li>Predefined Roles (Recommended)</li>
+<li>Custom Roles</li>
+</ul>
+</li>
+<li>Policy</li>
+<li>Service Accounts (Recommended)
+<ul>
+<li>Default</li>
+<li>User Managed (Recommended)</li>
+<li>Google managed Service accounts</li>
+<li>Use cases
+<ul>
+<li>VM to Cloud Storage</li>
+<li>On Prem to Cloud Storage (long lived)</li>
+<li>On Prem to Gcloud APIs (short lived)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Access Control Lists
+<ul>
+<li>Uniform</li>
+<li>Fine grained</li>
+</ul>
+</li>
+<li>Best Practices
+<ul>
+<li>Principle of Least Privilege</li>
+<li>Separation of duties</li>
+<li>Constant Monitoring</li>
+<li>Use Groups when Possible</li>
+</ul>
+</li>
+<li>Remember
+<ul>
+<li>Roles: set of permissions</li>
+<li>Policy: assign permissions to members (assign role to a member)</li>
+<li>Don’t use basic roles in prod</li>
+<li>Service accounts:
+<ul>
+<li>Default service account has Editor role by default (Not recommended)</li>
+</ul>
+</li>
+<li>ACL:
+<ul>
+<li>IAM for common permissions to all objects in the bucket</li>
+<li>ACL custom access to individual objects</li>
+<li>use Uniform access when all users have same level of access across all objects in a bucket</li>
+</ul>
+</li>
+<li>Cloud Storage - SignedURL
+<ul>
+<li>Allow user a limited access time</li>
+</ul>
+</li>
+<li>Cloud Storage - Static Website
+<ul>
+<li>bucket name same as website name</li>
+<li>add allUsers and grant Storage Object Viewer</li>
+<li>allow public access</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Compute Engine
+<ul>
+<li>Image &#x26; Machine Types
+<ul>
+<li>Custom Image
+<ul>
+<li>Hardened Images</li>
+</ul>
+</li>
+<li>Machine Image
+<ul>
+<li>disk backups, instance cloning, replication</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>IP Address
+<ul>
+<li>Static IP address</li>
+</ul>
+</li>
+<li>Instance Templates</li>
+<li>Instance Groups
+<ul>
+<li>Managed Instance Group
+<ul>
+<li>Releases
+<ul>
+<li>Rolling updates</li>
+<li>Canary Deployments</li>
+</ul>
+</li>
+<li>MIG Features
+<ul>
+<li>Auto Healing</li>
+<li>Auto Scaling</li>
+<li>Load Balancer to distribute load</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Unmanaged (Not recommended)</li>
+</ul>
+</li>
+<li>Virtual Machines / Instances
+<ul>
+<li>Temporary VMs
+<ul>
+<li>Preemptible VM</li>
+<li>Spot VM</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Remember
+<ul>
+<li>Live Migration</li>
+<li>Availability Policy
+<ul>
+<li>On host maintenance - Migrate and Terminate</li>
+<li>Automatic Restart</li>
+</ul>
+</li>
+<li>You will be billed if the storage is attached even if compute engine instance is turned off</li>
+<li>IAAS</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Kubernetes Engine
+<ul>
+<li>Kubernetes
+<ul>
+<li>Deployment</li>
+<li>Service
+<ul>
+<li>ClusterIP</li>
+<li>Load Balancer</li>
+<li>NodePort</li>
+</ul>
+</li>
+<li>Pods
+<ul>
+<li>Pod Status
+<ul>
+<li>Pending/Running/Succeeded/Failed/Unknown/Waiting</li>
+</ul>
+</li>
+<li>Ephemeral IP</li>
+<li>One or more containers</li>
+<li>N/w, storage, IP address, Ports, Vols (are shared b/w pods)</li>
+</ul>
+</li>
+<li>Replica Set</li>
+<li>Secrets</li>
+<li>Config Map</li>
+</ul>
+</li>
+<li>Cluster
+<ul>
+<li>Master Node (Control Plane)
+<ul>
+<li>API Server</li>
+<li>Scheduler</li>
+<li>Control Manager</li>
+<li>etcd</li>
+</ul>
+</li>
+<li>Worker Nodes
+<ul>
+<li>kubelet</li>
+</ul>
+</li>
+<li>Types of Clusters
+<ul>
+<li>Zonal</li>
+<li>Regional</li>
+<li>Private</li>
+<li>Alpha</li>
+</ul>
+</li>
+<li>Node pools
+<ul>
+<li>nodeSelector</li>
+</ul>
+</li>
+<li>deployment.yaml</li>
+<li>Clusters
+<ul>
+<li>Standard</li>
+<li>AutoPilot</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Container Registry (gcr)</li>
+<li>Remember
+<ul>
+<li>Replicate master nodes across zones - HA</li>
+<li>Supports Stateful deployments
+<ul>
+<li>StatefulSet</li>
+</ul>
+</li>
+<li>DaemonSet - background job - logs, metrics</li>
+<li>GKE cluster management: <code>gcloud container clusters</code></li>
+<li>GKE workload management: <code>kubectl</code></li>
+<li>Features - K8s:
+<ul>
+<li>Auto Scaling</li>
+<li>Service Discovery</li>
+<li>Load Balancer</li>
+<li>Self Healing</li>
+<li>0 downtime deployments</li>
+<li>HPA</li>
+<li>VPA</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>App Engine - REGIONAL
+<ul>
+<li>Environments
+<ul>
+<li>Standard</li>
+<li>Flexible</li>
+<li>Go for standard if you want to scale down to 0</li>
+</ul>
+</li>
+<li>Application Component Hierarchy
+<ul>
+<li>Application - One Per Project</li>
+<li>Services(s) - Multiple micro services</li>
+<li>Versions - associated with config and code</li>
+</ul>
+</li>
+<li>Scaling Instances
+<ul>
+<li>Automatic - auto scale based on load</li>
+<li>Basic - adhoc workloads</li>
+<li>Manual</li>
+</ul>
+</li>
+<li>Request Routing
+<ul>
+<li>With URLs</li>
+<li>dispatch.yaml</li>
+<li>Cloud load balancing</li>
+</ul>
+</li>
+<li>Traffic Splitting
+<ul>
+<li>IP Splitting</li>
+<li>Cookie Splitting</li>
+<li>Random</li>
+</ul>
+</li>
+<li>Cron Job - cron.yaml</li>
+<li>queue.yaml</li>
+<li>Remember
+<ul>
+<li>Automatic Load balancing &#x26; Auto Scaling</li>
+<li>Manages Platform Updates &#x26; Application</li>
+<li>Health Monitoring</li>
+<li>Application Versioning</li>
+<li>Traffic Splitting</li>
+<li>App Engine Flexible can be CAAS but is expensive compared to Cloud Run.</li>
+<li>One app per project</li>
+<li>PAAS</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Load Balancing
+<ul>
+<li>SSL/TLS Termination/ Offloading</li>
+<li>External
+<ul>
+<li>HTTP/HTTPS Traffic
+<ul>
+<li>External HTTP(S) Loadbalancer (Global)</li>
+<li>Regional External loadbalancer</li>
+</ul>
+</li>
+<li>TCP Traffic
+<ul>
+<li>TCP Proxy (Global)</li>
+<li>SSL Offload ?
+<ul>
+<li>SSL Proxy</li>
+</ul>
+</li>
+<li>External N/w loadbalancing</li>
+</ul>
+</li>
+<li>UDP Traffic
+<ul>
+<li>External N/w loadbalancing</li>
+</ul>
+</li>
+<li>ESP/ICMP traffic
+<ul>
+<li>External N/w loadbalancing</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Internal
+<ul>
+<li>TCP Traffic
+<ul>
+<li>Internal TCP/UDP Loadbalancing</li>
+</ul>
+</li>
+<li>UDP Traffic
+<ul>
+<li>Internal TCP/UDP Loadbalancing</li>
+</ul>
+</li>
+<li>HTTP/HTTPS
+<ul>
+<li>Internal HTTP(S) loadbalancing</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Cloud Functions
+<ul>
+<li>gen1</li>
+<li>gen2
+<ul>
+<li>Concurrency</li>
+<li>Longer req timeout</li>
+<li>Multiple fn revisions</li>
+<li>Traffic splitting</li>
+<li>EventArc</li>
+<li>Larger Instance sizes</li>
+</ul>
+</li>
+<li>Remember
+<ul>
+<li>Serverless</li>
+<li>Pay only for what you use</li>
+<li>Horizontally Scaled</li>
+<li>Responds to Events</li>
+<li>Auto Scaling</li>
+<li><code>gcloud functions</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Cloud Run
+<ul>
+<li>Anthos</li>
+<li>Remember
+<ul>
+<li>Serverless</li>
+<li>Pay per use</li>
+<li>Anthos - Run k8s clusters anywhere</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>KMS
+<ul>
+<li>Google managed key</li>
+<li>Customer managed key</li>
+<li>Customer supplied key</li>
+</ul>
+</li>
+<li>Storage
+<ul>
+<li>Block Storage
+<ul>
+<li>Persistent disks - N/w Storage
+<ul>
+<li>Standard</li>
+<li>Balanced</li>
+<li>SSD</li>
+<li>Snapshots - incremental
+<ul>
+<li>incremental</li>
+<li>snapshot from disk > snapshot from image</li>
+<li>disk from image > disk from snapshot</li>
+<li>snapshot scheduling</li>
+</ul>
+</li>
+<li>Options
+<ul>
+<li>Regional</li>
+<li>Zonal</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Local SSDs - Physically attached - Ephemeral storage</li>
+</ul>
+</li>
+<li>File Storage
+<ul>
+<li>FileStore
+<ul>
+<li>high performance</li>
+<li>fileshare, media workflows, content management</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Object Storage
+<ul>
+<li>Cloud Storage - gsutil
+<ul>
+<li>Storage Classes
+<ul>
+<li>Standard</li>
+<li>Nearline</li>
+<li>Coldline</li>
+<li>Archive</li>
+</ul>
+</li>
+<li>Uploading and downloading objects</li>
+<li>Object Versioning</li>
+<li>Object Lifecycle management
+<ul>
+<li>Actions
+<ul>
+<li>setStorageClass</li>
+<li>Deletion</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Encryption
+<ul>
+<li>Server side
+<ul>
+<li>Google managed encryption key</li>
+<li>Customer managed encryption key</li>
+</ul>
+</li>
+<li>Client side (optional)</li>
+</ul>
+</li>
+<li>Signed URL
+<ul>
+<li>See IAM → Remember</li>
+</ul>
+</li>
+<li>Static Website
+<ul>
+<li>See IAM → Remember</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Remember
+<ul>
+<li>key-value</li>
+<li>objects are stored in buckets</li>
+<li>supports all file types</li>
+<li>partial update on objects is not allowed</li>
+<li>bucket names are globally unique</li>
+<li>Object versioning prevents accidental deletion &#x26; provides history</li>
+<li>Object life cycle management:
+<ul>
+<li>change from one storage class to another</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Pub/Sub
+<ul>
+<li>Use cases
+<ul>
+<li>Event Ingestion</li>
+<li>Delivery of streaming analytics pipelines</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>  </div> </details> </article>  </main> <footer class="site-footer"> <div class="site-footer__bar"> <ul class="social-links"> <li> <a href="https://github.com/g-savitha" class="social-links__link hover-lift" aria-label="GitHub" title="GitHub" target="_blank" rel="noopener noreferrer"> <svg xmlns="http://www.w3.org/2000/svg" stroke-width="2" width="24" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" aria-hidden="true" class="lucide lucide-github social-links__icon">  <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path> <path d="M9 18c-4.51 2-5-2-7-2"></path>  </svg> </a> </li><li> <a href="https://www.linkedin.com/in/g-savitha/" class="social-links__link hover-lift" aria-label="LinkedIn" title="LinkedIn" target="_blank" rel="noopener noreferrer"> <svg xmlns="http://www.w3.org/2000/svg" stroke-width="2" width="24" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" aria-hidden="true" class="lucide lucide-linkedin social-links__icon">  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path> <rect width="4" height="12" x="2" y="9"></rect> <circle cx="4" cy="4" r="2"></circle>  </svg> </a> </li><li> <a href="https://leetcode.com/u/g-savitha/" class="social-links__link hover-lift" aria-label="LeetCode" title="LeetCode" target="_blank" rel="noopener noreferrer"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="social-links__icon" aria-hidden="true"> <path d="M14.5 2 5.3 11.2a2.5 2.5 0 0 0 0 3.6l4 4a2.5 2.5 0 0 0 3.6 0l2.6-2.6"></path> <path d="M15.5 8 13 5.5"></path> <path d="M10 13.5h10"></path> </svg> </a> </li><li> <a href="https://takeuforward.org/profile/gsavitha" class="social-links__link hover-lift" aria-label="TakeUForward" title="TakeUForward" target="_blank" rel="noopener noreferrer"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="social-links__icon" aria-hidden="true"> <path d="M4.5 6v9.5A2.5 2.5 0 0 0 7 18"></path> <path d="M2.5 10h4"></path> <path d="M10 10v4.5a2 2 0 0 0 4 0V10"></path> <path d="M14 14.5V18"></path> <path d="M21.5 6.5a2.5 2.5 0 0 0-4 2V18"></path> <path d="M16 12h4"></path> </svg> </a> </li><li> <a href="mailto:gsavitha@protonmail.com" class="social-links__link hover-lift" aria-label="Email" title="Email"> <svg xmlns="http://www.w3.org/2000/svg" stroke-width="2" width="24" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" aria-hidden="true" class="lucide lucide-mail social-links__icon">  <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"></path> <rect x="2" y="4" width="20" height="16" rx="2"></rect>  </svg> </a> </li><li> <a href="/rss.xml" class="social-links__link hover-lift" aria-label="RSS Feed" title="RSS Feed"> <svg xmlns="http://www.w3.org/2000/svg" stroke-width="2" width="24" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" aria-hidden="true" class="lucide lucide-rss social-links__icon">  <path d="M4 11a9 9 0 0 1 9 9"></path> <path d="M4 4a16 16 0 0 1 16 16"></path> <circle cx="5" cy="19" r="1"></circle>  </svg> </a> </li> </ul> <div class="site-footer__meta"> <p class="site-footer__copyright">
+&copy; 2026 G. Savitha. All rights reserved.
+</p> <p class="site-footer__credit">Built with Astro</p> </div> </div> </footer> </div> </div> </body></html>

@@ -1,4 +1,0 @@
-#!/bin/sh
-# Same gate CI runs (minus the network-dependent build). Installed by `bun install` via
-# the `prepare` script. Bypass only with a reason in the PR description.
-exec bun run verify:fast
