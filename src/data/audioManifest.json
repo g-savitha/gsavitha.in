@@ -237,13 +237,13 @@
     "en": {
       "label": "English",
       "language": "en",
-      "duration": 641.59,
-      "bytes": 5133120,
-      "hash": "e20d4628be57c2c659babcfd812424ee19ce8c1b45ce79bb29eda096c3c82ee1",
+      "duration": 633.37,
+      "bytes": 5067456,
+      "hash": "813410d0b1c173aba686e84a6a5b762dce1368d4ec13ffd6f78fbf4757c309cf",
       "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
       "voice": "af_heart",
-      "generatedAt": "2026-10-19T15:41:45.876Z",
-      "url": "https://audio.gsavitha.in/audio/blog/prompt-caching/e20d4628be57c2c659babcfd812424ee19ce8c1b45ce79bb29eda096c3c82ee1/en.mp3"
+      "generatedAt": "2026-10-20T15:58:45.902Z",
+      "url": "https://audio.gsavitha.in/audio/blog/prompt-caching/813410d0b1c173aba686e84a6a5b762dce1368d4ec13ffd6f78fbf4757c309cf/en.mp3"
     }
   },
   "making-coding-agents-trustworthy": {
