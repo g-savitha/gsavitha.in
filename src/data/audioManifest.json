@@ -250,13 +250,13 @@
     "en": {
       "label": "English",
       "language": "en",
-      "duration": 1651.79,
-      "bytes": 13214784,
-      "hash": "b3f11799b0e8a5b904e46d273905f5fb8fc7a61531fb75b48c98fe2242e87da6",
+      "duration": 870.5,
+      "bytes": 6964416,
+      "hash": "78b31f384fad89d7631f9c57ce58b62a82a6ad95711a50de0c9a8e9ffb576d28",
       "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
       "voice": "af_heart",
-      "generatedAt": "2026-10-20T10:50:00.914Z",
-      "url": "https://audio.gsavitha.in/audio/blog/making-coding-agents-trustworthy/b3f11799b0e8a5b904e46d273905f5fb8fc7a61531fb75b48c98fe2242e87da6/en.mp3"
+      "generatedAt": "2026-10-20T15:57:00.528Z",
+      "url": "https://audio.gsavitha.in/audio/blog/making-coding-agents-trustworthy/78b31f384fad89d7631f9c57ce58b62a82a6ad95711a50de0c9a8e9ffb576d28/en.mp3"
     }
   },
   "async-code-in-js": {
