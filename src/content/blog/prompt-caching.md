@@ -205,8 +205,8 @@ If there's one thing to take away, it's the prefix rule. The model can only reus
 
 ## Sources
 
-- [Prompt caching: 10x cheaper LLM tokens, but how?](https://ngrok.com/blog/prompt-caching) by Sam Rose (ngrok). Walks through attention step by step with interactive visuals.
-- [Lessons from building Claude Code: Prompt caching is everything](https://claude.dev/blog/lessons-from-building-claude-code-prompt-caching-is-everything/) by Thariq Shihipar
+- [Prompt caching: 10x cheaper LLM tokens, but how?](https://ngrok.com/blog/prompt-caching)
+- [Lessons from building Claude Code: Prompt caching is everything](https://claude.dev/blog/lessons-from-building-claude-code-prompt-caching-is-everything/)
 - [Anthropic docs: Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching)
 - [OpenAI docs: Prompt caching](https://developers.openai.com/api/docs/guides/prompt-caching)
 - [Gemini API docs: Context caching](https://ai.google.dev/gemini-api/docs/generate-content/caching)
@@ -215,4 +215,4 @@ If there's one thing to take away, it's the prefix rule. The model can only reus
 - [DeepSeek docs: Context caching](https://api-docs.deepseek.com/guides/kv_cache)
 - [vLLM docs: Automatic prefix caching](https://docs.vllm.ai/en/latest/design/prefix_caching.html)
 - [DigitalOcean: Prompt caching explained](https://www.digitalocean.com/community/tutorials/prompt-caching-explained)
-- [Prompt caching explained: what it is, what it isn't, and when to use it](https://medium.com/@michael.hannecke/prompt-caching-explained-what-it-is-what-it-isnt-and-when-to-use-it-9f5c6fce7bdb) by Michael Hannecke
+- [Prompt caching explained: what it is, what it isn't, and when to use it](https://medium.com/@michael.hannecke/prompt-caching-explained-what-it-is-what-it-isnt-and-when-to-use-it-9f5c6fce7bdb)
