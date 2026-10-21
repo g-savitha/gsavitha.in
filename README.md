@@ -148,6 +148,12 @@ if a post has a hex colour in a Mermaid block or uses an unknown class.
 `node --experimental-strip-types scripts/mermaid/stripSharedColours.ts --check` also fails on hex
 colours in Mermaid blocks (without `--check` it removes lines that exactly match a shared class).
 
+To ship a diagram as a static image instead (no client-side Mermaid, so it also shows in RSS and
+reader mode), put the source in a `.mmd` file next to the post's assets and run
+`node --experimental-strip-types scripts/mermaid/renderSvg.ts path/to/diagram.mmd`. It writes
+`diagram.svg` beside it with the shared theme and a dark card background. Commit both and embed the
+SVG with alt text: `![What the diagram shows](../../assets/blog/<post>/diagram.svg)`.
+
 ## Math
 
 Writings can include LaTeX. It is rendered at build time with KaTeX. (Papershelf entries are link-only, so their bodies are not rendered.)
