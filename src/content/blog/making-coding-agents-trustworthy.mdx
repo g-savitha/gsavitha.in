@@ -44,21 +44,21 @@ The talk draws this as a curve. The more you trust your agents, the more of them
 
 ![Illustration of the trust curve: as you go from 1 agent to 1k+ agents, the trust you need climbs from low to high. Not real data.](../../assets/blog/making-coding-agents-trustworthy/trust-curve.svg)
 
-There's no shortcut along this curve. If you jump straight to thousands of cloud agents without trust, you mostly burn tokens, because nobody can tell which of their outputs are good.
+There's no shortcut along this curve. If you jump straight to thousands of cloud agents without trust, you mostly burn tokens, because nobody can tell which outputs are good.
 
 ### In practice
 
 - Start with one agent and one kind of task you do often.
-- Ask yourself what you still check by hand after the agent says it's done. Each of those checks is something to automate, using the ideas below.
+- Notice what you still check by hand after the agent says it's done. Each of those checks is something to automate, using the ideas below.
 - Add more agents only when you've stopped re-checking the work of the ones you have.
 
 ## Verify first
 
-Verification means the agent runs the code and checks the result, the same way your users would see it. Depending on the app, that could mean driving the UI, calling an API, taking a CPU trace or a heap snapshot, or opening an iOS simulator.
+Verification means the agent runs the code and checks the result the way your users would see it. Depending on the app, that could mean driving the UI, calling an API, taking a CPU trace or a heap snapshot, or opening an iOS simulator.
 
 For web and Electron apps, the agent can use the Chrome DevTools Protocol (CDP). That's the protocol DevTools itself uses, and it lets code control a browser.
 
-Here's what that looks like. Say the bug is "clicking Save does nothing". A guessing agent reads the code, finds something plausible, changes it, and stops. A verifying agent changes the code, starts the app, clicks Save, and checks that the saved state actually appears.
+Here's what that looks like. Say the bug is "clicking Save does nothing". A guessing agent reads the code, finds something plausible, changes it, and stops. A verifying agent changes the code, starts the app, clicks Save, and checks that the saved state shows up.
 
 In Playwright, that check is a few lines:
 
@@ -76,8 +76,8 @@ Verification doesn't guarantee *good* code, but it helps the agent write *correc
 
 ### In practice
 
-- Give the agent one command that builds the project and checks it. On this site, that's `bun run verify:site`, which builds the site and then runs a script that checks it.
-- Tell the agent to use it, in your rules or `AGENTS.md`. Ask it to run the command before saying "done", to check UI changes the way a user would, and to show what it ran and what it saw instead of saying "this should work".
+- Give the agent one command that builds the project and checks it. On this site, that's `bun run verify:site`. It builds the site, then runs a script that checks it.
+- Tell the agent to use it, in your rules or `AGENTS.md`. Ask it to run the command before saying "done" and to check UI changes the way a user would. Ask it to show what it ran and what it saw, instead of saying "this should work".
 - Let your agent write the first verification skill. pstack, a Cursor plugin full of skills, has `/create-verification-skill` to build one and `/maintain-verification-skill` to keep it up to date.
 
 ## Give the agent a feature map
@@ -86,9 +86,9 @@ Once an agent can run your app, a new problem shows up. It doesn't know what any
 
 Someone reports "the left sidebar is laggy", and the agent flails, searching the code for where the sidebar lives. A screenshot with no words gives it even less to go on.
 
-A feature map fixes that. It's a folder of markdown files that describes each feature from the user's point of view. Each file says what the feature is, how to get to it, its sub-features, its keyboard shortcuts, and the attributes you use to select its elements.
+A feature map fixes that. It's a folder of markdown files that describes each feature from the user's point of view. Each file says what the feature is and how to get to it. It also lists the sub-features, the keyboard shortcuts, and the attributes you use to select its elements.
 
-The files teach how to *use* a feature, not how it's built. With a map, the agent goes straight to the feature and checks it, instead of exploring the whole app every time.
+The files teach the agent how to *use* a feature, not how it's built. With a map, the agent goes straight to the feature and checks it, instead of exploring the whole app every time.
 
 ### In practice
 
@@ -122,25 +122,25 @@ document.querySelector('[data-action-id="save-post"]');
 
 ### In practice
 
-- Prefer ARIA labels and meaningful data attributes, like `data-component` and `data-action-id`. Use class names only as a fallback.
-- Wait for something a user would see. Timing isn't predictable when output streams in, so poll for a visible end state, like a button becoming enabled.
-- Read the DOM directly with a bit of JavaScript for an exact answer. Prefer keyboard shortcuts over clicking at screen coordinates, and watch the console.
+- Prefer ARIA labels (the labels screen readers use) and data attributes with clear names, like `data-component` and `data-action-id`. Use class names only as a fallback.
+- Wait for something a user would see. Streamed output doesn't arrive on a fixed schedule, so poll for a visible end state, like a button becoming enabled.
+- Read the DOM with a bit of JavaScript when you need an exact answer. Use keyboard shortcuts instead of clicking at screen coordinates, and watch the console.
 - Write these rules in your feature map's README, so every agent follows the same ones.
 
 ## Turn failures into skills, and test them with evals
 
-A skill, in Cursor terms, is a set of instructions that an agent can pick up when it needs to do a specific job. It's mostly a markdown file, sometimes with scripts.
+A skill, in Cursor terms, is a set of instructions an agent picks up when it needs to do a specific job. It's mostly a markdown file, sometimes with scripts.
 
-A useful way to think about an agent is a strong engineer you hired five seconds ago. They can code well, but they have no context about your project. A skill is how you teach that person to be effective.
+A useful way to think about an agent is a strong engineer you hired five seconds ago. They can code well, but they have no context about your project. A skill is how you teach them to be effective.
 
-Good skills come from watching agents fail. Be a backseat driver, like in pair programming when you ask a coworker "why didn't you do it this way?". Read the agent's tool calls and thinking. A common one is an agent confidently naming a bug's cause without reading the code involved.
+Good skills come from watching agents fail. Be a backseat driver, like in pair programming when you ask a coworker "why didn't you do it this way?". Read the agent's tool calls and thinking. A common failure is an agent confidently naming a bug's cause without reading the code involved.
 
-But how do you know a skill works? It's just text, and an agent might ignore half of it. That's what evals are for. Think of them as unit tests for an agent, and you don't need a special framework for them. Here's the setup from the talk (pstack ships it as the Eval playbook in its poteto-mode skill):
+But how do you know a skill works? It's just text, and an agent might ignore half of it. That's what evals are for. An eval is a unit test for an agent, and you don't need a special framework to write one. Here's the setup from the talk (pstack ships it as the Eval playbook in its poteto-mode skill):
 
-1. A coordinator agent writes a rubric for what "good" looks like for the skill.
+1. A coordinator agent writes a rubric, a short list of what "good" looks like for the skill.
 2. It spawns subagents to do a task with the skill, each in a folder named so it doesn't realize it's being tested. Agents behave differently when they know.
 3. A judge agent on a different model grades the results, which helps catch grading bias.
-4. You hill-climb. In Cursor, you can use `/loop` and tell it to keep looping on the eval until everything scores 10 out of 10.
+4. You hill-climb: change the skill, run the eval again, and keep what raises the score. In Cursor, you can use `/loop` and tell it to keep looping on the eval until everything scores 10 out of 10.
 
 The rubric doesn't need to be fancy. For a verification skill, it could be as small as this:
 
@@ -162,7 +162,7 @@ Say a skill keeps scoring 6/10 because agents skip the "wait for the visible end
 
 ## Turn repeated review comments into checks
 
-Hard guardrails turn CI red, so the agent can't ship around them. Soft ones, like rules and AI code review, help, but an agent can forget them.
+A guardrail is anything that stops an agent from making a bad change. Hard guardrails turn CI red, so the agent can't ship around them. Soft ones, like rules and AI code review, help, but an agent can forget them.
 
 The talk puts these in five layers, from strongest to weakest:
 
@@ -172,12 +172,12 @@ The codebase is the strongest layer, because agents love to copy existing patter
 
 Layer the soft ones on top, but don't rely on them alone, or the codebase eventually becomes a mess.
 
-poteto later posted the same idea as an inverse pyramid, with human review last. The worst place to be is enforcing your rules through review comments. Each time you write "don't do this" on a PR, treat it as a code smell.
+poteto later posted the same idea as an inverse pyramid, with human review last. The worst place to be is enforcing your rules through review comments. Each time you write "don't do this" on a PR, treat it as a code smell, a sign that something deeper needs fixing.
 
 ### In practice
 
 - When you catch yourself writing the same review comment twice, ask if you can make it a lint rule or a CI failure. Better still, ask if you can remove that whole class of problem.
-- Ban footguns. `useEffect` is one of React's biggest footguns, so one team banned it. In ESLint, `no-restricted-imports` catches `import { useEffect } from 'react'`, but not `React.useEffect`. Add `no-restricted-properties` to cover that one too:
+- Ban footguns, the features that make it easy to shoot yourself in the foot. `useEffect` is one of React's biggest, so one team banned it. In ESLint, `no-restricted-imports` catches `import { useEffect } from 'react'`, but not `React.useEffect`. Add `no-restricted-properties` to cover that one too:
 
   ```js
   // eslint.config.js
@@ -207,7 +207,7 @@ An agent only sees the part of your codebase that fits in its context. So it cop
 
 None of these are bad on their own. They make sense for the files the agent can see, but they can be wrong for the system as a whole. You can't make the agent see everything, so make the shortest path the correct one.
 
-This is also why brand-new projects are risky. In a vibe-coded prototype, nobody reads the code, so there are no guardrails and it spirals. Large company codebases are often the opposite. Their frameworks and conventions stop the least experienced engineer from doing much damage, and they stop agents too.
+This is also why brand-new projects are risky. A vibe-coded prototype, built fast from prompts with nobody reading the code, has no guardrails, so it spirals. Large company codebases are often the opposite. Their frameworks and conventions stop the least experienced engineer from doing much damage, and they stop agents too.
 
 Your tech stack is a guardrail as well. Rust is the talk's example. Its compiler checks a lot, including the borrow checker. If agents stay out of `unsafe` blocks and the code compiles, you can be fairly confident it works.
 
@@ -222,7 +222,7 @@ The talk listed five rules for a codebase like this. Here's each one with a plai
 ### In practice
 
 - Turn on the strictest settings your language has, like `strict` in TypeScript. Run the type checker in CI and in your verify command.
-- Do the math on tokens. The refactor burns a lot of tokens upfront, so compare that bill to hiring someone to do the same refactor and test it all by hand, work Lauren said would've taken her years on her own. Once the codebase is in shape, even smaller models do well, and non-experts can contribute safely.
+- Do the math on tokens. The refactor burns a lot of tokens upfront, so compare that bill to hiring someone to do the same refactor and test it all by hand. Lauren said that work would've taken her years on her own. Once the codebase is in shape, even smaller models do well, and non-experts can contribute safely.
 
 ## Keep PRs small
 
