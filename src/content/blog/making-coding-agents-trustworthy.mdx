@@ -21,7 +21,7 @@ categories:
   - engineering
 ---
 
-*The ideas in this post come from Lauren Tan's (poteto) talk "How Cursor Turned AI Agents Into Better Engineers". The talk and the video are linked under Further reading.*
+*The ideas in this post come from Lauren Tan's (poteto) talk "How Cursor Turned AI Agents Into Better Engineers". The talk and the video are linked under [Further reading](#further-reading).*
 
 I watched this talk once and only came away with a vague idea of it. So I went back through it properly. Here's what I took from it, one idea at a time, each with a short "how you can do it".
 
@@ -41,22 +41,7 @@ Think about managing a team. If you don't trust your engineers, you check every 
 
 The talk draws this as a curve. The more you trust your agents, the more of them you can run in parallel. The chart below is an illustration of that idea, not real data.
 
-```mermaid
----
-config:
-  xyChart:
-    width: 480
-    height: 320
-    yAxis:
-      showLabel: false
-      showTick: false
----
-xychart-beta
-    title "Illustration: trust vs agents"
-    x-axis "Agents you can run" ["1", "1-5", "5-10", "10-20", "100s", "1k+"]
-    y-axis "Trust (low to high)" 0 --> 10
-    line [1, 4, 6, 7.5, 8.5, 9]
-```
+![Illustration of the trust curve: as you go from 1 agent to 1k+ agents, the trust you need climbs from low to high. Not real data.](../../assets/blog/making-coding-agents-trustworthy/trust-curve.svg)
 
 There's no shortcut along this curve. If you jump straight to thousands of cloud agents without trust, you mostly burn tokens, because nobody can tell which of their outputs are good.
 
@@ -73,6 +58,18 @@ Verification means the agent runs the code and checks the result, the same way y
 For web and Electron apps, the agent can use the Chrome DevTools Protocol (CDP). That's the protocol DevTools itself uses, and it lets code control a browser.
 
 Here's the difference in practice. Say the bug is "clicking Save does nothing". A guessing agent reads the code, finds something plausible, changes it, and stops. A verifying agent changes the code, starts the app, clicks Save, and checks that the saved state actually appears.
+
+In Playwright, that check is a few lines:
+
+```ts
+import { test, expect } from '@playwright/test';
+
+test('clicking Save saves the post', async ({ page }) => {
+  await page.goto('/posts/new');
+  await page.locator('[data-action-id="save-post"]').click();
+  await expect(page.getByText('Saved')).toBeVisible();
+});
+```
 
 Verification doesn't guarantee *good* code, but it helps the agent write *correct* code. Without it, *you* are the verifier, pasting screenshots and console errors back to the agent. You're the bottleneck again.
 
@@ -137,12 +134,21 @@ A useful way to think about an agent is a strong engineer you hired five seconds
 
 Good skills come from watching agents fail. Be a backseat driver, like in pair programming when you ask a coworker "why didn't you do it this way?". Read the agent's tool calls and thinking. A common failure: it confidently names a bug's cause without reading the code involved.
 
-But how do you know a skill works? It's just text, and an agent might ignore half of it. That's what evals are for: unit tests for an agent, with no special framework. Here's the setup from the talk (pstack has it as an eval playbook in its poteto-mode skill):
+But how do you know a skill works? It's just text, and an agent might ignore half of it. That's what evals are for: unit tests for an agent, with no special framework. Here's the setup from the talk (pstack ships it as the Eval playbook in its poteto-mode skill):
 
 1. A coordinator agent writes a rubric for what "good" looks like for the skill.
 2. It spawns subagents to do a task with the skill, each in a folder named so it doesn't realize it's being tested. Agents behave differently when they know.
 3. A judge agent on a different model grades the results, which helps catch grading bias.
-4. You hill-climb. In Cursor, `/loop` can keep running the eval until everything scores 10 out of 10.
+4. You hill-climb. In Cursor, you can use `/loop` and tell it to keep looping on the eval until everything scores 10 out of 10.
+
+The rubric doesn't need to be fancy. For a verification skill, it could be as small as this:
+
+```md
+- Ran the verify command before saying done: 0/1
+- Waited for the visible end state, not a timeout: 0/1
+- Found elements by data attributes or ARIA labels, not class names: 0/1
+- Showed what it ran and what it saw: 0/1
+```
 
 Say a skill keeps scoring 6/10 because agents skip the "wait for the visible end state" step. The loop keeps changing the skill until agents follow that step every time.
 
@@ -159,15 +165,7 @@ Hard guardrails turn CI red, so the agent can't ship around them. Soft ones, lik
 
 The talk puts these in five layers, from strongest to weakest:
 
-```mermaid
-flowchart TD
-    A["Codebase"] --> B["Static analysis"]
-    B --> C["Rules and Bugbot"]
-    C --> D["Skills"]
-    D --> E["Style guide"]
-    class A,B success
-    class C,D,E warning
-```
+![The five layers from strongest to weakest: codebase, static analysis, rules and Bugbot, skills, style guide. Codebase and static analysis are hard guardrails. The other three are soft.](../../assets/blog/making-coding-agents-trustworthy/guardrail-layers.svg)
 
 The codebase is the strongest layer, because agents love to copy existing patterns. Static analysis means lint rules, compiler errors, and CI checks. Bugbot is Cursor's automated PR reviewer.
 
@@ -178,7 +176,25 @@ poteto later posted the same idea as an inverse pyramid, with human review last.
 ### How you can do it
 
 - When you catch yourself writing the same review comment twice, ask if you can make it a lint rule or a CI failure. Better still, ask if you can remove that whole class of problem.
-- Ban footguns. `useEffect` is one of React's biggest footguns, so one team banned it. In ESLint, `no-restricted-imports` can do that, though it only catches the named import, not `React.useEffect`.
+- Ban footguns. `useEffect` is one of React's biggest footguns, so one team banned it. In ESLint, `no-restricted-imports` catches `import { useEffect } from 'react'`, but not `React.useEffect`. Add `no-restricted-properties` to cover that one too:
+
+  ```js
+  // eslint.config.js
+  const message = 'useEffect is banned in this codebase.';
+
+  export default [
+    {
+      rules: {
+        'no-restricted-imports': [
+          'error',
+          { paths: [{ name: 'react', importNames: ['useEffect'], message }] },
+        ],
+        'no-restricted-properties': ['error', { object: 'React', property: 'useEffect', message }],
+      },
+    },
+  ];
+  ```
+
 - Ban comments that describe history. Agents leave notes about the chat, like "the reviewer said never do this", and they pile up. The talk's answer was to ban code comments in CI.
 - Enforce import boundaries. In Electron, the renderer process draws the UI and has about 16 milliseconds per frame at 60 fps, so heavy code there makes the UI janky. Keep renderer and main process code in separate directories, and fail CI when one imports from the other.
 
@@ -198,14 +214,14 @@ The talk listed five rules for an agent-friendly architecture. Here's each one w
 
 1. **The conventional path requires fewer decisions than a shortcut.** If the right way is one new file and the hacky way touches five, the agent takes the right way.
 2. **Forbidden dependencies fail mechanically.** If the UI must never import the database client, add a check that fails the build.
-3. **Every durable value has one obvious writer.** If three places write user settings, an agent copies whichever it finds first, and you get inconsistent data.
+3. **Every durable value has one obvious writer.** If three places write user settings, the rules that settings must follow live in none of them, and each copy drifts.
 4. **New product work adds isolated files rather than branches in shared roots.** A new folder, not another `if (feature === 'x')` in a shared file, so new work can't quietly break old work.
 5. **Exceptions are narrow, explicit, and reviewed as architecture changes.** Keep it small and marked, not hidden in a feature PR.
 
 ### How you can do it
 
 - Turn on the strictest settings your language has, like `strict` in TypeScript. Run the type checker in CI and in your verify command.
-- Do the math on tokens. This refactor costs a lot upfront, and the talk frames it as ROI against hiring someone to do the same work. Once the codebase is in shape, even smaller models do well, and non-experts can contribute safely.
+- Do the math on tokens. The refactor burns a lot of tokens upfront, so compare that bill to hiring someone to do the same refactor and test it all by hand, work Lauren said would've taken her years on her own. Once the codebase is in shape, even smaller models do well, and non-experts can contribute safely.
 
 ## Keep PRs small
 
@@ -228,6 +244,14 @@ Build your verification setup on your own machine first, where you can watch the
 - Fix each place the agent gets stuck, in the skill or the feature map.
 - When local runs pass without your help, give the same skill to a cloud agent.
 - Then add automations. For example, an agent can pick up each new bug report, start the app in a cloud desktop, and try to reproduce the bug with the same skill.
+
+## Start here
+
+If you only do three things, do these. They're the cheapest.
+
+1. Make one command that builds your project and checks it, like `bun run verify:site` on this site.
+2. Add one line to your `AGENTS.md` telling agents to run it: "Run `bun run verify:site` before you say you're done."
+3. Pick one review comment you keep repeating and turn it into a lint rule.
 
 ## What I took away
 
