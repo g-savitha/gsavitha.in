@@ -339,7 +339,11 @@
   }
 
   .site-footer__bar {
-    @apply flex flex-col gap-6 border-t border-zinc-800/80 pt-8;
+    @apply flex flex-col gap-6 border-t border-zinc-800/80 pt-8 lg:block lg:gap-0;
+  }
+
+  .site-footer__social {
+    @apply lg:hidden;
   }
 
   .site-footer__meta {
@@ -355,7 +359,7 @@
   }
 
   .social-links {
-    @apply flex flex-wrap items-center justify-center gap-1 md:-ml-3 md:justify-start;
+    @apply flex flex-wrap items-center justify-center gap-1;
   }
 
   .social-links__link {

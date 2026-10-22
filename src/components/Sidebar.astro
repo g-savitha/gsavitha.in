@@ -1,8 +1,9 @@
 ---
-import { SITE_TITLE, NAV_LINKS } from '../consts';
+import { SITE_TITLE, NAV_LINKS, SIDEBAR_SOCIAL_LINKS } from '../consts';
 import ThemePicker from './ThemePicker.tsx';
 import { Menu, X } from 'lucide-astro';
 import NavigationLinks from './NavigationLinks.astro';
+import { ICONS } from '../utils/icons';
 
 const pathname = Astro.url.pathname;
 ---
@@ -40,6 +41,35 @@ const pathname = Astro.url.pathname;
         <NavigationLinks links={NAV_LINKS} pathname={pathname} variant="desktop" />
       </ul>
     </nav>
+
+    <div class="h-px bg-zinc-800/50 mx-4"></div>
+
+    <div class="px-1">
+      <h3 class="text-base font-bold text-zinc-100 mb-4">Stay Connected</h3>
+      <ul class="space-y-2 text-base text-zinc-400">
+        {
+          SIDEBAR_SOCIAL_LINKS.map((link) => {
+            const Icon = ICONS[link.icon];
+            return (
+              <li>
+                <a
+                  href={link.href}
+                  class="flex items-center gap-3 px-3 py-2 -mx-3 rounded-xl hover-lift hover:text-primary group"
+                  target={link.href.startsWith('http') ? '_blank' : undefined}
+                  rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                >
+                  <Icon
+                    class="w-4 h-4 text-zinc-500 group-hover:text-primary transition-colors"
+                    aria-hidden="true"
+                  />
+                  {link.label}
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </div>
   </div>
 </aside>
 

@@ -42,3 +42,21 @@ export const SOCIAL_LINKS = [
   { href: 'mailto:gsavitha@protonmail.com', label: 'Email', icon: 'Mail' },
   { href: '/rss.xml', label: 'RSS Feed', icon: 'Rss' },
 ] as const satisfies readonly SocialLink[];
+
+/** Desktop sidebar order (LeetCode below TakeUForward; footer uses `SOCIAL_LINKS` order). */
+const SIDEBAR_SOCIAL_LINK_LABELS = [
+  'GitHub',
+  'LinkedIn',
+  'TakeUForward',
+  'LeetCode',
+  'Email',
+  'RSS Feed',
+] as const satisfies readonly SocialLink['label'][];
+
+export const SIDEBAR_SOCIAL_LINKS = SIDEBAR_SOCIAL_LINK_LABELS.map((label) => {
+  const link = SOCIAL_LINKS.find((entry) => entry.label === label);
+  if (!link) {
+    throw new Error(`Missing social link for sidebar: ${label}`);
+  }
+  return link;
+});

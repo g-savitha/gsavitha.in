@@ -20,7 +20,8 @@ Astro 6 static site (React islands for interactive parts), dark-first, deployed 
 | `/rss.xml`                                | `rss.xml.js`                                |                                                                     |
 
 Navigation and social links live in `src/consts.ts` (`NAV_LINKS`, rendered by `Sidebar.astro` via
-`NavigationLinks.astro`; `SOCIAL_LINKS`, rendered by `Footer.astro` via `SocialLinks.astro`).
+`NavigationLinks.astro`; `SOCIAL_LINKS`, icon row in `Footer.astro` on small screens via
+`SocialLinks.astro`, labeled list in the desktop sidebar).
 
 ## Content collections (`src/content.config.ts`)
 
