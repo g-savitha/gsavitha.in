@@ -128,10 +128,10 @@ test('hit and miss are visibly different', () => {
 test('accent is the original yellow and diagrams use the dark theme', () => {
   assert.equal(sharedClassSwatch('accent').fill, '#eab308');
   assert.equal(MERMAID_THEME, 'dark');
-  assert.equal(MERMAID_LOOK, 'handDrawn');
+  assert.equal(MERMAID_LOOK, 'classic');
   assert.notEqual(MERMAID_HAND_DRAWN_SEED, 0);
   assert.equal(MERMAID_CONFIG.theme, 'dark');
-  assert.equal(MERMAID_CONFIG.look, 'handDrawn');
+  assert.equal(MERMAID_CONFIG.look, 'classic');
   assert.equal(MERMAID_CONFIG.themeVariables.fontFamily, 'Dank Mono, ui-monospace, monospace');
 });
 

@@ -5,8 +5,8 @@
  *   node --experimental-strip-types scripts/mermaid/renderSvg.ts path/to/diagram.mmd [...]
  *
  * Each `<name>.mmd` becomes `<name>.svg` next to it. Uses the site's shared Mermaid config
- * (`MERMAID_CONFIG` in `src/theme/mermaid.ts`), plain SVG text labels (no `foreignObject`, so
- * `<img>` renders them),
+ * (`MERMAID_CONFIG` in `src/theme/mermaid.ts`) and sketches flowchart edges the same way the
+ * page does. Plain SVG text labels (no `foreignObject`, so `<img>` renders them),
  * and a dark background baked in so the diagram stays readable on light readers too.
  * Commit both files and reference the SVG from the post with alt text.
  */
@@ -14,6 +14,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { chromium } from 'playwright-core';
 import { MERMAID_CONFIG, withSharedClassDefs } from '../../src/theme/mermaid.ts';
+import { sketchMermaidSvg } from '../../src/theme/sketchMermaidEdges.ts';
 
 /** zinc-900: one step lighter than the page, so the diagram reads as a card. */
 const BACKGROUND = '#18181b';
@@ -103,7 +104,7 @@ try {
     );
 
     const target = source.replace(/\.mmd$/, '.svg');
-    await writeFile(target, `${svg}\n`);
+    await writeFile(target, `${sketchMermaidSvg(svg)}\n`);
     console.log(`${source} -> ${target}`);
   }
 } finally {

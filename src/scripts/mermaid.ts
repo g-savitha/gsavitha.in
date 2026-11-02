@@ -1,5 +1,6 @@
 import mermaid from 'mermaid';
 import { MERMAID_CONFIG, withSharedClassDefs } from '../theme/mermaid.ts';
+import { sketchMermaidEdges } from '../theme/sketchMermaidEdges.ts';
 
 function getSource(el: HTMLElement): string {
   return el.dataset.mermaidSource ?? el.textContent?.trim() ?? '';
@@ -25,6 +26,7 @@ async function renderMermaid() {
   });
 
   await mermaid.run({ nodes: [...nodes] });
+  nodes.forEach((el) => sketchMermaidEdges(el));
 }
 
 function initMermaid() {
