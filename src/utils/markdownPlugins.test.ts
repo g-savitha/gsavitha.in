@@ -3,12 +3,13 @@ import test from 'node:test';
 import { createMarkdownProcessor } from '@astrojs/markdown-remark';
 import { compile } from '@mdx-js/mdx';
 import remarkGfm from 'remark-gfm';
+import { codeTheme } from './codeTheme.ts';
 import { rehypePlugins, remarkPlugins } from './markdownPlugins.ts';
 
 const processor = await createMarkdownProcessor({
   remarkPlugins,
   rehypePlugins,
-  shikiConfig: { theme: 'github-dark' },
+  shikiConfig: { theme: codeTheme() },
 });
 
 async function renderMarkdown(source: string) {
@@ -58,6 +59,13 @@ test('leaves prices as text', async () => {
   const escaped = await renderMarkdown('Write \\$5 and \\$10 when both amounts matter.');
   assert.equal(escaped.includes('katex'), false);
   assert.match(visibleText(escaped), /\$5 and \$10/);
+});
+
+test('renders code comments in italic', async () => {
+  const html = await renderMarkdown('```js\nconst ok = 1 // note\n```\n');
+  assert.match(html, /#6[Aa]737[Dd]/);
+  assert.match(html, /font-style:\s*italic/i);
+  assert.equal(/font-style:\s*italic/i.test(html.split('const')[0] ?? ''), false);
 });
 
 test('renders d2 fences to inline svg and keeps the dash animation', async () => {
