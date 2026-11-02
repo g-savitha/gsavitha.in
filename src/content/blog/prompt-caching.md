@@ -65,21 +65,26 @@ That part is standard. Prompt caching takes one extra step: it keeps the prefix 
 
 Here's the idea in one picture. The first request computes everything. The second request starts the same way, so it reuses that start and only computes the new message.
 
-```mermaid
-flowchart TB
-    subgraph R1["Request 1: nothing cached yet"]
-        direction LR
-        A1["System prompt<br/>computed"] --> A2["Docs<br/>computed"] --> A3["History<br/>computed"] --> A4["Message A<br/>computed"]
-    end
-    subgraph R2["Request 2: same start"]
-        direction LR
-        B1["System prompt<br/>reused"] --> B2["Docs<br/>reused"] --> B3["History<br/>reused"] --> B4["Message B<br/>computed"]
-    end
-    R1 -->|"start is saved"| R2
-    class A1,A2,A3,A4,B4 miss
-    class B1,B2,B3 hit
+```d2
+direction: down
+R1: "Request 1: nothing cached yet" {
+  grid-columns: 4
+  A1: "System prompt\ncomputed" {class: miss}
+  A2: "Docs\ncomputed" {class: miss}
+  A3: "History\ncomputed" {class: miss}
+  A4: "Message A\ncomputed" {class: miss}
+  A1 -> A2 -> A3 -> A4
+}
+R2: "Request 2: same start" {
+  grid-columns: 4
+  B1: "System prompt\nreused" {class: hit}
+  B2: "Docs\nreused" {class: hit}
+  B3: "History\nreused" {class: hit}
+  B4: "Message B\ncomputed" {class: miss}
+  B1 -> B2 -> B3 -> B4
+}
+R1 -> R2: "start is saved"
 ```
-
 ## Why only the start can be reused
 
 This is the key idea behind everything else in this post.
@@ -94,21 +99,26 @@ Put those together and you get one simple rule. If you change token 5, the value
 
 It also means the same paragraph sitting at a different position isn't reused. The position is different, and so is everything before it.
 
-```mermaid
-flowchart TB
-    subgraph TOP["Before the change: reused"]
-        direction LR
-        B1["Block 1"] --> B2["Block 2"] --> B3["Block 3"] --> B4["Block 4"]
-    end
-    subgraph BOT["From the change on: recomputed"]
-        direction LR
-        B5["Block 5<br/>CHANGED"] --> B6["Block 6"] --> B7["Block 7"] --> B8["Block 8"]
-    end
-    TOP --> BOT
-    class B1,B2,B3,B4 hit
-    class B5,B6,B7,B8 miss
+```d2
+direction: down
+TOP: "Before the change: reused" {
+  grid-columns: 4
+  B1: "Block 1" {class: hit}
+  B2: "Block 2" {class: hit}
+  B3: "Block 3" {class: hit}
+  B4: "Block 4" {class: hit}
+  B1 -> B2 -> B3 -> B4
+}
+BOT: "From the change on: recomputed" {
+  grid-columns: 4
+  B5: "Block 5\nCHANGED" {class: miss}
+  B6: "Block 6" {class: miss}
+  B7: "Block 7" {class: miss}
+  B8: "Block 8" {class: miss}
+  B5 -> B6 -> B7 -> B8
+}
+TOP -> BOT
 ```
-
 ## Blocks, hashes and routing
 
 So how does a provider actually find a matching prefix? The open-source inference engine vLLM documents one way to do it, and it's a good mental model.
@@ -177,18 +187,20 @@ Anthropic always builds the prefix as tools, then system, then messages. A chang
 
 The Claude Code team describes the same layering in their own product: static system prompt and tools first, then CLAUDE.md, then session context, then the conversation.
 
-```mermaid
-flowchart TB
-    S1(["Stays the same"]) ~~~ T
-    T["Tools"] --> S["System prompt"] --> D["Docs and examples"]
-    D --> BP{{"Cache breakpoint"}}
-    BP --> H["Conversation history"] --> M["New message"]
-    M ~~~ S2(["Changes every time"])
-    class T,S,D hit
-    class H,BP neutral
-    class M miss
+```d2
+direction: down
+S1: "Stays the same" {shape: oval}
+T: Tools {class: hit}
+S: "System prompt" {class: hit}
+D: "Docs and examples" {class: hit}
+BP: "Cache breakpoint" {shape: hexagon; class: neutral}
+H: "Conversation history" {class: neutral}
+M: "New message" {class: miss}
+S2: "Changes every time" {shape: oval}
+S1 -> T: "" {style.opacity: 0; style.stroke-width: 0; style.animated: false}
+T -> S -> D -> BP -> H -> M
+M -> S2: "" {style.opacity: 0; style.stroke-width: 0; style.animated: false}
 ```
-
 ## How to check that it's working
 
 You don't have to guess. Every provider reports cache activity in the `usage` part of the response.

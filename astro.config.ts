@@ -6,6 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
 import { themeCssPlugin } from './src/theme/vitePlugin.ts';
 import { buildEnvGuard } from './src/env/buildEnvGuard.ts';
+import { codeTheme } from './src/utils/codeTheme.ts';
 import { rehypePlugins, remarkPlugins } from './src/utils/markdownPlugins.ts';
 
 // https://astro.build/config
@@ -17,7 +18,7 @@ export default defineConfig({
     remarkPlugins,
     rehypePlugins,
     shikiConfig: {
-      theme: 'github-dark',
+      theme: codeTheme(),
     },
   },
 

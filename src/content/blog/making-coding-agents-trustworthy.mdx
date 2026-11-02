@@ -41,7 +41,19 @@ Think about a new engineer joining your team. At first, you review everything th
 
 The talk draws this as a curve. The more you trust your agents, the more of them you can run in parallel. The chart below is an illustration of that idea, not real data.
 
-![Illustration of the trust curve: as you go from 1 agent to 1k+ agents, the trust you need climbs from low to high. Not real data.](../../assets/blog/making-coding-agents-trustworthy/trust-curve.svg)
+```d2
+# alt: Illustration of the trust curve: as you go from 1 agent to 1k+ agents, the trust you need climbs from low to high. Not real data.
+direction: right
+heading: "Illustration: trust vs agents" {shape: text}
+axis: "Agents you can run, trust low to high" {shape: text}
+one: "1\ntrust 1" {class: accent}
+few: "1-5\ntrust 4" {class: accent}
+mid: "5-10\ntrust 6" {class: accent}
+more: "10-20\ntrust 7.5" {class: accent}
+hundreds: "100s\ntrust 8.5" {class: accent}
+thousand: "1k+\ntrust 9" {class: accent}
+one -> few -> mid -> more -> hundreds -> thousand
+```
 
 There's no shortcut along this curve. If you jump straight to thousands of cloud agents without trust, you mostly burn tokens, because nobody can tell which outputs are good.
 
@@ -165,7 +177,16 @@ A guardrail is anything that stops an agent from making a bad change. Hard guard
 
 The talk puts these in five layers, from strongest to weakest:
 
-![The five layers from strongest to weakest: codebase, static analysis, rules and Bugbot, skills, style guide. Codebase and static analysis are hard guardrails. The other three are soft.](../../assets/blog/making-coding-agents-trustworthy/guardrail-layers.svg)
+```d2
+# alt: The five layers from strongest to weakest: codebase, static analysis, rules and Bugbot, skills, style guide. Codebase and static analysis are hard guardrails. The other three are soft.
+direction: down
+A: Codebase {class: success}
+B: "Static analysis" {class: success}
+C: "Rules and Bugbot" {class: warning}
+D: Skills {class: warning}
+E: "Style guide" {class: warning}
+A -> B -> C -> D -> E
+```
 
 The codebase is the strongest layer, because agents love to copy existing patterns. Static analysis means lint rules, compiler errors, and CI checks. Bugbot is Cursor's automated PR reviewer.
 

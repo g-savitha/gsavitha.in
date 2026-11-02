@@ -124,17 +124,17 @@ Jitter spreads expiry across a population of keys. But what about a single very 
 
 Probabilistic early expiration solves this differently. Instead of waiting for the key to expire, some requests start recomputing it early. The closer the key is to expiring, the more likely any given request will trigger a background refresh.
 
-```mermaid
-timeline
-    title Probability of Early Recomputation Over Time
-    T=0   : Cache set — 0% chance of early recompute
-    T=50  : Getting closer — ~5% chance
-    T=75  : Halfway through stale window — ~20% chance
-    T=90  : Almost expired — ~40% chance
-    T=99  : Basically expired — ~90% chance
-    T=100 : Key gone — must recompute
+```d2
+direction: right
+heading: "Probability of Early Recomputation Over Time" {shape: text}
+t0: "T=0\nCache set\n0% early" {class: neutral}
+t50: "T=50\nCloser\n~5%" {class: secondary}
+t75: "T=75\nHalfway\n~20%" {class: violet}
+t90: "T=90\nAlmost gone\n~40%" {class: teal}
+t99: "T=99\nNearly expired\n~90%" {class: amber}
+t100: "T=100\nKey gone\nmust recompute" {class: severity3}
+t0 -> t50 -> t75 -> t90 -> t99 -> t100
 ```
-
 You do not need to understand the maths to use this pattern. The intuition is: the closer a key is to dying, the more aggressively the system tries to refresh it before it actually dies.
 
 ```js
@@ -186,23 +186,31 @@ Here is the scenario: one key expires. It is a popular key. In the gap between "
 
 Mutex locking says: only one request is allowed to do the work. Everyone else waits.
 
-```mermaid
-flowchart TD
-    R1[Request 1] --> C{Cache hit?}
-    R2[Request 2] --> C
-    R3[Request 3] --> C
-    C -->|Miss| L{Lock acquired?}
-    L -->|Yes — Request 1 wins| DB[(Database)]
-    L -->|No — Request 2 waits| W[Wait...]
-    L -->|No — Request 3 waits| W
-    DB --> S[Set cache]
-    S --> RL[Release lock]
-    RL --> W
-    W --> C2{Cache populated now?}
-    C2 -->|Yes| Resp[Serve from cache]
-    C -->|Hit| Resp
+```d2
+direction: down
+R1: "Request 1"
+R2: "Request 2"
+R3: "Request 3"
+C: "Cache hit?" {shape: diamond}
+L: "Lock acquired?" {shape: diamond}
+DB: Database {shape: cylinder}
+W: "Wait..."
+S: "Set cache"
+RL: "Release lock"
+C2: "Cache populated now?" {shape: diamond}
+Resp: "Serve from cache"
+R1 -> C
+R2 -> C
+R3 -> C
+C -> L: Miss
+C -> Resp: Hit
+L -> DB: "Yes — Request 1 wins"
+L -> W: "No — Request 2 waits"
+L -> W: "No — Request 3 waits"
+DB -> S -> RL -> W
+W -> C2
+C2 -> Resp: Yes
 ```
-
 Request 1 grabs the lock and does the work. Requests 2 through 5,000 wait patiently. When Request 1 finishes, it writes to cache and releases the lock. Everyone else reads from cache. Your database sees exactly one query instead of five thousand.
 
 ```js
@@ -252,22 +260,20 @@ This is probably the most elegant strategy, and it is how CDNs have operated for
 
 The idea is beautifully simple: serve the old value immediately, then recompute in the background.
 
-```mermaid
-sequenceDiagram
-    participant User
-    participant Cache
-    participant Background Worker
-    participant Database
-
-    User->>Cache: Request data
-    Cache-->>User: Serve stale value right away (fast!)
-    Cache->>Background Worker: Go refresh this quietly
-    Background Worker->>Database: Fetch fresh data
-    Database-->>Background Worker: Here you go
-    Background Worker->>Cache: Updated
-    Note over User: User got their response in ~1ms.<br/>Next request will get the fresh value.
+```d2
+shape: sequence_diagram
+User: User
+Cache: Cache
+Worker: "Background Worker"
+Database: Database
+User -> Cache: "Request data"
+Cache -> User: "Serve stale value right away (fast!)" {style.stroke-dash: 4}
+Cache -> Worker: "Go refresh this quietly"
+Worker -> Database: "Fetch fresh data"
+Database -> Worker: "Here you go" {style.stroke-dash: 4}
+Worker -> Cache: Updated
+User.note: "User got their response in ~1ms.\nNext request will get the fresh value."
 ```
-
 You define two TTLs. The "fresh" TTL is how long the data is considered current. After that, you enter a "stale" grace period: the data is old, but you still serve it while you refresh in the background. After the stale window ends, the key is truly gone and you fall back to a blocking fetch.
 
 ```js
@@ -336,21 +342,27 @@ Or you run a planned maintenance window. Cache gets flushed. Traffic resumes bef
 
 Cache warming is the practice of proactively populating the cache before traffic arrives.
 
-```mermaid
-flowchart LR
-    subgraph beforeTraffic [Before Traffic Arrives]
-        W[Warm-up Script] -->|Fetch top products| DB[(Database)]
-        DB --> W
-        W -->|Pre-populate| C[Cache Layer]
-    end
-
-    subgraph afterLaunch [After Launch]
-        U[User Requests] --> C
-        C -->|Hit — fast| R[Response]
-        C -.->|Miss — rare| DB
-    end
+```d2
+direction: down
+beforeTraffic: "Before Traffic Arrives" {
+  direction: down
+  W: "Warm-up Script"
+  DB: Database {shape: cylinder}
+  C: "Cache Layer"
+  W -> DB: "Fetch top products"
+  DB -> W
+  W -> C: "Pre-populate"
+}
+afterLaunch: "After Launch" {
+  direction: down
+  U: "User Requests"
+  C: "Cache Layer"
+  R: Response
+  U -> C
+  C -> R: "Hit — fast"
+  C -> beforeTraffic.DB: "Miss — rare" {style.stroke-dash: 4}
+}
 ```
-
 ```js
 // Run this as part of your deployment pipeline,
 // before you route live traffic to the new instance.
@@ -396,18 +408,26 @@ The challenge is knowing what to warm. Use your analytics. If you are warming 1,
 
 ## When to Reach for What
 
-```mermaid
-flowchart TD
-    Start[What problem are you solving?] --> A{Many keys expiring at once?}
-    A -->|Yes| J[TTL Jitter — do this by default]
-    A -->|No| B{One hot key causing a stampede?}
-    B -->|Yes, and latency is critical| S[Stale-While-Revalidate]
-    B -->|Yes, and consistency matters| M[Mutex Locking]
-    B -->|Want to prevent any miss window| P[Probabilistic Early Expiration]
-    Start --> E{Cold start or planned spike incoming?}
-    E -->|Yes| W[Cache Warming]
+```d2
+direction: down
+Start: "What problem are you solving?"
+A: "Many keys expiring at once?" {shape: diamond}
+J: "TTL Jitter — do this by default"
+B: "One hot key causing a stampede?" {shape: diamond}
+S: "Stale-While-Revalidate"
+M: "Mutex Locking"
+P: "Probabilistic Early Expiration"
+E: "Cold start or planned spike incoming?" {shape: diamond}
+W: "Cache Warming"
+Start -> A
+A -> J: Yes
+A -> B: No
+B -> S: "Yes, and latency is critical"
+B -> M: "Yes, and consistency matters"
+B -> P: "Want to prevent any miss window"
+Start -> E
+E -> W: Yes
 ```
-
 Quick rules of thumb:
 
 **Always add TTL jitter.** It is a two-line change and it prevents an entire class of problems. No reason not to.

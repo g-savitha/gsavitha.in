@@ -3,12 +3,13 @@ import test from 'node:test';
 import { createMarkdownProcessor } from '@astrojs/markdown-remark';
 import { compile } from '@mdx-js/mdx';
 import remarkGfm from 'remark-gfm';
+import { codeTheme } from './codeTheme.ts';
 import { rehypePlugins, remarkPlugins } from './markdownPlugins.ts';
 
 const processor = await createMarkdownProcessor({
   remarkPlugins,
   rehypePlugins,
-  shikiConfig: { theme: 'github-dark' },
+  shikiConfig: { theme: codeTheme() },
 });
 
 async function renderMarkdown(source: string) {
@@ -60,36 +61,21 @@ test('leaves prices as text', async () => {
   assert.match(visibleText(escaped), /\$5 and \$10/);
 });
 
-test('keeps mermaid fences for the existing remark plugin', async () => {
-  const html = await renderMarkdown('```mermaid\ngraph TD\n  A-->B\n```\n');
-  assert.match(html, /class="mermaid not-prose"/);
-  assert.match(html, /graph TD/);
-  assert.equal(html.includes('katex'), false);
+test('renders code comments in italic', async () => {
+  const html = await renderMarkdown('```js\nconst ok = 1 // note\n```\n');
+  assert.match(html, /#6[Aa]737[Dd]/);
+  assert.match(html, /font-style:\s*italic/i);
+  assert.equal(/font-style:\s*italic/i.test(html.split('const')[0] ?? ''), false);
 });
 
-const MERMAID_WITH_MARKUP =
-  '```mermaid\nflowchart TB\n  A["One<br/>Two"] --> B["x < y && y > z<br>end"]\n```\n';
-
-/** What `src/scripts/mermaid.ts` reads: the element's text, with HTML entities decoded. */
-function mermaidTextContent(html: string): string {
-  const inner = html.match(/<div class="mermaid not-prose">([\s\S]*?)<\/div>/)?.[1] ?? '';
-  assert.equal(
-    /<[a-z]/i.test(inner),
-    false,
-    'mermaid source must not contain parsed HTML elements',
+test('renders d2 fences to inline svg and keeps the dash animation', async () => {
+  const html = await renderMarkdown(
+    '```d2\ndirection: right\nA: One {class: hit}\nB: Two {class: miss}\nA -> B: go\n```\n',
   );
-  return inner
-    .replace(/&#x3C;|&#60;|&lt;/gi, '<')
-    .replace(/&#x3E;|&#62;|&gt;/gi, '>')
-    .replace(/&#x26;|&#38;|&amp;/gi, '&');
-}
-
-test('keeps <br/> and other markup in mermaid source as text', async () => {
-  const html = await renderMarkdown(MERMAID_WITH_MARKUP);
-  assert.equal(
-    mermaidTextContent(html),
-    'flowchart TB\n  A["One<br/>Two"] --> B["x < y && y > z<br>end"]',
-  );
+  assert.match(html, /<figure class="diagram not-prose">/);
+  assert.match(html, /<svg[\s\S]*@keyframes dashdraw/);
+  assert.match(html, /animation: dashdraw/);
+  assert.equal(html.includes('katex'), false);
 });
 
 test('wraps tables in a focusable horizontal scroll region', async () => {

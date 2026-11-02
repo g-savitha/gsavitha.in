@@ -3,26 +3,39 @@
 @plugin "@tailwindcss/typography";
 
 @font-face {
-  font-family: 'Dank Mono';
-  src: url('/fonts/DankMono/Dank%20Mono%20Regular.otf') format('opentype');
+  font-family: 'Cascadia Code';
+  src: url('/fonts/cascadia-code/CascadiaCode-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Dank Mono';
-  src: url('/fonts/DankMono/Dank%20Mono%20Italic.otf') format('opentype');
+  font-family: 'Cascadia Code';
+  src: url('/fonts/cascadia-code/CascadiaCode-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cascadia Code';
+  src: url('/fonts/cascadia-code/CascadiaCode-Italic.woff2') format('woff2');
   font-weight: 400;
   font-style: italic;
   font-display: swap;
+  /* ss01 is Cascadia's cursive italic, and it exists only on the italic face. */
+  font-feature-settings:
+    'ss01' 1,
+    'calt' 1,
+    'liga' 1;
 }
 
 @theme {
   --color-primary: var(--theme-color);
   --color-primary-hover: var(--theme-color-hover);
   --font-mono:
-    'Dank Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Cascadia Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
     'Courier New', monospace;
   --font-outfit: 'Outfit', system-ui, -apple-system, sans-serif;
   --font-sacramento: 'Sacramento', cursive;
@@ -78,35 +91,36 @@
     transform: translateY(var(--lift-y-subtle));
   }
 
-  /* Enable ligatures for code blocks globally */
+  /* Cascadia Code ligatures live in calt. ss01 turns on the cursive italic. */
   pre,
   code {
     font-family: var(--font-mono);
-    font-variant-ligatures: normal;
+    font-variant-ligatures: contextual;
+    font-feature-settings: 'calt', 'liga';
   }
 
-  /* Mermaid — isolate from prose typography; Dank Mono only */
-  .prose .mermaid,
-  .mermaid {
-    font-family: var(--font-mono);
-    font-size: 1rem;
-    line-height: 1.5;
+  pre span[style*='italic' i],
+  code span[style*='italic' i] {
+    font-feature-settings: 'ss01', 'calt', 'liga';
+  }
+
+  /* D2 diagrams. The SVG carries D2's own font; do not restyle it here. */
+  .diagram {
     margin-block: 1.5rem;
+    max-width: 100%;
+    overflow-x: auto;
   }
 
-  .prose .mermaid svg {
+  .diagram svg {
+    display: block;
     max-width: 100%;
     height: auto;
   }
 
-  /* Target shiki comments specifically to enforce italics,
-     using the github-dark comment color (#8b949e) and dark+ (#6A9955) */
-  .prose pre span[style*='#8b949e' i],
-  .prose pre span[style*='#8B949E' i],
-  .prose pre span[style*='#6a9955' i],
-  .prose pre span[style*='#6A9955' i],
-  .prose pre span[style*='italic' i] {
-    font-style: italic !important;
+  @media (prefers-reduced-motion: reduce) {
+    .diagram svg path {
+      animation-play-state: paused !important;
+    }
   }
 }
 

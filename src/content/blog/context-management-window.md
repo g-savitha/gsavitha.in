@@ -29,18 +29,16 @@ Consider this basic chat service:
 User → Server → POST /chat → LLM API
 ```
 
-```mermaid
-sequenceDiagram
-    participant Client as User / Client
-    participant Server as Server
-    participant LLM as OpenAI / LLM API
-
-    Client->>Server: Send message
-    Server->>LLM: API Call (with message)
-    LLM-->>Server: Return response
-    Server-->>Client: Return response
+```d2
+shape: sequence_diagram
+Client: "User / Client"
+Server: Server
+LLM: "OpenAI / LLM API"
+Client -> Server: "Send message"
+Server -> LLM: "API Call (with message)"
+LLM -> Server: "Return response" {style.stroke-dash: 4}
+Server -> Client: "Return response" {style.stroke-dash: 4}
 ```
-
 Now imagine this conversation:
 
 ```
@@ -92,13 +90,15 @@ The server should be **stateless**. Persistence belongs in a persistence layer.
 
 ## The Correct Foundation: Persist to a Database
 
-```mermaid
-graph LR
-    Client([Client]):::success --> Server[Server]:::primary
-    Server --> LLM[OpenAI / LLM]:::accent
-    Server --> DB[(Database)]:::info
+```d2
+direction: right
+Client: Client {shape: oval; class: success}
+Server: Server {class: primary}
+LLM: "OpenAI / LLM" {class: accent}
+DB: Database {shape: cylinder; class: info}
+Client -> Server -> LLM
+Server -> DB
 ```
-
 The server now stores every message — user and assistant alike — in a database, keyed by `conversationId`. On each new message, it fetches the full history, prepends it to the new message, and sends the whole thing to the LLM.
 
 This solves durability and statefulness. But it introduces two new problems:
@@ -115,14 +115,17 @@ These aren't deal-breakers — they're trade-offs that demand a smarter approach
 
 The fix for the latency problem is to stop writing to your database on the hot path. Instead, buffer recent messages in **Redis** — an in-memory data store designed for exactly this use case.
 
-```mermaid
-graph LR
-    Client([Client]):::success --> Server[Server]:::primary
-    Server --> LLM[OpenAI / LLM]:::accent
-    Server --> Redis[(Redis Cache)]:::info
-    Redis -.->|async cron job| DB[(PostgreSQL / Persistent DB)]:::secondary
+```d2
+direction: right
+Client: Client {shape: oval; class: success}
+Server: Server {class: primary}
+LLM: "OpenAI / LLM" {class: accent}
+Redis: "Redis Cache" {shape: cylinder; class: info}
+DB: "PostgreSQL / Persistent DB" {shape: cylinder; class: secondary}
+Client -> Server -> LLM
+Server -> Redis
+Redis -> DB: "async cron job" {style.stroke-dash: 4}
 ```
-
 **The write path**: New messages go to Redis immediately (microsecond writes). A background job (cron or a queue consumer) asynchronously flushes them to the persistent database.
 
 **The read path**: Recent history is served from Redis (sub-millisecond reads). The LLM call is no longer blocked by a database round-trip.
@@ -183,18 +186,23 @@ hobbies: ['coding', 'cycling', 'photography']
 
 These facts are not compressed — they are extracted, normalised, and stored as structured key-value pairs. On every subsequent LLM call, you inject the relevant facts directly into the system prompt, regardless of how far back in the conversation they were mentioned.
 
-```mermaid
-graph TB
-    Client([Client]):::success --> Server[Server]:::primary
-    Server --> LLM[OpenAI / LLM]:::accent
-    Server --> Redis[(Redis Layer)]:::info
-    Redis -->|extract facts async| FactsDB[(Facts DB)]:::secondary
-    Redis -->|cron job db sync| PostgreSQL[(PostgreSQL)]:::secondary
-    FactsDB --> ContextBuilder[Context Builder]:::warning
-    PostgreSQL -->|summary| ContextBuilder
-    ContextBuilder --> LLM
+```d2
+direction: down
+Client: Client {shape: oval; class: success}
+Server: Server {class: primary}
+LLM: "OpenAI / LLM" {class: accent}
+Redis: "Redis Layer" {shape: cylinder; class: info}
+FactsDB: "Facts DB" {shape: cylinder; class: secondary}
+PostgreSQL: PostgreSQL {shape: cylinder; class: secondary}
+ContextBuilder: "Context Builder" {class: warning}
+Client -> Server -> LLM
+Server -> Redis
+Redis -> FactsDB: "extract facts async"
+Redis -> PostgreSQL: "cron job db sync"
+FactsDB -> ContextBuilder
+PostgreSQL -> ContextBuilder: summary
+ContextBuilder -> LLM
 ```
-
 **The context sent to the LLM on each call** now looks like:
 
 ```
@@ -237,24 +245,22 @@ The **subconscious brain** pattern adds a reactive feedback loop:
 3. **Re-synthesis**: The enriched context (facts + summary + recent messages + retrieved information) is reassembled and the LLM generates a corrected output.
 4. **Feedback to Redis**: The outcome is stored back in the cache layer so the correction informs future responses.
 
-```mermaid
-sequenceDiagram
-    participant User
-    participant Server
-    participant Redis
-    participant LLM
-    participant Web as Web Search / RAG
-
-    User->>Server: "That's wrong"
-    Server->>Redis: Fetch conversation + run sentiment analysis
-    Redis->>LLM: Detected: user frustrated
-    LLM->>Web: Trigger retrieval / web search
-    Web-->>LLM: Return enriched context
-    LLM-->>Server: Corrected response
-    Server->>Redis: Store correction as feedback
-    Server-->>User: Corrected output
+```d2
+shape: sequence_diagram
+User: User
+Server: Server
+Redis: Redis
+LLM: LLM
+Web: "Web Search / RAG"
+User -> Server: "That's wrong"
+Server -> Redis: "Fetch conversation + run sentiment analysis"
+Redis -> LLM: "Detected: user frustrated"
+LLM -> Web: "Trigger retrieval / web search"
+Web -> LLM: "Return enriched context" {style.stroke-dash: 4}
+LLM -> Server: "Corrected response" {style.stroke-dash: 4}
+Server -> Redis: "Store correction as feedback"
+Server -> User: "Corrected output" {style.stroke-dash: 4}
 ```
-
 This is analogous to how a skilled human expert behaves in conversation: they read your reaction, recognise when they've missed the mark, and proactively go look for better information rather than defending a wrong answer.
 
 In production systems (Perplexity, Cursor, Claude), this pattern is more sophisticated — using explicit thumbs-up/thumbs-down signals, retrieval re-ranking, and fine-tuning pipelines — but the core loop is the same.
@@ -265,49 +271,42 @@ In production systems (Perplexity, Cursor, Claude), this pattern is more sophist
 
 Bringing it all together:
 
-```mermaid
-graph TB
-    subgraph clientLayer [Client Layer]
-        User:::success
-    end
-
-    subgraph serverLayer [Server Layer]
-        API[API Server - Stateless]:::primary
-        ContextBuilder[Context Builder]:::warning
-        SentimentEngine[Sentiment Engine]:::danger
-    end
-
-    subgraph cacheLayer [Cache Layer]
-        Redis[(Redis - Short-Term Memory)]:::info
-    end
-
-    subgraph persistenceLayer [Persistence Layer]
-        FactsDB[(Facts DB - Long-Term Memory)]:::secondary
-        SummaryDB[(Summary Store)]:::secondary
-        PostgreSQL[(PostgreSQL - Full History)]:::secondary
-    end
-
-    subgraph externalLayer [External]
-        LLM[LLM API - OpenAI / Anthropic]:::accent
-        Web[Web Search / RAG]:::accent
-    end
-
-    User -->|message| API
-    API --> ContextBuilder
-    ContextBuilder -->|facts + summary + recent messages| LLM
-    LLM -->|response| API
-    API -->|store message| Redis
-    Redis -->|async - cron| PostgreSQL
-    Redis -->|async - extract facts| FactsDB
-    Redis -->|async - summarise| SummaryDB
-
-    API -->|sentiment check| SentimentEngine
-    SentimentEngine -->|user unhappy| Web
-    Web --> LLM
-    LLM -->|corrected output| API
-    API --> User
+```d2
+direction: down
+clientLayer: "Client Layer" {
+  User: User {class: success}
+}
+serverLayer: "Server Layer" {
+  API: "API Server - Stateless" {class: primary}
+  ContextBuilder: "Context Builder" {class: warning}
+  SentimentEngine: "Sentiment Engine" {class: danger}
+}
+cacheLayer: "Cache Layer" {
+  Redis: "Redis - Short-Term Memory" {shape: cylinder; class: info}
+}
+persistenceLayer: "Persistence Layer" {
+  FactsDB: "Facts DB - Long-Term Memory" {shape: cylinder; class: secondary}
+  SummaryDB: "Summary Store" {shape: cylinder; class: secondary}
+  PostgreSQL: "PostgreSQL - Full History" {shape: cylinder; class: secondary}
+}
+externalLayer: External {
+  LLM: "LLM API - OpenAI / Anthropic" {class: accent}
+  Web: "Web Search / RAG" {class: accent}
+}
+clientLayer.User -> serverLayer.API: message
+serverLayer.API -> serverLayer.ContextBuilder
+serverLayer.ContextBuilder -> externalLayer.LLM: "facts + summary + recent messages"
+externalLayer.LLM -> serverLayer.API: response
+serverLayer.API -> cacheLayer.Redis: "store message"
+cacheLayer.Redis -> persistenceLayer.PostgreSQL: "async - cron"
+cacheLayer.Redis -> persistenceLayer.FactsDB: "async - extract facts"
+cacheLayer.Redis -> persistenceLayer.SummaryDB: "async - summarise"
+serverLayer.API -> serverLayer.SentimentEngine: "sentiment check"
+serverLayer.SentimentEngine -> externalLayer.Web: "user unhappy"
+externalLayer.Web -> externalLayer.LLM
+externalLayer.LLM -> serverLayer.API: "corrected output"
+serverLayer.API -> clientLayer.User
 ```
-
 **Each component has a single responsibility:**
 
 - **API Server**: Stateless. Orchestrates the flow. Never holds conversation state in memory.

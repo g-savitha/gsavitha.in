@@ -127,7 +127,7 @@ function codeLabel(language: string | null | undefined) {
     javascript: 'JavaScript',
     jsx: 'JSX',
     json: 'JSON',
-    mermaid: 'diagram',
+    d2: 'diagram',
     sh: 'shell',
     sql: 'SQL',
     ts: 'TypeScript',
@@ -289,7 +289,7 @@ export function contextualCodeSummary(
   const lang = (language ?? '').toLowerCase();
   const label = codeLabel(language);
 
-  if (lang === 'mermaid') return `This diagram illustrates ${heading}.`;
+  if (lang === 'd2') return `This diagram illustrates ${heading}.`;
 
   const comment = extractLeadingComment(code);
   if (comment) return comment;
@@ -344,7 +344,7 @@ function extractSegments(tree: MdRoot, title: string, audio: AudioConfig) {
             'code-summary',
             contextualCodeSummary(node.lang, currentHeading, node.value ?? ''),
           );
-        } else if (audio.codeSummaryMode !== 'skip' && node.lang !== 'mermaid') {
+        } else if (audio.codeSummaryMode !== 'skip' && node.lang !== 'd2') {
           missingCodeSummaries.push({
             language: node.lang ?? 'text',
             line: node.position?.start?.line ?? null,
