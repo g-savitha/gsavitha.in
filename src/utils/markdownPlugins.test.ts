@@ -60,36 +60,14 @@ test('leaves prices as text', async () => {
   assert.match(visibleText(escaped), /\$5 and \$10/);
 });
 
-test('keeps mermaid fences for the existing remark plugin', async () => {
-  const html = await renderMarkdown('```mermaid\ngraph TD\n  A-->B\n```\n');
-  assert.match(html, /class="mermaid not-prose"/);
-  assert.match(html, /graph TD/);
+test('renders d2 fences to inline svg and keeps the dash animation', async () => {
+  const html = await renderMarkdown(
+    '```d2\ndirection: right\nA: One {class: hit}\nB: Two {class: miss}\nA -> B: go\n```\n',
+  );
+  assert.match(html, /<figure class="diagram not-prose">/);
+  assert.match(html, /<svg[\s\S]*@keyframes dashdraw/);
+  assert.match(html, /animation: dashdraw/);
   assert.equal(html.includes('katex'), false);
-});
-
-const MERMAID_WITH_MARKUP =
-  '```mermaid\nflowchart TB\n  A["One<br/>Two"] --> B["x < y && y > z<br>end"]\n```\n';
-
-/** What `src/scripts/mermaid.ts` reads: the element's text, with HTML entities decoded. */
-function mermaidTextContent(html: string): string {
-  const inner = html.match(/<div class="mermaid not-prose">([\s\S]*?)<\/div>/)?.[1] ?? '';
-  assert.equal(
-    /<[a-z]/i.test(inner),
-    false,
-    'mermaid source must not contain parsed HTML elements',
-  );
-  return inner
-    .replace(/&#x3C;|&#60;|&lt;/gi, '<')
-    .replace(/&#x3E;|&#62;|&gt;/gi, '>')
-    .replace(/&#x26;|&#38;|&amp;/gi, '&');
-}
-
-test('keeps <br/> and other markup in mermaid source as text', async () => {
-  const html = await renderMarkdown(MERMAID_WITH_MARKUP);
-  assert.equal(
-    mermaidTextContent(html),
-    'flowchart TB\n  A["One<br/>Two"] --> B["x < y && y > z<br>end"]',
-  );
 });
 
 test('wraps tables in a focusable horizontal scroll region', async () => {

@@ -139,6 +139,27 @@ repository. Preserve existing behavior unless a change is explicitly requested.
   or regressions when practical.
 - Report checks that could not be run and any known risk or follow-up work.
 
+## Diagrams
+
+Posts use `d2` fences, rendered to inline SVG at build time. Colours, sketch mode, ELK, and
+animated edges come from `src/theme/diagram.ts`. Name a class (`{class: hit}`). Do not put hex
+colours, `fill-pattern`, or a font in the fence. A line break is `\n` inside quotes.
+`direction: right` or `direction: down`. Sequence diagrams start with `shape: sequence_diagram`.
+
+````md
+```d2
+direction: right
+Req: Request {class: neutral}
+Cache: "In cache?" {shape: diamond; class: decision}
+Hit: "Serve from cache" {class: hit}
+Req -> Cache
+Cache -> Hit: yes
+```
+````
+
+The build runs `scripts/d2/ensure.ts`, which downloads pinned D2 0.7.1 (ELK is inside the binary)
+into `.cache/d2`. That is what Vercel and GitHub Actions use. Don't pass a font to D2.
+
 ## Commit Discipline
 
 - Do not stage or commit until the current step has been presented for review and approved.

@@ -85,18 +85,23 @@
     font-variant-ligatures: normal;
   }
 
-  /* Mermaid — isolate from prose typography; Dank Mono only */
-  .prose .mermaid,
-  .mermaid {
-    font-family: var(--font-mono);
-    font-size: 1rem;
-    line-height: 1.5;
+  /* D2 diagrams. The SVG carries D2's own font; do not restyle it here. */
+  .diagram {
     margin-block: 1.5rem;
+    max-width: 100%;
+    overflow-x: auto;
   }
 
-  .prose .mermaid svg {
+  .diagram svg {
+    display: block;
     max-width: 100%;
     height: auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .diagram svg path {
+      animation-play-state: paused !important;
+    }
   }
 
   /* Target shiki comments specifically to enforce italics,

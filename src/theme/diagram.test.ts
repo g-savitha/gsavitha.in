@@ -4,17 +4,13 @@ import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import {
   BLACK,
-  MERMAID_CONFIG,
-  MERMAID_HAND_DRAWN_SEED,
-  MERMAID_LOOK,
-  MERMAID_THEME,
   PALETTE,
   SHARED_CLASS_NAMES,
   WHITE,
+  d2Preamble,
   sharedClassSwatch,
-  withSharedClassDefs,
-} from './mermaid.ts';
-import type { Swatch } from './mermaid.ts';
+} from './diagram.ts';
+import type { Swatch } from './diagram.ts';
 
 /** `#abc` -> `#aabbcc`, lower case. */
 function normalise(hex: string): string {
@@ -55,14 +51,14 @@ function assertSwatch(fill: string, text: string, label: string) {
   }
 }
 
-/** Every line inside a Mermaid block of any blog post. */
-function mermaidLines(): { label: string; line: string }[] {
+/** Every line inside a D2 block of any blog post. */
+function diagramLines(): { label: string; line: string }[] {
   const dir = 'src/content/blog';
   return readdirSync(dir)
     .filter((file) => /\.mdx?$/.test(file))
     .flatMap((file) => {
       const source = readFileSync(path.join(dir, file), 'utf8');
-      return [...source.matchAll(/^```mermaid\s*$([\s\S]*?)^```\s*$/gm)].flatMap(([, body]) =>
+      return [...source.matchAll(/^```d2\s*$([\s\S]*?)^```\s*$/gm)].flatMap(([, body]) =>
         body.split('\n').map((line) => ({ label: file, line })),
       );
     });
@@ -92,9 +88,9 @@ test('the text rule picks black for light fills and white for dark fills', () =>
   assert.equal(sharedClassSwatch('primary').text, WHITE);
 });
 
-test('posts contain no hex colours in Mermaid blocks', () => {
-  const lines = mermaidLines();
-  assert.ok(lines.length > 0, 'expected Mermaid blocks in posts');
+test('posts contain no hex colours in D2 blocks', () => {
+  const lines = diagramLines();
+  assert.ok(lines.length > 0, 'expected D2 blocks in posts');
   const offenders = lines.filter(({ line }) => /#[0-9a-f]{3,8}\b/i.test(line));
   assert.deepEqual(
     offenders.map(({ label, line }) => `${label}: ${line.trim()}`),
@@ -105,11 +101,8 @@ test('posts contain no hex colours in Mermaid blocks', () => {
 
 test('every class a post uses exists in the palette', () => {
   const known = new Set<string>(SHARED_CLASS_NAMES);
-  for (const { label, line } of mermaidLines()) {
-    const used = [
-      ...[...line.matchAll(/:::(\w+)/g)].map((m) => m[1]),
-      ...(line.match(/^\s*class\s+\S+\s+(\w+)\s*$/)?.slice(1) ?? []),
-    ];
+  for (const { label, line } of diagramLines()) {
+    const used = [...line.matchAll(/\bclass:\s*(\w+)/g)].map((m) => m[1]);
     for (const name of used) assert.ok(known.has(name), `${label}: unknown class ${name}`);
   }
 });
@@ -125,28 +118,23 @@ test('hit and miss are visibly different', () => {
   assert.notEqual(sharedClassSwatch('hit').fill, sharedClassSwatch('miss').fill);
 });
 
-test('accent is the original yellow and diagrams use the dark theme', () => {
+test('accent is the original yellow', () => {
   assert.equal(sharedClassSwatch('accent').fill, '#eab308');
-  assert.equal(MERMAID_THEME, 'dark');
-  assert.equal(MERMAID_LOOK, 'classic');
-  assert.notEqual(MERMAID_HAND_DRAWN_SEED, 0);
-  assert.equal(MERMAID_CONFIG.theme, 'dark');
-  assert.equal(MERMAID_CONFIG.look, 'classic');
-  assert.equal(MERMAID_CONFIG.themeVariables.fontFamily, 'Dank Mono, ui-monospace, monospace');
 });
 
-test('shared classDefs go right after the flowchart header', () => {
-  const out = withSharedClassDefs(
-    "%%{init: {'flowchart': {'curve': 'basis'}}}%%\nflowchart LR\n  A:::hit --> B",
-  );
-  const lines = out.split('\n');
-  assert.equal(lines[1], 'flowchart LR');
-  assert.match(lines[2], /^classDef /);
-  assert.equal(lines.at(-1), '  A:::hit --> B');
-  for (const name of SHARED_CLASS_NAMES) assert.match(out, new RegExp(`^classDef ${name} `, 'm'));
-});
-
-test('non-flowchart diagrams are left alone', () => {
-  const source = 'sequenceDiagram\n  A->>B: hi';
-  assert.equal(withSharedClassDefs(source), source);
+test('d2 preamble sketches with elk, animates edges, and does not strip hatching or set a font', () => {
+  const source = d2Preamble();
+  assert.match(source, /sketch: true/);
+  assert.match(source, /layout-engine: elk/);
+  assert.match(source, /animated: true/);
+  assert.match(source, /italic: false/);
+  assert.match(source, /#22c55e/);
+  assert.match(source, /#2563eb/);
+  assert.match(source, /#06b6d4/);
+  assert.match(source, /#cccccc/);
+  assert.match(source, /#18181b/);
+  assert.equal(source.includes('fill-pattern'), false);
+  assert.equal(source.toLowerCase().includes('font-family'), false);
+  assert.equal(source.toLowerCase().includes('dank'), false);
+  for (const name of SHARED_CLASS_NAMES) assert.match(source, new RegExp(`^  ${name}: `, 'm'));
 });

@@ -51,62 +51,49 @@ User → App Server → Cache (Redis) → Database (PostgreSQL)
 
 The cache is the middleman. It holds frequently-read data so the database barely gets touched. Here's the happy path:
 
-```mermaid
-sequenceDiagram
-    participant U as User
-    participant App as App Server
-    participant C as Cache (Redis)
-    participant DB as Database
-
-    U->>App: GET /match/ind-pak/score
-    App->>C: GET match:score
-    C-->>App: ✅ HIT - returned in ~1ms
-    App-->>U: Response. DB never touched.
+```d2
+shape: sequence_diagram
+U: User
+App: "App Server"
+C: "Cache (Redis)"
+DB: Database
+U -> App: "GET /match/ind-pak/score"
+App -> C: "GET match:score"
+C -> App: "HIT - returned in ~1ms" {style.stroke-dash: 4}
+App -> U: "Response. DB never touched." {style.stroke-dash: 4}
 ```
-
 Clean. Whether there are 100 users or 10 million - if the cache holds, the database barely notices.
 
 Now here's what happens when that cache key expires under high traffic:
 
-```mermaid
-sequenceDiagram
-    participant U1 as User 1
-    participant U2 as User 2
-    participant UN as User N (thousands)
-    participant App as App Servers
-    participant C as Cache (Redis)
-    participant DB as Database
-
-    Note over C: ⏰ TTL expires - key deleted
-
-    U1->>App: GET /match/score
-    U2->>App: GET /match/score
-    UN->>App: GET /match/score
-
-    App->>C: GET match:score
-    C-->>App: ❌ MISS
-    App->>C: GET match:score
-    C-->>App: ❌ MISS
-    App->>C: GET match:score
-    C-->>App: ❌ MISS
-
-    Note over App: Every server. Every request. All miss simultaneously.
-
-    par All servers hit DB at the same time
-        App->>DB: SELECT score FROM matches...
-    and
-        App->>DB: SELECT score FROM matches...
-    and
-        App->>DB: SELECT score FROM matches...
-    end
-
-    Note over DB: 💀 Connection pool full. CPU at 100%.<br/>Timeouts begin. Errors cascade.
-    DB-->>App: ERROR: too many connections
-    App-->>U1: 503 Service Unavailable
-    App-->>U2: 503 Service Unavailable
-    App-->>UN: 503 Service Unavailable
+```d2
+shape: sequence_diagram
+U1: "User 1"
+U2: "User 2"
+UN: "User N (thousands)"
+App: "App Servers"
+C: "Cache (Redis)"
+DB: Database
+C.note: "TTL expires - key deleted"
+U1 -> App: "GET /match/score"
+U2 -> App: "GET /match/score"
+UN -> App: "GET /match/score"
+App -> C: "GET match:score"
+C -> App: MISS {style.stroke-dash: 4}
+App -> C: "GET match:score"
+C -> App: MISS {style.stroke-dash: 4}
+App -> C: "GET match:score"
+C -> App: MISS {style.stroke-dash: 4}
+App.note: "Every server. Every request. All miss simultaneously."
+App -> DB: "SELECT score FROM matches..."
+App -> DB: "SELECT score FROM matches..."
+App -> DB: "SELECT score FROM matches..."
+DB.note: "Connection pool full. CPU at 100%.\nTimeouts begin. Errors cascade."
+DB -> App: "ERROR: too many connections" {style.stroke-dash: 4}
+App -> U1: "503 Service Unavailable" {style.stroke-dash: 4}
+App -> U2: "503 Service Unavailable" {style.stroke-dash: 4}
+App -> UN: "503 Service Unavailable" {style.stroke-dash: 4}
 ```
-
 Thousands of requests - all for the exact same data - hammer the database simultaneously. The DB, built to handle a few hundred queries per second comfortably, gets thousands in a single instant. It buckles.
 
 ---
@@ -115,15 +102,12 @@ Thousands of requests - all for the exact same data - hammer the database simult
 
 This is the distinction engineers miss most often. Both look like "elevated traffic" on a dashboard. They are completely different problems.
 
-```mermaid
-xychart-beta
-    title "DB Queries/sec: Normal Traffic Spike vs Thundering Herd"
-    x-axis ["-5m", "-4m", "-3m", "-2m", "-1m", "0s", "+1m", "+2m", "+3m"]
-    y-axis "DB Queries/sec" 0 --> 100000
-    line "Normal Traffic Spike" [1000, 2000, 6000, 15000, 28000, 36000, 30000, 18000, 8000]
-    line "Thundering Herd" [1000, 1000, 1000, 1000, 1000, 95000, 80000, 65000, 40000]
+```d2
+direction: down
+heading: "DB Queries/sec: Normal Traffic Spike vs Thundering Herd" {shape: text}
+normal: "Normal Traffic Spike\n-5m 1k · -4m 2k · -3m 6k · -2m 15k · -1m 28k · 0s 36k · +1m 30k · +2m 18k · +3m 8k" {class: primary}
+herd: "Thundering Herd\n-5m 1k · -4m 1k · -3m 1k · -2m 1k · -1m 1k · 0s 95k · +1m 80k · +2m 65k · +3m 40k" {class: success}
 ```
-
 A normal spike builds gradually. Your auto-scaler has time to react. Your cache is still serving most requests. The database sees incremental load it can manage.
 
 A thundering herd goes from baseline to catastrophic **in one second.** Your auto-scaler hasn't even been alerted yet. Your cache is completely empty. Every single request is a DB query. No ramp - just a wall.
@@ -142,21 +126,18 @@ A thundering herd goes from baseline to catastrophic **in one second.** Your aut
 
 One spike is bad. What happens *after* is worse.
 
-```mermaid
-flowchart TD
-    A["⏰ Cache TTL expires\nAll keys at the same time"] --> B["Thousands of requests\nhit the DB simultaneously"]
-    B --> C["DB connection pool fills up\n500/500 connections used"]
-    C --> D["New requests can't connect\nTimeout after 5–30 seconds"]
-    D --> E["Client retry logic fires\n'Let me try again...'"]
-    E --> F["Even MORE load on DB\noriginal requests + retries"]
-    F --> G["DB slows further\nMore timeouts, more retries"]
-    G --> H["💀 Full system failure\nManual intervention required"]
-
-    class C severity1
-    class D severity2
-    class H severity3
+```d2
+direction: down
+A: "Cache TTL expires\nAll keys at the same time"
+B: "Thousands of requests\nhit the DB simultaneously"
+C: "DB connection pool fills up\n500/500 connections used" {class: severity1}
+D: "New requests can't connect\nTimeout after 5–30 seconds" {class: severity2}
+E: "Client retry logic fires\n'Let me try again...'"
+F: "Even MORE load on DB\noriginal requests + retries"
+G: "DB slows further\nMore timeouts, more retries"
+H: "Full system failure\nManual intervention required" {class: severity3}
+A -> B -> C -> D -> E -> F -> G -> H
 ```
-
 The retry death spiral is what turns "our site was slow for 30 seconds" into "we were down for 2 hours." Every second of failure generates more load than the second before it. The system stops recovering on its own.
 
 ---
@@ -245,38 +226,30 @@ Jitter spreads expiries across different keys. But what about one very popular k
 
 The solution: when a key is missing, only let **one** request go to the database. Everyone else waits for that single result and shares it.
 
-```mermaid
-sequenceDiagram
-    participant R1 as Request 1
-    participant R2 as Request 2
-    participant R3 as Requests 3–50,000
-    participant Lock as In-Flight Registry
-    participant DB as Database
-    participant C as Cache
-
-    Note over C: Cache miss - key expired
-
-    R1->>Lock: Is 'match:score' being fetched?
-    Lock-->>R1: No. You fetch it. Registering...
-
-    R2->>Lock: Is 'match:score' being fetched?
-    Lock-->>R2: Yes. Wait for it.
-
-    R3->>Lock: Is 'match:score' being fetched?
-    Lock-->>R3: Yes. Wait for it.
-
-    R1->>DB: SELECT * FROM matches WHERE id='ind-pak'
-    Note over DB: ✅ 1 query. Not 50,000.
-
-    DB-->>R1: {score: "India 287/4"}
-    R1->>C: SET match:score → data
-    R1->>Lock: Done. Broadcasting result.
-    Lock-->>R2: Here's your result.
-    Lock-->>R3: Here's your result.
-
-    Note over DB: 50,000 requests resolved.\nDatabase ran 1 query.
+```d2
+shape: sequence_diagram
+R1: "Request 1"
+R2: "Request 2"
+R3: "Requests 3–50,000"
+Lock: "In-Flight Registry"
+DB: Database
+C: Cache
+C.note: "Cache miss - key expired"
+R1 -> Lock: "Is 'match:score' being fetched?"
+Lock -> R1: "No. You fetch it. Registering..." {style.stroke-dash: 4}
+R2 -> Lock: "Is 'match:score' being fetched?"
+Lock -> R2: "Yes. Wait for it." {style.stroke-dash: 4}
+R3 -> Lock: "Is 'match:score' being fetched?"
+Lock -> R3: "Yes. Wait for it." {style.stroke-dash: 4}
+R1 -> DB: "SELECT * FROM matches WHERE id='ind-pak'"
+DB.note: "1 query. Not 50,000."
+DB -> R1: "{score: India 287/4}" {style.stroke-dash: 4}
+R1 -> C: "SET match:score"
+R1 -> Lock: "Done. Broadcasting result."
+Lock -> R2: "Here's your result." {style.stroke-dash: 4}
+Lock -> R3: "Here's your result." {style.stroke-dash: 4}
+DB.note: "50,000 requests resolved.\nDatabase ran 1 query."
 ```
-
 The mechanism is an in-flight registry - a simple map of `key → Promise`. When request 1 misses cache, it creates a Promise for the DB fetch and registers it. Requests 2 through 50,000 find that Promise in the registry and simply await it. The database gets exactly one query. When the result arrives, every waiting request resolves simultaneously.
 
 ```js
@@ -313,25 +286,21 @@ Here's what happens. Your DB gets overwhelmed. Requests start timing out. Every 
 
 You didn't have one thundering herd. You accidentally scheduled ten of them back to back.
 
-```mermaid
-sequenceDiagram
-    participant C1 as Client 1
-    participant C2 as Client 2
-    participant CN as Client N
-    participant DB as Database
-
-    DB-->>C1: ❌ Timeout at T=0s
-    DB-->>C2: ❌ Timeout at T=0s
-    DB-->>CN: ❌ Timeout at T=0s
-
-    Note over C1,CN: Fixed retry: "wait 1 second"
-
-    C1->>DB: Retry at T=1s
-    C2->>DB: Retry at T=1s
-    CN->>DB: Retry at T=1s
-    Note over DB: 💀 Second thundering herd. DB never recovers.
+```d2
+shape: sequence_diagram
+C1: "Client 1"
+C2: "Client 2"
+CN: "Client N"
+DB: Database
+DB -> C1: "Timeout at T=0s" {style.stroke-dash: 4}
+DB -> C2: "Timeout at T=0s" {style.stroke-dash: 4}
+DB -> CN: "Timeout at T=0s" {style.stroke-dash: 4}
+C1.note: "Fixed retry: wait 1 second"
+C1 -> DB: "Retry at T=1s"
+C2 -> DB: "Retry at T=1s"
+CN -> DB: "Retry at T=1s"
+DB.note: "Second thundering herd. DB never recovers."
 ```
-
 The fix has two parts working together.
 
 **Exponential backoff** means each failed attempt waits longer than the last - 200ms, then 400ms, then 800ms, then 1600ms. This gives the DB progressively more breathing room instead of hammering it every second.
@@ -372,19 +341,19 @@ The three techniques above spread load out. Rate limiting does the opposite - it
 
 When a thundering herd hits, your DB doesn't fail because the requests are illegitimate. It fails because there are too many of them at once. Rate limiting at the edge - on your API gateway or load balancer - means you decide how many requests per second your backend will accept. Everything above that threshold gets rejected with a `429 Too Many Requests` before it ever touches your cache or DB.
 
-```mermaid
-flowchart LR
-    Users["👥 10,000 req/s\n(thundering herd)"] --> LB["Load Balancer\nRate Limiter"]
-    LB -->|"✅ 500 req/s allowed"| App["App Servers"]
-    LB -->|"❌ 9,500 req/s rejected\n429 Too Many Requests"| Drop["Clients back off\nand retry with jitter"]
-    App --> Cache["Cache (Redis)"]
-    Cache --> DB["Database\n(protected)"]
-
-    class LB cobalt
-    class Drop maroon
-    class DB forest
+```d2
+direction: right
+Users: "10,000 req/s\n(thundering herd)"
+LB: "Load Balancer\nRate Limiter" {class: cobalt}
+App: "App Servers"
+Drop: "Clients back off\nand retry with jitter" {class: maroon}
+Cache: "Cache (Redis)"
+DB: "Database\n(protected)" {class: forest}
+Users -> LB
+LB -> App: "500 req/s allowed"
+LB -> Drop: "9,500 req/s rejected\n429 Too Many Requests"
+App -> Cache -> DB
 ```
-
 **Rate limiting alone doesn't prevent the thundering herd** - it just caps the blast radius. The herd still arrives; you're turning it away at the door rather than letting it flood the DB. The clients that get rejected need exponential backoff with jitter (technique 3) so they don't immediately form another synchronized retry wave.
 
 The two most common algorithms:
@@ -401,40 +370,43 @@ Rate limiting is the last line of defense - not the first. You still want jitter
 
 Without any mitigation, a cache miss under high traffic goes straight to DB stampede:
 
-```mermaid
-flowchart LR
-    Users["👥 Thousands\nof requests"] --> App["App Servers"]
-    App -->|"❌ All MISS"| Cache["Cache\n(expired)"]
-    Cache --> DB["💀 Database\n(overloaded)"]
-    App -->|"All hit DB directly"| DB
-
-    class Cache maroon
-    class DB maroon
+```d2
+direction: right
+Users: "Thousands\nof requests"
+App: "App Servers"
+Cache: "Cache\n(expired)" {class: maroon}
+DB: "Database\n(overloaded)" {class: maroon}
+Users -> App
+App -> Cache: "All MISS"
+Cache -> DB
+App -> DB: "All hit DB directly"
 ```
-
 With techniques layered together:
 
-```mermaid
-flowchart TD
-    Users["👥 Thousands of requests"] --> RL["Rate Limiter\n(cap at threshold)"]
-    RL -->|"✅ Allowed"| App["App Servers"]
-    RL -->|"429 - retry with jitter"| Backoff["Clients back off\n(exponential + jitter)"]
-
-    App --> Cache{"Cache hit?"}
-    Cache -->|"✅ HIT"| Response["⚡ Fast response"]
-    Cache -->|"❌ MISS"| Flight{"Already\nfetching?"}
-
-    Flight -->|"Yes"| Wait["Wait for\nshared result"]
-    Flight -->|"No - first miss"| DB["Database\n(1 query only)"]
-
-    DB -->|"Result + TTL jitter"| CacheWrite["Cache repopulated\n(staggered expiry)"]
-    CacheWrite --> Broadcast["All waiting\nrequests served"]
-
-    class RL cobalt
-    class DB forest
-    class Response forest
+```d2
+direction: down
+Users: "Thousands of requests"
+RL: "Rate Limiter\n(cap at threshold)" {class: cobalt}
+App: "App Servers"
+Backoff: "Clients back off\n(exponential + jitter)"
+Cache: "Cache hit?" {shape: diamond}
+Response: "Fast response" {class: forest}
+Flight: "Already\nfetching?" {shape: diamond}
+Wait: "Wait for\nshared result"
+DB: "Database\n(1 query only)" {class: forest}
+CacheWrite: "Cache repopulated\n(staggered expiry)"
+Broadcast: "All waiting\nrequests served"
+Users -> RL
+RL -> App: Allowed
+RL -> Backoff: "429 - retry with jitter"
+App -> Cache
+Cache -> Response: HIT
+Cache -> Flight: MISS
+Flight -> Wait: Yes
+Flight -> DB: "No - first miss"
+DB -> CacheWrite: "Result + TTL jitter"
+CacheWrite -> Broadcast
 ```
-
 Every layer has a job. Rate limiter caps volume. Single-flight ensures one DB query per miss. Jitter prevents the next synchronized expiry. Backoff with jitter prevents retry storms from forming.
 
 ---

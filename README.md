@@ -101,22 +101,13 @@ bun run audio:upload
 The upload command requires the AWS CLI because R2 exposes an S3-compatible API.
 Export the five R2 configuration values above before running it locally.
 
-## Mermaid diagrams
+## Diagrams
 
-Diagram colours live in one place: the `PALETTE` object in
-[`src/theme/mermaid.ts`](src/theme/mermaid.ts) (name -> fill / text / border / border width).
-Diagrams render on Mermaid's `dark` theme with classic solid shapes. Mermaid's
-`look: 'handDrawn'` also hatches fills and cannot sketch edges on their own, so flowchart arrows
-are redrawn afterwards with rough.js at Mermaid's edge roughness
-([`src/theme/sketchMermaidEdges.ts`](src/theme/sketchMermaidEdges.ts)). The page renderer and the
-static SVG renderer share that step. Node fills, borders, text, and subgraphs stay flat, and
-palette and theme-variable colours are unchanged.
-Posts contain no hex colours: do not add `classDef`,
-`style` or `%%{init}%%` lines. To restyle every diagram, edit the `PALETTE` entries; to add a
-colour, add an entry there and use its name as a class.
-
-To highlight nodes in a `flowchart`/`graph`, use a shared class. They are available in every
-flowchart without declaring them:
+Diagrams are [D2](https://d2lang.com) fences. The build renders them to inline SVG (sketch mode,
+ELK, animated edges, D2's own font). Colours live in [`src/theme/diagram.ts`](src/theme/diagram.ts).
+Posts name a class and do not include hex values. The build downloads a pinned D2 binary into
+`.cache/d2` so GitHub Pages and Vercel can render without a system install. ELK ships inside that
+binary.
 
 | Class                                   | Use for                                 |
 | --------------------------------------- | --------------------------------------- |
@@ -132,33 +123,29 @@ flowchart without declaring them:
 | `storage`                               | stores, buckets (teal)                  |
 | `severity1` / `severity2` / `severity3` | rising severity (peach, rose, maroon)   |
 
-Every palette entry name is a class too, for example `royal`, `violet`, `emerald`, `teal`, `amber`
-(the audio-player post's light-border set) and `cobalt`, `forest`, `maroon` (thundering-herd).
+Palette entry names (`royal`, `violet`, `emerald`, `teal`, `amber`, `cobalt`, `forest`, `maroon`)
+are classes too. Dark fills use white text and light fills use black text. `src/theme/diagram.test.ts`
+checks that, and fails if a D2 block contains a hex colour or an unknown class.
 
 ````md
-```mermaid
-flowchart LR
-    Req["Request"]:::neutral --> Cache{"In cache?"}:::decision
-    Cache -->|"yes"| Hit["Serve from cache"]:::hit
-    Cache -->|"no"| Miss["Query database"]:::miss
+```d2
+direction: right
+Req: Request {class: neutral}
+Cache: "In cache?" {shape: diamond; class: decision}
+Hit: "Serve from cache" {class: hit}
+Miss: "Query database" {class: miss}
+Req -> Cache
+Cache -> Hit: yes
+Cache -> Miss: no
 ```
 ````
 
-`class A,B accent` assigns a class to several nodes at once. Use `<br/>` for a line break inside a
-label or note (`A["First line<br/>second line"]`).
+`direction: down` is top to bottom. A line break inside a label is `\n` in a quoted string.
+Sequence diagrams start with `shape: sequence_diagram`. A dashed reply is
+`A -> B: label {style.stroke-dash: 4}`. Containers are `Name: "Title" { ... }`.
 
-Unclassed nodes, subgraphs, notes and sequence diagrams use Mermaid's own dark theme. Dark fills
-take white text and light fills (yellow, rose, peach, mint, cyan) take black text, and all text
-meets WCAG AA. `src/theme/mermaid.test.ts` checks every palette entry against these rules and fails
-if a post has a hex colour in a Mermaid block or uses an unknown class.
-`node --experimental-strip-types scripts/mermaid/stripSharedColours.ts --check` also fails on hex
-colours in Mermaid blocks (without `--check` it removes lines that exactly match a shared class).
-
-To ship a diagram as a static image instead (no client-side Mermaid, so it also shows in RSS and
-reader mode), put the source in a `.mmd` file next to the post's assets and run
-`node --experimental-strip-types scripts/mermaid/renderSvg.ts path/to/diagram.mmd`. It writes
-`diagram.svg` beside it with the shared theme and a dark card background. Commit both and embed the
-SVG with alt text: `![What the diagram shows](../../assets/blog/<post>/diagram.svg)`.
+Sketch hatching is D2's. Don't set `fill-pattern` or a font. Edges are already animated and
+`#cccccc`. `prefers-reduced-motion` pauses the dashes.
 
 ## Math
 

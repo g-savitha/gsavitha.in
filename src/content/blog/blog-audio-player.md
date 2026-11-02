@@ -63,45 +63,42 @@ I wanted the stack to be reliable and maintainable, not fancy. If I come back to
 
 Here's the full picture before we go through each piece. 
 
-```mermaid
-flowchart TD
-    subgraph Authoring["1 · Authoring"]
-        INPUT["Markdown post\n+ audio frontmatter\n+ optional code summaries"]:::content
-    end
-
-    subgraph Build["2 · Audio pipeline · GitHub Actions"]
-        EXTRACT["Parse Markdown AST\ninto narration segments"]:::royal
-        HASH["Hash content +\nvoice settings"]:::royal
-        CHANGED{"Audio already\npublished?"}:::decision
-        GENERATE["Chunk text · reuse segment cache\nKokoro-82M synthesis · MP3 encoding"]:::violet
-        UPLOAD["Validate + upload\ncontent-addressed MP3"]:::violet
-
-        EXTRACT --> HASH --> CHANGED
-        CHANGED -->|"no · generate"| GENERATE --> UPLOAD
-    end
-
-    subgraph Contract["3 · Published contract"]
-        MANIFEST["Committed audio manifest\nslug → URL · label · duration"]:::emerald
-        R2[("Cloudflare R2\nimmutable MP3s")]:::storage
-        UPLOAD --> R2
-        UPLOAD --> MANIFEST
-        CHANGED -->|"yes · reuse"| MANIFEST
-    end
-
-    subgraph Delivery["4 · Build and playback"]
-        ASTRO["Astro build\nresolve audio by slug"]:::royal
-        PAGE["Static blog page"]:::content
-        PLAYER["React audio player\nseek · speed · voice"]:::emerald
-        PROGRESS[("localStorage\nplayback position")]:::storage
-
-        MANIFEST --> ASTRO --> PAGE --> PLAYER
-        PLAYER <-->|"save / restore"| PROGRESS
-    end
-
-    INPUT --> EXTRACT
-    PLAYER -->|"stream MP3 from CDN"| R2
+```d2
+direction: down
+Authoring: "1 · Authoring" {
+  INPUT: "Markdown post\n+ audio frontmatter\n+ optional code summaries" {class: content}
+}
+Build: "2 · Audio pipeline · GitHub Actions" {
+  direction: down
+  EXTRACT: "Parse Markdown AST\ninto narration segments" {class: royal}
+  HASH: "Hash content +\nvoice settings" {class: royal}
+  CHANGED: "Audio already\npublished?" {shape: diamond; class: decision}
+  GENERATE: "Chunk text · reuse segment cache\nKokoro-82M synthesis · MP3 encoding" {class: violet}
+  UPLOAD: "Validate + upload\ncontent-addressed MP3" {class: violet}
+  EXTRACT -> HASH -> CHANGED
+  CHANGED -> GENERATE: "no · generate"
+  GENERATE -> UPLOAD
+}
+Contract: "3 · Published contract" {
+  MANIFEST: "Committed audio manifest\nslug → URL · label · duration" {class: emerald}
+  R2: "Cloudflare R2\nimmutable MP3s" {shape: cylinder; class: storage}
+}
+Delivery: "4 · Build and playback" {
+  direction: down
+  ASTRO: "Astro build\nresolve audio by slug" {class: royal}
+  PAGE: "Static blog page" {class: content}
+  PLAYER: "React audio player\nseek · speed · voice" {class: emerald}
+  PROGRESS: "localStorage\nplayback position" {shape: cylinder; class: storage}
+  ASTRO -> PAGE -> PLAYER
+  PLAYER <-> PROGRESS: "save / restore"
+}
+Authoring.INPUT -> Build.EXTRACT
+Build.UPLOAD -> Contract.R2
+Build.UPLOAD -> Contract.MANIFEST
+Build.CHANGED -> Contract.MANIFEST: "yes · reuse"
+Contract.MANIFEST -> Delivery.ASTRO
+Delivery.PLAYER -> Contract.R2: "stream MP3 from CDN"
 ```
-
 ---
 
 ## Extracting Narration from Markdown
@@ -149,17 +146,22 @@ Code is valuable on screen and terrible when read aloud verbatim. No listener wa
 
 The system handles code blocks in two ways. You can place an explicit `<!-- audio-summary: ... -->` HTML comment directly before a code fence, and that text is used verbatim. Or you can set `codeSummaryMode: contextual` in the post's frontmatter, and the extractor derives a useful description from the code itself.
 
-```mermaid
-flowchart TD
-    CB["Code block"]:::content --> EXPLICIT{"Explicit\naudio-summary?"}:::amber
-    EXPLICIT -->|"yes"| OUT["Narration text"]:::emerald
-    EXPLICIT -->|"no"| ANALYZE["Contextual analysis\ncomments · semantic tags · selectors\ncommands · functions · classes"]:::teal
-    ANALYZE --> FOUND{"Useful context\nfound?"}:::amber
-    FOUND -->|"yes"| OUT
-    FOUND -->|"no"| FALLBACK["Use section heading\nas fallback"]:::royal
-    FALLBACK --> OUT
+```d2
+direction: down
+CB: "Code block" {class: content}
+EXPLICIT: "Explicit\naudio-summary?" {shape: diamond; class: amber}
+OUT: "Narration text" {class: emerald}
+ANALYZE: "Contextual analysis\ncomments · semantic tags · selectors\ncommands · functions · classes" {class: teal}
+FOUND: "Useful context\nfound?" {shape: diamond; class: amber}
+FALLBACK: "Use section heading\nas fallback" {class: royal}
+CB -> EXPLICIT
+EXPLICIT -> OUT: yes
+EXPLICIT -> ANALYZE: no
+ANALYZE -> FOUND
+FOUND -> OUT: yes
+FOUND -> FALLBACK: no
+FALLBACK -> OUT
 ```
-
 For each code block, the contextual engine looks for the most useful clue it can find: a leading comment, semantic structure, command names, selectors, or meaningful symbols. It skips generic names that do not help a listener and turns the useful parts into a short sentence:
 
 <!-- audio-summary: Here is a code block explaining a function stripping comments from a code block and extracts the names of top-level functions, classes, and arrow-function constants, ignoring generic identifiers to produce a useful narration sentence. -->
@@ -219,13 +221,16 @@ Each voice gets its own hash, its own MP3, and its own manifest entry. Voice, mo
 
 Every decision in the pipeline — synthesize or skip, upload or skip, re-run or not — comes down to a single SHA-256 hash computed from the narration segments and the voice settings.
 
-```mermaid
-flowchart TD
-    INPUTS["Narration segments\n+ model · dtype · voice · speed"]:::content --> HASH["SHA-256\nnarration hash"]:::royal
-    HASH --> URL["CDN path\nslug/hash/lang.mp3"]:::violet
-    HASH --> ENTRY["Manifest\nentry"]:::emerald
+```d2
+direction: down
+INPUTS: "Narration segments\n+ model · dtype · voice · speed" {class: content}
+HASH: "SHA-256\nnarration hash" {class: royal}
+URL: "CDN path\nslug/hash/lang.mp3" {class: violet}
+ENTRY: "Manifest\nentry" {class: emerald}
+INPUTS -> HASH
+HASH -> URL
+HASH -> ENTRY
 ```
-
 The hash goes into the storage key itself, not just the metadata:
 
 <!-- audio-summary: Here is a codeblock explaining the storage key embedding the narration hash so every published audio file has a content-addressed path — the URL never changes after upload. -->
@@ -278,17 +283,21 @@ Text-to-speech generation is CPU-intensive, but most edits to a blog post are sm
 
 Every synthesized chunk is stored as a raw `Float32LE` file on disk, keyed by a SHA-256 of the chunk text and the voice settings. On the next run, the generator checks the cache before calling the TTS model:
 
-```mermaid
-flowchart TD
-    CHUNK["Speech chunk\n+ voice settings"]:::content --> CHASH["Chunk hash\nSHA-256"]:::royal
-    CHASH --> HIT{"Cached audio\non disk?"}:::amber
-    HIT -->|"yes"| READ["Read Float32\nfrom disk"]:::emerald
-    HIT -->|"no"| TTS["Run Kokoro\nTTS model"]:::violet
-    TTS --> WRITE["Write Float32\nto disk"]:::teal
-    READ --> ENCODE["Stream into\nMP3 encoder"]:::royal
-    WRITE --> ENCODE
+```d2
+direction: down
+CHUNK: "Speech chunk\n+ voice settings" {class: content}
+CHASH: "Chunk hash\nSHA-256" {class: royal}
+HIT: "Cached audio\non disk?" {shape: diamond; class: amber}
+READ: "Read Float32\nfrom disk" {class: emerald}
+TTS: "Run Kokoro\nTTS model" {class: violet}
+WRITE: "Write Float32\nto disk" {class: teal}
+ENCODE: "Stream into\nMP3 encoder" {class: royal}
+CHUNK -> CHASH -> HIT
+HIT -> READ: yes
+HIT -> TTS: no
+TTS -> WRITE -> ENCODE
+READ -> ENCODE
 ```
-
 The chunk hash covers the text, model, quantization dtype, voice, and speed — every input that affects the synthesized audio. That means the same paragraph text synthesized with two different voices produces two different cache keys, so changing a voice in frontmatter correctly triggers re-synthesis.
 
 Cleanup is automatic. After a full run, the generator computes the live set of chunk hashes across all audio-enabled posts and removes any `.f32` files that are no longer referenced. Deleted paragraphs, renamed posts, and removed voices do not leave cache debris behind indefinitely.
@@ -299,15 +308,16 @@ Cleanup is automatic. After a full run, the generator computes the live set of c
 
 With one post to generate, running serially is fine. With dozens, it wastes the CPU cores sitting idle while one post synthesizes at a time. When the orchestrator has multiple posts to process and enough cores available, it fans out work across up to four child processes:
 
-```mermaid
-flowchart TD
-    ORCH["Orchestrator"]:::royal --> QUEUE["Pending posts"]:::content
-    QUEUE --> WORKERS["Up to four isolated workers\none post per worker"]:::violet
-    WORKERS --> RESULTS["Validated result files\nserve as recovery checkpoints"]:::teal
-    RESULTS --> MERGE["Merge results"]:::emerald
-    MERGE --> INDEX["Generated index"]:::emerald
+```d2
+direction: down
+ORCH: Orchestrator {class: royal}
+QUEUE: "Pending posts" {class: content}
+WORKERS: "Up to four isolated workers\none post per worker" {class: violet}
+RESULTS: "Validated result files\nserve as recovery checkpoints" {class: teal}
+MERGE: "Merge results" {class: emerald}
+INDEX: "Generated index" {class: emerald}
+ORCH -> QUEUE -> WORKERS -> RESULTS -> MERGE -> INDEX
 ```
-
 Each worker handles one post. It loads the model, hits the segment cache, synthesizes whatever's missing, and writes a result file before it exits. Workers don't share state — they run independently and write separate files.
 
 The result files double as crash recovery checkpoints. If a CI run is interrupted after three workers finish but before the fourth does, the next run validates each result file against the current narration hash. Workers whose results are still valid are skipped. Only the interrupted one gets re-dispatched.
@@ -352,30 +362,33 @@ Because the storage key is content-addressed, editing a post produces a brand-ne
 
 For a while, every push to main ran the whole thing — generate, upload, commit, build — as one workflow. That was a mistake. A pure styling tweak shouldn't wait behind a multi-hour synthesis run, and a run that got cancelled by my next push could drop the manifest commit entirely, which sent the *following* run off regenerating everything from scratch. So I split it into two pipelines.
 
-```mermaid
-flowchart TD
-    PUSH["Push to main"]:::content --> Q{"What changed?"}:::amber
-    Q -->|"blog content or\naudio scripts"| AUDIO["audio.yml"]:::violet
-    Q -->|"anything"| DEPLOY["deploy.yml"]:::royal
-
-    subgraph AudioJob["audio.yml — its own concurrency group"]
-        GEN["Generate only\nchanged audio"]:::violet
-        UP["Upload to R2\n+ prune old files"]:::violet
-        REC["Reconcile manifest\nagainst R2"]:::teal
-        COMMIT["Commit manifest\nto main (rebase first)"]:::emerald
-    end
-
-    AUDIO --> GEN --> UP --> REC --> COMMIT
-    COMMIT -->|"triggers a deploy"| DEPLOY
-
-    subgraph DeployJob["deploy.yml — fast path"]
-        BUILD["Astro build\nreads committed manifest"]:::royal
-        PAGES["Deploy to Pages"]:::emerald
-    end
-
-    DEPLOY --> BUILD --> PAGES
+```d2
+direction: down
+PUSH: "Push to main" {class: content}
+Q: "What changed?" {shape: diamond; class: amber}
+AUDIO: audio.yml {class: violet}
+DEPLOY: deploy.yml {class: royal}
+AudioJob: "audio.yml — its own concurrency group" {
+  direction: down
+  GEN: "Generate only\nchanged audio" {class: violet}
+  UP: "Upload to R2\n+ prune old files" {class: violet}
+  REC: "Reconcile manifest\nagainst R2" {class: teal}
+  COMMIT: "Commit manifest\nto main (rebase first)" {class: emerald}
+  GEN -> UP -> REC -> COMMIT
+}
+DeployJob: "deploy.yml — fast path" {
+  direction: down
+  BUILD: "Astro build\nreads committed manifest" {class: royal}
+  PAGES: "Deploy to Pages" {class: emerald}
+  BUILD -> PAGES
+}
+PUSH -> Q
+Q -> AUDIO: "blog content or\naudio scripts"
+Q -> DEPLOY: anything
+AUDIO -> AudioJob.GEN
+AudioJob.COMMIT -> DEPLOY: "triggers a deploy"
+DEPLOY -> DeployJob.BUILD
 ```
-
 `deploy.yml` builds and ships the site. It runs on every push to main, touches no audio at all, and simply trusts whatever is already committed in the manifest. Styling, logic, and prose changes go live in well under a minute.
 
 `audio.yml` owns generation. It only triggers when blog content or the audio scripts change, and it runs in its own concurrency group with `cancel-in-progress: false` — so a long synthesis run finishes instead of being killed by the next unrelated push. When it's done it commits the manifest back to main, rebasing first so it never clobbers a concurrent change, and then explicitly triggers a deploy so the new URLs go live.
@@ -392,20 +405,27 @@ After upload, a reconcile step rebuilds the manifest from what's genuinely publi
 
 The first version worked but was painfully slow — a single edit could trigger a multi-hour run re-synthesizing audio R2 already had. Each improvement below solved one bottleneck; together they turned a brute-force generator into something that usually finishes in seconds.
 
-```mermaid
-flowchart TD
-    POST["Post + voice settings"]:::content --> M{"Manifest hash\nmatches?"}:::decision
-    M -->|"yes"| SKIP["Skip entirely\naudio already in R2"]:::emerald
-    M -->|"no"| WORKERS["Parallel workers\nup to four posts at once"]:::violet
-    WORKERS --> CHUNKS["Build speech chunks\nfor this post only"]:::royal
-    CHUNKS --> CACHE{"Segment cache\nhit per chunk?"}:::decision
-    CACHE -->|"yes"| ASSEMBLE["Assemble from disk"]:::teal
-    CACHE -->|"no"| TTS["Synthesize\nthis chunk only"]:::violet
-    TTS --> ASSEMBLE
-    ASSEMBLE --> UPLOAD["Validate + upload\nprune stale R2 objects"]:::royal
-    UPLOAD --> MANIFEST["Update manifest"]:::emerald
+```d2
+direction: down
+POST: "Post + voice settings" {class: content}
+M: "Manifest hash\nmatches?" {shape: diamond; class: decision}
+SKIP: "Skip entirely\naudio already in R2" {class: emerald}
+WORKERS: "Parallel workers\nup to four posts at once" {class: violet}
+CHUNKS: "Build speech chunks\nfor this post only" {class: royal}
+CACHE: "Segment cache\nhit per chunk?" {shape: diamond; class: decision}
+ASSEMBLE: "Assemble from disk" {class: teal}
+TTS: "Synthesize\nthis chunk only" {class: violet}
+UPLOAD: "Validate + upload\nprune stale R2 objects" {class: royal}
+MANIFEST: "Update manifest" {class: emerald}
+POST -> M
+M -> SKIP: yes
+M -> WORKERS: no
+WORKERS -> CHUNKS -> CACHE
+CACHE -> ASSEMBLE: yes
+CACHE -> TTS: no
+TTS -> ASSEMBLE
+ASSEMBLE -> UPLOAD -> MANIFEST
 ```
-
 **1. Parallel workers.** One post at a time wasted idle CPU cores. The orchestrator now fans out across up to four child processes; result files double as crash-recovery checkpoints.
 
 **2. Two-level caching.** Synthesized chunks live on disk as keyed `Float32LE` files — unchanged text never hits TTS again. CI caches model weights, segments, and worker artifacts between runs so cold starts stay rare.
