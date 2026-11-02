@@ -4,19 +4,16 @@
  *
  *   node --experimental-strip-types scripts/mermaid/renderSvg.ts path/to/diagram.mmd [...]
  *
- * Each `<name>.mmd` becomes `<name>.svg` next to it. Uses the site's shared theme
- * (`src/theme/mermaid.ts`), plain SVG text labels (no `foreignObject`, so `<img>` renders them),
+ * Each `<name>.mmd` becomes `<name>.svg` next to it. Uses the site's shared Mermaid config
+ * (`MERMAID_CONFIG` in `src/theme/mermaid.ts`), plain SVG text labels (no `foreignObject`, so
+ * `<img>` renders them),
  * and a dark background baked in so the diagram stays readable on light readers too.
  * Commit both files and reference the SVG from the post with alt text.
  */
 import { readFile, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { chromium } from 'playwright-core';
-import {
-  MERMAID_THEME,
-  MERMAID_THEME_VARIABLES,
-  withSharedClassDefs,
-} from '../../src/theme/mermaid.ts';
+import { MERMAID_CONFIG, withSharedClassDefs } from '../../src/theme/mermaid.ts';
 
 /** zinc-900: one step lighter than the page, so the diagram reads as a card. */
 const BACKGROUND = '#18181b';
@@ -56,7 +53,7 @@ try {
   for (const source of sources) {
     const definition = withSharedClassDefs(await readFile(source, 'utf8'));
     const svg = await page.evaluate(
-      async ({ definition, theme, themeVariables, xyChart, background, padding }) => {
+      async ({ definition, config, xyChart, background, padding }) => {
         const { mermaid } = window as unknown as {
           mermaid: {
             initialize(config: object): void;
@@ -64,9 +61,8 @@ try {
           };
         };
         mermaid.initialize({
-          startOnLoad: false,
-          theme,
-          themeVariables: { ...themeVariables, xyChart },
+          ...config,
+          themeVariables: { ...config.themeVariables, xyChart },
           htmlLabels: false,
           flowchart: { htmlLabels: false },
         });
@@ -99,8 +95,7 @@ try {
       },
       {
         definition,
-        theme: MERMAID_THEME,
-        themeVariables: MERMAID_THEME_VARIABLES,
+        config: MERMAID_CONFIG,
         xyChart: XY_CHART,
         background: BACKGROUND,
         padding: PADDING,

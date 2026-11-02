@@ -1,5 +1,5 @@
 import mermaid from 'mermaid';
-import { MERMAID_THEME, MERMAID_THEME_VARIABLES, withSharedClassDefs } from '../theme/mermaid.ts';
+import { MERMAID_CONFIG, withSharedClassDefs } from '../theme/mermaid.ts';
 
 function getSource(el: HTMLElement): string {
   return el.dataset.mermaidSource ?? el.textContent?.trim() ?? '';
@@ -9,9 +9,7 @@ let renderQueue = Promise.resolve();
 
 async function renderMermaid() {
   mermaid.initialize({
-    startOnLoad: false,
-    theme: MERMAID_THEME,
-    themeVariables: MERMAID_THEME_VARIABLES,
+    ...MERMAID_CONFIG,
     securityLevel: 'loose',
   });
 
