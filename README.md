@@ -21,9 +21,9 @@ audio:
   codeSummaryMode: contextual
 ```
 
-Code blocks are never read aloud. Every non-Mermaid code block in an audio-enabled
-post using `codeSummaryMode: required` must have a reviewed summary immediately
-before it:
+Code blocks are never read aloud. Every code block that isn't a `d2` diagram, in an
+audio-enabled post using `codeSummaryMode: required`, must have a reviewed summary
+immediately before it:
 
 ````md
 <!-- audio-summary:

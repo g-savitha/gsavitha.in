@@ -32,7 +32,7 @@ export const BLACK: Hex = '#000000';
 /** Arrow and edge-label colour. Same light grey the dark diagrams used for lines. */
 export const DIAGRAM_EDGE: Hex = '#cccccc';
 
-/** Mermaid's old default node border, kept by nodes that only had a fill and text colour. */
+/** Light grey border for nodes that only have a fill and text colour. */
 const THEME_BORDER: Hex = '#cccccc';
 
 /** Every diagram colour, by name. Each name is also a D2 class. */

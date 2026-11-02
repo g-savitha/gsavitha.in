@@ -135,6 +135,6 @@ test('d2 preamble sketches with elk, animates edges, and does not strip hatching
   assert.match(source, /#18181b/);
   assert.equal(source.includes('fill-pattern'), false);
   assert.equal(source.toLowerCase().includes('font-family'), false);
-  assert.equal(source.toLowerCase().includes('dank'), false);
+  assert.equal(/\bfont\s*:/.test(source), false);
   for (const name of SHARED_CLASS_NAMES) assert.match(source, new RegExp(`^  ${name}: `, 'm'));
 });
