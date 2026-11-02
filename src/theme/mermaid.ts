@@ -19,7 +19,8 @@
  *
  * Text rule (enforced by `mermaid.test.ts`, with WCAG AA): dark fills take white text, light
  * fills (yellow, rose, peach, mint, cyan) take black text. Diagrams render on Mermaid's `dark`
- * theme. See README "Mermaid diagrams".
+ * theme with classic solid shapes. Flowchart edges are sketched afterwards
+ * (`sketchMermaidEdges`). See README "Mermaid diagrams".
  */
 type Hex = `#${string}`;
 
@@ -36,9 +37,33 @@ export const BLACK: Hex = '#000000';
 /** Mermaid's built-in theme; `dark` is what every diagram used before the shared palette. */
 export const MERMAID_THEME = 'dark';
 
+/**
+ * Shapes stay classic. `look: 'handDrawn'` also hatches fills, and Mermaid has no switch for
+ * edges alone, so flowchart arrows are sketched in `sketchMermaidEdges` instead.
+ */
+export const MERMAID_LOOK = 'classic' as const;
+
+/**
+ * Rough.js treats seed `0` as random. A fixed seed keeps every sketched edge stable.
+ * Mermaid uses this same seed for its own hand-drawn edges.
+ */
+export const MERMAID_HAND_DRAWN_SEED = 1;
+
+/** Roughness Mermaid passes to rough.js when it draws a hand-drawn edge. */
+export const MERMAID_EDGE_ROUGHNESS = 0.3;
+
 /** Overrides on top of the `dark` theme. Only the font; the rest is Mermaid's own dark look. */
 export const MERMAID_THEME_VARIABLES = {
   fontFamily: 'Dank Mono, ui-monospace, monospace',
+} as const;
+
+/** Shared by the page renderer and the static SVG renderer. Add renderer-only options at the call. */
+export const MERMAID_CONFIG = {
+  startOnLoad: false,
+  theme: MERMAID_THEME,
+  look: MERMAID_LOOK,
+  handDrawnSeed: MERMAID_HAND_DRAWN_SEED,
+  themeVariables: MERMAID_THEME_VARIABLES,
 } as const;
 
 /** Mermaid's `dark` theme node border, kept by nodes that only had a fill and text colour. */

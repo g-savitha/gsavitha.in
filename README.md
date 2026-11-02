@@ -105,7 +105,13 @@ Export the five R2 configuration values above before running it locally.
 
 Diagram colours live in one place: the `PALETTE` object in
 [`src/theme/mermaid.ts`](src/theme/mermaid.ts) (name -> fill / text / border / border width).
-Diagrams render on Mermaid's `dark` theme. Posts contain no hex colours: do not add `classDef`,
+Diagrams render on Mermaid's `dark` theme with classic solid shapes. Mermaid's
+`look: 'handDrawn'` also hatches fills and cannot sketch edges on their own, so flowchart arrows
+are redrawn afterwards with rough.js at Mermaid's edge roughness
+([`src/theme/sketchMermaidEdges.ts`](src/theme/sketchMermaidEdges.ts)). The page renderer and the
+static SVG renderer share that step. Node fills, borders, text, and subgraphs stay flat, and
+palette and theme-variable colours are unchanged.
+Posts contain no hex colours: do not add `classDef`,
 `style` or `%%{init}%%` lines. To restyle every diagram, edit the `PALETTE` entries; to add a
 colour, add an entry there and use its name as a class.
 
