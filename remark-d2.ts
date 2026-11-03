@@ -7,8 +7,8 @@ function escapeAttribute(value: string): string {
 }
 
 /**
- * Renders ```d2 fences to inline SVG at build time. Authors write the shapes only; colours,
- * sketch mode, ELK, and animated edges come from `d2Preamble()`.
+ * Renders ```d2 fences to inline SVG at build time. Authors write the shapes only; Dark Mauve
+ * colours, sketch mode, ELK, label size, containers, and animated edges come from `d2Preamble()`.
  */
 export function remarkD2() {
   return async (tree: Root) => {

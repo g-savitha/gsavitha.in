@@ -57,7 +57,7 @@ This doesn't scale. And it definitely doesn't survive production.
 
 Kafka puts a pipeline in the middle. Producers drop events into it. Consumers read from it. Nobody talks to each other directly.
 ```d2
-direction: right
+direction: down
 P: "Order Service\nProducer" {class: success}
 K: Kafka {shape: cylinder; class: primary}
 C1: "Inventory Service" {class: info}
@@ -92,7 +92,7 @@ Kafka organises events into **topics**. A topic is just a named channel — `ord
 
 Producers write to a topic. Consumers subscribe to a topic. Multiple consumers can read the same topic independently without interfering with each other.
 ```d2
-direction: right
+direction: down
 OS: "Order Service" {class: success}
 OT: "orders topic" {shape: package; class: accent}
 PT: "payments topic" {shape: package; class: accent}
@@ -136,7 +136,7 @@ Each event in a partition gets a sequential number — its **offset**. Consumers
 
 One consumer reading a high-throughput topic won't keep up. Kafka lets you form a **consumer group** — multiple consumers splitting the partitions between them.
 ```d2
-direction: right
+direction: down
 GroupA: "Consumer Group A — Inventory" {
   A1: "Consumer A1" {class: info}
   A2: "Consumer A2" {class: info}
@@ -154,7 +154,7 @@ Each partition is owned by exactly one consumer within the group. Add more consu
 
 Different consumer groups are completely independent:
 ```d2
-direction: right
+direction: down
 T: "orders topic" {shape: package; class: accent}
 GroupA: "Consumer Group A — Inventory" {
   A1: "Consumer A1" {class: info}
@@ -193,7 +193,7 @@ This is why Kafka can comfortably handle millions of events per second on commod
 
 Every partition is replicated across multiple brokers. One broker is the **leader** — it handles all reads and writes for that partition. The others are **followers** — they replicate the leader's data continuously.
 ```d2
-direction: right
+direction: down
 P: "Partition 0\nLeader — Broker 1" {class: success}
 F1: "Follower — Broker 2" {class: info}
 F2: "Follower — Broker 3" {class: info}

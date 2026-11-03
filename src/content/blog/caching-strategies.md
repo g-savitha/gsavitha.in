@@ -125,7 +125,7 @@ Jitter spreads expiry across a population of keys. But what about a single very 
 Probabilistic early expiration solves this differently. Instead of waiting for the key to expire, some requests start recomputing it early. The closer the key is to expiring, the more likely any given request will trigger a background refresh.
 
 ```d2
-direction: right
+direction: down
 heading: "Probability of Early Recomputation Over Time" {shape: text}
 t0: "T=0\nCache set\n0% early" {class: neutral}
 t50: "T=50\nCloser\n~5%" {class: secondary}

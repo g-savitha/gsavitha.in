@@ -43,16 +43,19 @@ The talk draws this as a curve. The more you trust your agents, the more of them
 
 ```d2
 # alt: Illustration of the trust curve: as you go from 1 agent to 1k+ agents, the trust you need climbs from low to high. Not real data.
-direction: right
-heading: "Illustration: trust vs agents" {shape: text}
-axis: "Agents you can run, trust low to high" {shape: text}
-one: "1\ntrust 1" {class: accent}
-few: "1-5\ntrust 4" {class: accent}
-mid: "5-10\ntrust 6" {class: accent}
-more: "10-20\ntrust 7.5" {class: accent}
-hundreds: "100s\ntrust 8.5" {class: accent}
-thousand: "1k+\ntrust 9" {class: accent}
-one -> few -> mid -> more -> hundreds -> thousand
+title: "Illustration: trust vs agents" {
+  shape: text
+  near: top-center
+}
+grid-rows: 6
+grid-columns: 1
+grid-gap: 10
+one: "1 · trust 1" {width: 48; height: 36}
+few: "1-5 · trust 4" {width: 120; height: 36}
+mid: "5-10 · trust 6" {width: 168; height: 36}
+more: "10-20 · trust 7.5" {width: 204; height: 36}
+hundreds: "100s · trust 8.5" {width: 228; height: 36}
+thousand: "1k+ · trust 9" {width: 252; height: 36}
 ```
 
 There's no shortcut along this curve. If you jump straight to thousands of cloud agents without trust, you mostly burn tokens, because nobody can tell which outputs are good.
