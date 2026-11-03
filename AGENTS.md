@@ -141,24 +141,35 @@ repository. Preserve existing behavior unless a change is explicitly requested.
 
 ## Diagrams
 
-Posts use `d2` fences, rendered to inline SVG at build time. Colours, sketch mode, ELK, and
-animated edges come from `src/theme/diagram.ts`. Name a class (`{class: hit}`). Do not put hex
-colours, `fill-pattern`, or a font in the fence. A line break is `\n` inside quotes.
-`direction: right` or `direction: down`. Sequence diagrams start with `shape: sequence_diagram`.
+Posts use `d2` fences, rendered to inline SVG at build time. Colours come from D2's Dark Mauve
+theme (200) via `src/theme/diagram.ts`, along with sketch mode, ELK, label size, container
+chrome, and edge animation. Do not put hex colours, `fill-pattern`, a font, or a theme id in
+the fence — the shared preamble owns those. A line break is `\n` inside quotes.
+`direction: down` when a diagram would be too wide to read on a ~390px phone; use
+`direction: right` only when it still fits. Sequence diagrams start with `shape: sequence_diagram`.
+
+Animated edges: solid main-flow arrows animate; dashed edges (replies, side notes, async) stay
+still. Set `style.stroke-dash: 4` on those non-flow edges — the preamble turns their animation
+off. Containers/group boxes always get a transparent fill, no hatch, and a white outline from
+the preamble (not the site accent).
 
 ````md
 ```d2
-direction: right
-Req: Request {class: neutral}
-Cache: "In cache?" {shape: diamond; class: decision}
-Hit: "Serve from cache" {class: hit}
+direction: down
+Req: Request
+Cache: "In cache?" {shape: diamond}
+Hit: "Serve from cache"
 Req -> Cache
 Cache -> Hit: yes
+Cache -> Req: miss {style.stroke-dash: 4}
 ```
 ````
 
 The build runs `scripts/d2/ensure.ts`, which downloads pinned D2 0.7.1 (ELK is inside the binary)
-into `.cache/d2`. That is what Vercel and GitHub Actions use. Don't pass a font to D2.
+into `.cache/d2`. That is what Vercel and GitHub Actions use. Don't pass a font to D2. Label
+text is sized in the preamble to match blog body text (about 16–17px). The renderer uses
+`--scale 1`, then `fitDiagramSvg` caps width to a phone column and boosts font-size so the
+rendered labels stay around that size on mobile and desktop.
 
 ## Commit Discipline
 

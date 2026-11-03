@@ -342,7 +342,7 @@ The three techniques above spread load out. Rate limiting does the opposite - it
 When a thundering herd hits, your DB doesn't fail because the requests are illegitimate. It fails because there are too many of them at once. Rate limiting at the edge - on your API gateway or load balancer - means you decide how many requests per second your backend will accept. Everything above that threshold gets rejected with a `429 Too Many Requests` before it ever touches your cache or DB.
 
 ```d2
-direction: right
+direction: down
 Users: "10,000 req/s\n(thundering herd)"
 LB: "Load Balancer\nRate Limiter" {class: cobalt}
 App: "App Servers"
@@ -371,7 +371,7 @@ Rate limiting is the last line of defense - not the first. You still want jitter
 Without any mitigation, a cache miss under high traffic goes straight to DB stampede:
 
 ```d2
-direction: right
+direction: down
 Users: "Thousands\nof requests"
 App: "App Servers"
 Cache: "Cache\n(expired)" {class: maroon}

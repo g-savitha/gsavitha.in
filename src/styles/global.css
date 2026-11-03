@@ -104,7 +104,11 @@
     font-feature-settings: 'ss01', 'calt', 'liga';
   }
 
-  /* D2 diagrams. The SVG carries D2's own font; do not restyle it here. */
+  /*
+   * D2 diagrams. The renderer fits each SVG to DIAGRAM_MAX_WIDTH and boosts font-size so
+   * labels stay near body text after the cap. Keep the SVG at its declared box — do not
+   * let a second CSS shrink pass crush the text.
+   */
   .diagram {
     margin-block: 1.5rem;
     max-width: 100%;
@@ -113,6 +117,7 @@
 
   .diagram svg {
     display: block;
+    width: auto;
     max-width: 100%;
     height: auto;
   }

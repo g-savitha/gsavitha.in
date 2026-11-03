@@ -91,7 +91,7 @@ The server should be **stateless**. Persistence belongs in a persistence layer.
 ## The Correct Foundation: Persist to a Database
 
 ```d2
-direction: right
+direction: down
 Client: Client {shape: oval; class: success}
 Server: Server {class: primary}
 LLM: "OpenAI / LLM" {class: accent}
@@ -116,7 +116,7 @@ These aren't deal-breakers — they're trade-offs that demand a smarter approach
 The fix for the latency problem is to stop writing to your database on the hot path. Instead, buffer recent messages in **Redis** — an in-memory data store designed for exactly this use case.
 
 ```d2
-direction: right
+direction: down
 Client: Client {shape: oval; class: success}
 Server: Server {class: primary}
 LLM: "OpenAI / LLM" {class: accent}
