@@ -154,9 +154,15 @@ Blog diagrams are hand-drawn Excalidraw scenes, shipped as SVG images.
   and `-- --png=/tmp/diagrams` for PNG previews. `scripts/diagrams/render.mjs` uses the real
   `@excalidraw/excalidraw` export in headless Chromium, blocks all network, and fails when a label
   doesn't fit its shape. It needs a Playwright Chromium (`bunx playwright-core install chromium`).
-- Icons: `diagrams/libraries/*.excalidrawlib`, public Excalidraw libraries (see the README there).
+- Libraries: `diagrams/libraries/*.excalidrawlib`, public MIT Excalidraw libraries (list in the
+  README there). Icons: it-icons, system-design, data-sources, robots. Low-level design: uml-er
+  (class, ER), uml-activity (states, actions, notes), flowchart, data-structures (arrays, linked
+  lists, trees, hash tables), graphs, network-topology, message-queue. Use them before drawing your
+  own.
 - Embed: `![plain alt text that says what the diagram shows](/diagrams/<post>/<name>.svg)`. CSS in
-  `src/styles/global.css` keeps the natural width on desktop and shrinks it to fit on phones.
+  `src/styles/global.css` keeps the natural width when it fits and shrinks it to the column when
+  it doesn't. `src/utils/rehypeDiagramZoom.ts` wraps every `/diagrams/` image in a link that opens
+  the full-size file in a new tab, so readers can zoom.
 
 Rules:
 
@@ -168,19 +174,23 @@ Rules:
   good or done, red is failure or miss, amber is a decision).
 - Group containers: transparent fill, thin light outline, readable title. Don't let arrows cross
   the title (put it at the bottom or right if they would).
-- Icons: use the shared libraries (database, cache, queue, Kafka, server, user, load balancer, CDN,
-  LLM model, robot for agents). Recolour them to the node's stroke colour and keep the label next
-  to the icon.
+- Icons only where they add meaning: people (user, client, requests), databases and caches, queues
+  and Kafka topics, AI or cloud services (LLM). No icons on plain steps, layers, files, or generic
+  services and servers. Take them from the shared libraries, recolour them to the node's stroke
+  colour, and keep the label next to the icon.
 - Labels: fontSize 16, secondary text 14 or 15 at minimum. Short and plain.
-- Size: design about 360 to 400 scene units wide, vertical and stacked. Rendered labels must be no
-  bigger than body text (16px) on desktop and around 13 to 15px on a 390px phone.
+- Size: flow diagrams are about 360 to 400 scene units wide, vertical and stacked. Rendered labels
+  must be no bigger than body text (16px) on desktop and around 13 to 15px on a 390px phone.
 - One diagram for both widths. No desktop/mobile variants, and never a horizontal scroll at 390px.
-- Sequence diagrams: up to 3 actors as vertical lanes, more as a numbered step list. Keep every
-  message.
+- Sequence diagrams are real sequence diagrams: actor header boxes, dashed lifelines, horizontal
+  labelled arrows (requests solid, returns dashed), notes as comment boxes. Keep every message.
+  They can be wider than the phone column (aim for 700 units or less so they stay readable on
+  desktop); they shrink to fit and readers tap through to zoom.
 - Charts and timelines are fine. Draw curves with line elements and points.
-- Before merging a diagram change, build, open the posts at 390px and 1280px, and look at every
-  diagram: readable labels, no overlap, text inside shapes, arrows connected, nothing cut off, and
-  `document.documentElement.scrollWidth <= 390` on the phone.
+- Before merging a diagram change, run `bun run verify:site` (it checks every diagram loads, links
+  to its full-size file, and causes no sideways scroll at 390px). Then open the posts at 390px and
+  1280px and look at every diagram: readable labels, no overlap, text inside shapes, arrows
+  connected, nothing cut off.
 
 ## Commit Discipline
 
