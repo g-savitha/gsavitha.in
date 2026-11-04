@@ -213,7 +213,7 @@ In production systems (Perplexity, Cursor, Claude), this pattern is more sophist
 
 Bringing it all together:
 
-![The complete architecture: client, API server, LLM API, context builder, Redis cache, facts DB, summary store, PostgreSQL, and a feedback loop with a sentiment engine, retrieval agent, and re-synthesis.](../../assets/context-window-hero.png)
+![The complete architecture: client, API server, LLM API, context builder, Redis cache, facts DB, summary store, PostgreSQL, and a feedback loop with a sentiment engine, retrieval agent, and re-synthesis.](/diagrams/context-management-window/complete-architecture.png)
 **Each component has a single responsibility:**
 
 - **API Server**: Stateless. Orchestrates the flow. Never holds conversation state in memory.

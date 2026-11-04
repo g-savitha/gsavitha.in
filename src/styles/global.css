@@ -105,9 +105,15 @@
   }
 
   /*
-   * Excalidraw diagrams (public/diagrams/<post>/*.svg). Natural width on desktop so 16px labels stay
-   * 16px; they shrink with the column on phones, never wider than it.
+   * Excalidraw diagrams (public/diagrams/<post>/*.svg). Natural width when it fits the column, so
+   * 16px labels stay 16px; wider ones shrink to the column, never past it. Each one links to the
+   * full-size file (rehypeDiagramZoom) so readers can zoom.
    */
+  .prose .diagram-link {
+    display: block;
+    cursor: zoom-in;
+  }
+
   .prose img[src^='/diagrams/'] {
     display: block;
     width: auto;

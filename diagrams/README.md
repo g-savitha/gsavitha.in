@@ -10,4 +10,5 @@ bun run diagrams -- --png=/tmp/diagrams   # also PNG previews on the site backgr
 ```
 
 The drawing rules (colours, sizes, layout, how to check them) are in
-[AGENTS.md](../AGENTS.md#diagrams). Icons come from [`libraries/`](libraries/README.md).
+[AGENTS.md](../AGENTS.md#diagrams). Icons and low-level design shapes (UML class and ER, activity and state, flowchart,
+data structures, graphs, network, message queues) are in [`libraries/`](libraries/README.md).

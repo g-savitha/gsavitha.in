@@ -1,6 +1,7 @@
 import rehypeKatex from 'rehype-katex';
 import remarkGemoji from 'remark-gemoji';
 import remarkMath from 'remark-math';
+import { rehypeDiagramZoom } from './rehypeDiagramZoom.ts';
 import { rehypeKatexDisplay } from './rehypeKatexDisplay.ts';
 import { rehypeTableScroll } from './rehypeTableScroll.ts';
 import { remarkProtectCurrency } from './remarkProtectCurrency.ts';
@@ -26,4 +27,5 @@ export const rehypePlugins = [
   withOptions(rehypeKatex, katexOptions),
   rehypeKatexDisplay,
   rehypeTableScroll,
+  rehypeDiagramZoom,
 ];

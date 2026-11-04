@@ -94,3 +94,14 @@ test('renders math in MDX with the same plugins', async () => {
   assert.match(source, /katex/);
   assert.match(source, /\$E=mc\^2\$/);
 });
+
+test('links each diagram to its full-size file in a new tab', async () => {
+  const html = await renderMarkdown(
+    '![Cache hit flow](/diagrams/thundering-herd/cache-hit.svg)\n\n![Photo](/images/cat.png)\n',
+  );
+  assert.match(
+    html,
+    /<a href="\/diagrams\/thundering-herd\/cache-hit.svg" target="_blank" rel="noopener" class="diagram-link"[^>]*><img src="\/diagrams\/thundering-herd\/cache-hit.svg" alt="Cache hit flow"/,
+  );
+  assert.equal(html.includes('href="/images/cat.png"'), false);
+});
