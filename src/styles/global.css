@@ -105,22 +105,68 @@
   }
 
   /*
-   * Diagrams keep their natural viewBox size so body-sized labels stay body-sized.
-   * max-width: 100% only caps overflow — any diagram that would shrink under the column
-   * needs a narrower D2 layout, not CSS scale-down.
+   * Diagrams keep natural viewBox size (16px labels stay 16px). Desktop/mobile variants
+   * swap via container query on the prose column so wide layouts never get scaled down.
+   * Sequence diagrams that still exceed the phone column may scroll inside the mobile
+   * variant as a last resort.
    */
   .diagram {
+    container-type: inline-size;
+    container-name: diagram;
     margin-block: 1.5rem;
     width: 100%;
     max-width: 100%;
-    overflow-x: auto;
+    display: flex;
+    justify-content: center;
   }
 
-  .diagram > svg {
+  .diagram-variant {
+    max-width: 100%;
+  }
+
+  .diagram-variant--desktop {
+    display: none;
+  }
+
+  .diagram-variant--mobile,
+  .diagram-variant--solo {
+    display: block;
+  }
+
+  /*
+   * The prose column is ~556px with the desktop sidebar, so the breakpoint must sit
+   * below that. Prefer the wide/horizontal variant whenever the column has room.
+   */
+  @container diagram (min-width: 480px) {
+    .diagram-variant--desktop {
+      display: block;
+    }
+
+    .diagram-variant--mobile {
+      display: none;
+    }
+  }
+
+  .diagram-variant svg {
     display: block;
     width: auto;
-    max-width: 100%;
+    max-width: none;
     height: auto;
+    margin-inline: auto;
+  }
+
+  /* Last resort: variants wider than the column scroll inside a quiet frame (no font shrink). */
+  .diagram-variant--scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+    border: 1px solid color-mix(in oklab, var(--color-border, #3f3f46) 70%, transparent);
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+  }
+
+  .diagram-variant--scroll svg {
+    max-width: none;
   }
 
   @media (prefers-reduced-motion: reduce) {

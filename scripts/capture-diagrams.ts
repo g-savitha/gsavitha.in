@@ -64,7 +64,12 @@ async function main() {
       ['mobile', 390],
       ['desktop', 1280],
     ] as const) {
-      await page.setViewportSize({ width, height: 2000 });
+      // Keep mobile at 390 so container queries pick the mobile variant. Desktop can be
+      // wider than 1280 so expanded natural-width shots are not clipped by the viewport.
+      await page.setViewportSize({
+        width: label === 'mobile' ? width : Math.max(width, 1600),
+        height: 2400,
+      });
       for (const slug of POSTS) {
         await page.goto(`${ORIGIN}/blog/${slug}/`, { waitUntil: 'networkidle' });
         const count = await page.locator('figure.diagram').count();
@@ -73,7 +78,7 @@ async function main() {
           await figure.scrollIntoViewIfNeeded();
           await page.waitForTimeout(100);
 
-          // Build a temporary wrapper around prev text + figure + next text for one shot.
+          // Build a temporary wrapper around prev text + the visible diagram variant + next text.
           const handle = await figure.evaluateHandle((el) => {
             let prev: Element | null = el.previousElementSibling;
             while (prev && (prev.tagName === 'FIGURE' || prev.classList.contains('diagram'))) {
@@ -90,7 +95,44 @@ async function main() {
             const parent = el.parentElement!;
             parent.insertBefore(wrap, el);
             if (prev) wrap.appendChild(prev.cloneNode(true));
-            wrap.appendChild(el.cloneNode(true));
+
+            const clone = el.cloneNode(true) as HTMLElement;
+            // Keep only the variant that is visible at this viewport so shots match what readers see.
+            const variants = [...clone.querySelectorAll<HTMLElement>('.diagram-variant')];
+            let naturalWidth = 0;
+            if (variants.length) {
+              const liveVariants = [...el.querySelectorAll<HTMLElement>('.diagram-variant')];
+              variants.forEach((variant, variantIndex) => {
+                const live = liveVariants[variantIndex];
+                const shown = live ? getComputedStyle(live).display !== 'none' : variantIndex === 0;
+                if (!shown) variant.remove();
+                else {
+                  // Expand scroll frames so the full natural-size SVG is in the shot
+                  // (readers still scroll on the live page; shots are for review).
+                  variant.style.display = 'block';
+                  variant.style.overflow = 'visible';
+                  variant.style.maxWidth = 'none';
+                  variant.classList.remove(
+                    'diagram-variant--desktop',
+                    'diagram-variant--mobile',
+                    'diagram-variant--scroll',
+                  );
+                  const svg = variant.querySelector('svg');
+                  if (svg instanceof SVGElement) {
+                    const vbW = svg.viewBox.baseVal.width || svg.clientWidth;
+                    naturalWidth = Math.max(naturalWidth, vbW);
+                    svg.style.maxWidth = 'none';
+                    svg.style.width = `${vbW}px`;
+                  }
+                }
+              });
+            }
+            // Wrapper must be at least as wide as the SVG, or Playwright clips the overflow.
+            if (naturalWidth > 0) {
+              wrap.style.width = `${Math.ceil(naturalWidth + 32)}px`;
+              wrap.style.maxWidth = 'none';
+            }
+            wrap.appendChild(clone);
             if (next) wrap.appendChild(next.cloneNode(true));
             return wrap;
           });

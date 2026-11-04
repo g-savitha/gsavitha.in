@@ -49,8 +49,7 @@ yLabel: Trust (low to high)
 yMin: 0
 yMax: 10
 x: [1, 1-5, 5-10, 10-20, 100s, 1k+]
-- name: trust
-  values: [1, 4, 6, 7.5, 8.5, 9]
+- values: [1, 4, 6, 7.5, 8.5, 9]
 ```
 
 There's no shortcut along this curve. If you jump straight to thousands of cloud agents without trust, you mostly burn tokens, because nobody can tell which outputs are good.
@@ -177,6 +176,15 @@ The talk puts these in five layers, from strongest to weakest:
 
 ```d2
 # alt: The five layers from strongest to weakest: codebase, static analysis, rules and Bugbot, skills, style guide. Codebase and static analysis are hard guardrails. The other three are soft.
+@@@desktop
+direction: right
+A: Codebase {class: success}
+B: "Static analysis" {class: success}
+C: "Rules and Bugbot" {class: warning}
+D: Skills {class: warning}
+E: "Style guide" {class: warning}
+A -> B -> C -> D -> E
+@@@mobile
 direction: down
 A: Codebase {class: success}
 B: "Static analysis" {class: success}

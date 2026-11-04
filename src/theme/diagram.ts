@@ -9,8 +9,8 @@
  * Animated edges: solid main-flow arrows animate; dashed edges (replies, side notes,
  * async) stay still.
  *
- * Prefer `direction: down` (and fewer side-by-side nodes) when a diagram would be too
- * crowded on a phone. CSS sizes the SVG to the article column; we do not shrink fonts.
+ * Posts should ship `@@@desktop` / `@@@mobile` variants when a wide layout would shrink
+ * below body-sized labels on a phone. Natural SVG size + 16px fonts; never CSS scale-down.
  */
 type Hex = `#${string}`;
 
@@ -113,6 +113,7 @@ export function d2Preamble(): string {
 
   const fallback = sharedClassSwatch('neutral');
 
+  // Do not set `*: style.fill` — in D2 that overrides `class:` fills and greys every node.
   return `vars: {
   d2-config: {
     sketch: true
@@ -122,14 +123,12 @@ export function d2Preamble(): string {
 }
 style.fill: "transparent"
 *: {
-  style.fill: "${fallback.fill}"
-  style.stroke: "${fallback.border}"
-  style.stroke-width: 2
-  style.font-color: "${fallback.text}"
   style.font-size: ${DIAGRAM_FONT_SIZE}
+  style.stroke-width: 2
 }
 classes: {
 ${classes}
+  unmarked: {style: {fill: "${fallback.fill}"; stroke: "${fallback.border}"; stroke-width: 2; font-color: "${fallback.text}"; font-size: ${DIAGRAM_FONT_SIZE}}}
 }
 (* -> *)[*]: {style: {stroke: "${DIAGRAM_EDGE}"; stroke-width: 2; animated: true; font-color: "${DIAGRAM_EDGE}"; font-size: ${DIAGRAM_FONT_SIZE}; italic: false}}
 (* -> *)[*]: {

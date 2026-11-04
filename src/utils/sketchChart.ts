@@ -55,19 +55,32 @@ function escapeXml(value: string): string {
     .replace(/"/g, '&quot;');
 }
 
-/**
- * Build a sketchy line chart SVG using the site palette, with a transparent background
- * so it sits on the portfolio surface like the D2 diagrams.
- */
-/** Match article body (1rem) and keep the chart narrower than a phone column. */
 const CHART_FONT = 16;
-const CHART_WIDTH = 340;
-const CHART_HEIGHT = 280;
 
-export function renderSketchChart(spec: SketchChartSpec): string {
-  const width = CHART_WIDTH;
-  const height = CHART_HEIGHT;
-  const pad = { top: 56, right: 16, bottom: 72, left: 44 };
+export type SketchChartVariant = 'mobile' | 'desktop';
+
+/**
+ * Build a sketchy line chart SVG using the site palette, with a transparent background.
+ * Mobile and desktop variants both use 16px labels at natural width (no CSS scale-down).
+ */
+export function renderSketchChart(
+  spec: SketchChartSpec,
+  variant: SketchChartVariant = 'mobile',
+): string {
+  // Desktop width stays inside the ~556px prose column so the last tick (1k+) is visible
+  // without horizontal scroll.
+  const width = variant === 'desktop' ? 540 : 340;
+  const namedSeries = spec.series.filter((series) => series.name);
+  const showLegend = namedSeries.length > 1;
+  const height = variant === 'desktop' ? 360 : 320;
+  // Extra right pad so the last tick label (e.g. "1k+") is not clipped.
+  // Extra top pad when a legend sits under a wrapped title.
+  const pad = {
+    top: showLegend ? 96 : 64,
+    right: variant === 'desktop' ? 48 : 40,
+    bottom: 64,
+    left: 48,
+  };
   const plotW = width - pad.left - pad.right;
   const plotH = height - pad.top - pad.bottom;
 
@@ -80,6 +93,20 @@ export function renderSketchChart(spec: SketchChartSpec): string {
   const yAt = (value: number) => pad.top + plotH * (1 - (value - yMin) / (yMax - yMin));
 
   const colours = [CHART.line, CHART.lineAlt, CHART.fill];
+
+  // Legend sits under the title (not under the x-axis) so it cannot look like a stray tick.
+  const legendY = 70;
+  const legendSvg = showLegend
+    ? namedSeries
+        .map((series, seriesIndex) => {
+          const colour = colours[seriesIndex % colours.length];
+          const x = pad.left + seriesIndex * (variant === 'desktop' ? 200 : 150);
+          return `<circle cx="${x}" cy="${legendY}" r="4" fill="${colour}" />
+  <text x="${x + 10}" y="${legendY + 5}" fill="${colour}" font-size="${CHART_FONT}">${escapeXml(series.name!)}</text>`;
+        })
+        .join('\n  ')
+    : '';
+
   const seriesPaths = spec.series
     .map((series, seriesIndex) => {
       const points = series.values.map((value, index) => ({
@@ -94,23 +121,22 @@ export function renderSketchChart(spec: SketchChartSpec): string {
             `<circle cx="${(point.x + wobble(seriesIndex * 40 + index, 0.6)).toFixed(1)}" cy="${(point.y + wobble(seriesIndex * 40 + index + 2, 0.6)).toFixed(1)}" r="3.2" fill="${colour}" stroke="${WHITE}" stroke-width="0.6" />`,
         )
         .join('');
-      const label =
-        series.name != null
-          ? `<text x="${pad.left + 4 + seriesIndex * 160}" y="${height - 14}" fill="${colour}" font-size="${CHART_FONT}">${escapeXml(series.name)}</text>`
-          : '';
-      return `<path d="${d}" fill="none" stroke="${colour}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />${dots}${label}`;
+      return `<path d="${d}" fill="none" stroke="${colour}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />${dots}`;
     })
     .join('');
 
   const xLabels = spec.x
     .map((label, index) => {
       const x = xAt(index);
-      // Show every other tick when the axis is dense so 16px labels stay readable.
-      if (spec.x.length > 6 && index % 2 === 1) {
-        return `<line x1="${x.toFixed(1)}" y1="${(pad.top + plotH).toFixed(1)}" x2="${x.toFixed(1)}" y2="${(pad.top + plotH + 5).toFixed(1)}" stroke="${CHART.axis}" stroke-width="1.5" />`;
-      }
-      return `<text x="${x.toFixed(1)}" y="${(height - 40).toFixed(1)}" text-anchor="middle" fill="${CHART.muted}" font-size="${CHART_FONT}">${escapeXml(label)}</text>
-      <line x1="${x.toFixed(1)}" y1="${(pad.top + plotH).toFixed(1)}" x2="${x.toFixed(1)}" y2="${(pad.top + plotH + 5).toFixed(1)}" stroke="${CHART.axis}" stroke-width="1.5" />`;
+      const showLabel =
+        variant === 'desktop' ||
+        spec.x.length <= 6 ||
+        index % 2 === 0 ||
+        index === spec.x.length - 1;
+      const tick = `<line x1="${x.toFixed(1)}" y1="${(pad.top + plotH).toFixed(1)}" x2="${x.toFixed(1)}" y2="${(pad.top + plotH + 5).toFixed(1)}" stroke="${CHART.axis}" stroke-width="1.5" />`;
+      if (!showLabel) return tick;
+      return `<text x="${x.toFixed(1)}" y="${(height - 36).toFixed(1)}" text-anchor="middle" fill="${CHART.muted}" font-size="${CHART_FONT}">${escapeXml(label)}</text>
+      ${tick}`;
     })
     .join('');
 
@@ -118,12 +144,12 @@ export function renderSketchChart(spec: SketchChartSpec): string {
     ? `<text x="14" y="${(pad.top + plotH / 2).toFixed(1)}" fill="${CHART.muted}" font-size="${CHART_FONT}" text-anchor="middle" transform="rotate(-90 14 ${(pad.top + plotH / 2).toFixed(1)})">${escapeXml(spec.yLabel)}</text>`
     : '';
   const xLabel = spec.xLabel
-    ? `<text x="${(pad.left + plotW / 2).toFixed(1)}" y="${height - 10}" text-anchor="middle" fill="${CHART.muted}" font-size="${CHART_FONT}">${escapeXml(spec.xLabel)}</text>`
+    ? `<text x="${(pad.left + plotW / 2).toFixed(1)}" y="${height - 12}" text-anchor="middle" fill="${CHART.muted}" font-size="${CHART_FONT}">${escapeXml(spec.xLabel)}</text>`
     : '';
 
-  // Wrap long titles onto two centered lines so 16px type fits the phone column.
   const titleLines = (() => {
-    if (spec.title.length <= 28) return [spec.title];
+    const limit = variant === 'desktop' ? 48 : 28;
+    if (spec.title.length <= limit) return [spec.title];
     const words = spec.title.split(/\s+/);
     const mid = Math.ceil(words.length / 2);
     return [words.slice(0, mid).join(' '), words.slice(mid).join(' ')];
@@ -138,6 +164,7 @@ export function renderSketchChart(spec: SketchChartSpec): string {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" role="img" aria-label="${escapeXml(spec.title)}">
   <rect width="${width}" height="${height}" fill="transparent" />
   ${titleSvg}
+  ${legendSvg}
   <line x1="${pad.left}" y1="${pad.top}" x2="${pad.left}" y2="${pad.top + plotH}" stroke="${CHART.axis}" stroke-width="2" />
   <line x1="${pad.left}" y1="${pad.top + plotH}" x2="${pad.left + plotW}" y2="${pad.top + plotH}" stroke="${CHART.axis}" stroke-width="2" />
   ${yLabel}

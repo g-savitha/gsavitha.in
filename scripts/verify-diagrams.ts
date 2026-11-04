@@ -104,22 +104,29 @@ async function main() {
 
             figures.forEach((figure, index) => {
               const diagram = index + 1;
-              const svg = figure.querySelector('svg');
+              // Only the CSS-visible variant (desktop or mobile) is checked at this viewport.
+              const variants = [...figure.querySelectorAll<HTMLElement>('.diagram-variant')];
+              const visibleVariant =
+                variants.find((variant) => getComputedStyle(variant).display !== 'none') ?? null;
+              const svg = (visibleVariant ?? figure).querySelector('svg');
               if (!svg) {
                 local.push({
                   route: routeName,
                   width: viewportWidth,
                   diagram,
-                  detail: 'missing svg',
+                  detail: 'missing visible svg',
                 });
                 return;
               }
 
-              const figBox = figure.getBoundingClientRect();
+              const allowsScroll = Boolean(
+                visibleVariant?.classList.contains('diagram-variant--scroll'),
+              );
+              const figBox = (visibleVariant ?? figure).getBoundingClientRect();
               const svgBox = svg.getBoundingClientRect();
-              // Natural-size diagrams may be narrower than the column; they must not overflow it
-              // (max-width: 100% would shrink labels below body size).
-              if (svgBox.width > contentWidth + 2) {
+              // Natural-size diagrams must not be CSS-shrunk. Scroll variants may be wider
+              // than the column; everything else must fit.
+              if (!allowsScroll && svgBox.width > contentWidth + 2) {
                 local.push({
                   route: routeName,
                   width: viewportWidth,
@@ -129,7 +136,7 @@ async function main() {
               }
 
               const gap = figBox.height - svgBox.height;
-              if (gap > 48) {
+              if (!allowsScroll && gap > 48) {
                 local.push({
                   route: routeName,
                   width: viewportWidth,
@@ -208,11 +215,13 @@ async function main() {
 
               for (let i = 0; i < boxes.length; i += 1) {
                 const a = boxes[i].box;
+                // Scroll frames intentionally clip horizontally; still require labels inside the SVG.
+                const bounds = allowsScroll ? svgBox : figBox;
                 if (
-                  a.left < figBox.left - 2 ||
-                  a.right > figBox.right + 2 ||
-                  a.top < figBox.top - 2 ||
-                  a.bottom > figBox.bottom + 2
+                  a.left < bounds.left - 2 ||
+                  a.right > bounds.right + 2 ||
+                  a.top < bounds.top - 2 ||
+                  a.bottom > bounds.bottom + 2
                 ) {
                   local.push({
                     route: routeName,

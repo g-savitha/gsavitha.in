@@ -20,12 +20,28 @@ x: [1, 1-5, 1k+]
 });
 
 test('renderSketchChart is transparent and uses site purple/pink strokes', () => {
-  const svg = renderSketchChart({
-    title: 'Demo',
-    x: ['a', 'b'],
-    series: [{ values: [1, 2] }],
-  });
+  const svg = renderSketchChart(
+    {
+      title: 'Demo',
+      x: ['a', 'b'],
+      series: [{ values: [1, 2] }],
+    },
+    'mobile',
+  );
   assert.match(svg, /fill="transparent"/);
   assert.match(svg, /#c084fc/i);
   assert.equal(/#1[Ee]1[Ee]2[Ee]/.test(svg), false);
+});
+
+test('single-series charts omit a legend name under the axis', () => {
+  const svg = renderSketchChart(
+    {
+      title: 'Illustration: trust vs agents',
+      x: ['1', '1k+'],
+      series: [{ name: 'trust', values: [1, 9] }],
+    },
+    'mobile',
+  );
+  assert.equal(/>trust</.test(svg), false);
+  assert.match(svg, /1k\+/);
 });
