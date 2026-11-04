@@ -161,8 +161,7 @@ Blog diagrams are hand-drawn Excalidraw scenes, shipped as SVG images.
   own.
 - Embed: `![plain alt text that says what the diagram shows](/diagrams/<post>/<name>.svg)`. CSS in
   `src/styles/global.css` keeps the natural width when it fits and shrinks it to the column when
-  it doesn't. `src/utils/rehypeDiagramZoom.ts` wraps every `/diagrams/` image in a link that opens
-  the full-size file in a new tab, so readers can zoom.
+  it doesn't. Diagrams are plain images, not links.
 
 Rules:
 
@@ -185,10 +184,10 @@ Rules:
 - Sequence diagrams are real sequence diagrams: actor header boxes, dashed lifelines, horizontal
   labelled arrows (requests solid, returns dashed), notes as comment boxes. Keep every message.
   They can be wider than the phone column (aim for 700 units or less so they stay readable on
-  desktop); they shrink to fit and readers tap through to zoom.
+  desktop); they scale down to fit the column.
 - Charts and timelines are fine. Draw curves with line elements and points.
-- Before merging a diagram change, run `bun run verify:site` (it checks every diagram loads, links
-  to its full-size file, and causes no sideways scroll at 390px). Then open the posts at 390px and
+- Before merging a diagram change, run `bun run verify:site` (it checks every diagram loads and
+  causes no sideways scroll at 390px). Then open the posts at 390px and
   1280px and look at every diagram: readable labels, no overlap, text inside shapes, arrows
   connected, nothing cut off.
 

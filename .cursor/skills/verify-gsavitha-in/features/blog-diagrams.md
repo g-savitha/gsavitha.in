@@ -6,14 +6,12 @@ Posts show hand-drawn Excalidraw diagrams as SVG images. The same file serves de
 
 - `diagram-render` every `diagrams/src/<post>/<name>.excalidraw` has a matching
   `public/diagrams/<post>/<name>.svg`, and `bun run diagrams` reports no label problems.
-- `diagram-embed` posts reference `/diagrams/<post>/<name>.svg` with real alt text. The
-  context-window post's complete architecture is a copy of its hero image at
-  `public/diagrams/context-management-window/complete-architecture.png`.
-- `diagram-zoom` every diagram is wrapped in `a.diagram-link` pointing at its own file with
-  `target="_blank"` (`src/utils/rehypeDiagramZoom.ts`), so readers can open it full size and zoom.
+- `diagram-embed` posts reference `/diagrams/<post>/<name>.svg` with real alt text, as plain
+  images (not links). The context-window post reuses its hero image
+  (`src/assets/context-window-hero.png`) for the complete architecture.
 - `diagram-fit` at 390px no page scrolls sideways. Flow diagrams land around 13 to 15px labels on
   the phone and natural width (16px labels) on desktop. Sequence diagrams are wider and shrink to
-  the 556px desktop column (about 12 to 16px labels) and further on the phone; tap through to zoom.
+  the 556px desktop column (about 12 to 16px labels) and further on the phone.
 - `diagram-icons` icons only on people, databases and caches, queues and Kafka topics, and AI
   services. Plain steps have none.
 
@@ -30,9 +28,9 @@ Preconditions: `bun install`, a Playwright Chromium, fresh `bun run build`, `bun
 - **Edit a diagram.** Change the `.excalidraw` source, run `bun run diagrams -- <post>`, and commit
   both files. A label that doesn't fit its shape fails the script.
 - **Check it.** `bun run verify:site` checks every source has an SVG, and that each diagram post
-  loads all its diagrams at 390px, links each one to its full-size file, and has no sideways scroll (evidence in
-  `verify-artifacts/diagrams-<post>-390.png`). Then screenshot each post above at 390px and 1280px and look at every diagram: labels
-  readable, no overlap, text inside shapes, arrows connected, nothing cut off. On the phone,
+  loads all its diagrams at 390px and has no sideways scroll (evidence in
+  `verify-artifacts/diagrams-<post>-390.png`). Then screenshot each post above at 390px and
+  1280px and look at every diagram: labels readable, no overlap, text inside shapes, arrows connected, nothing cut off. On the phone,
   `document.documentElement.scrollWidth` must be 390 or less. Rendered label px is
   `16 * img.clientWidth / img.naturalWidth`.
 
