@@ -36,6 +36,9 @@ on any failure; the build step fails first on Astro or content-schema errors.
   `--theme-color`; the GCP ACE mind map draws markmap nodes; clicking `Theme picker` then
   `Select pink theme` sets `data-theme`, changes `--theme-color` to that theme's hex, and
   survives a reload.
+- **Blog diagrams:** every `diagrams/src/**/*.excalidraw` has its SVG in `public/diagrams/`; every
+  post that embeds a diagram loads all of them at 390px, has no sideways scroll
+  (`scrollWidth <= 390`), and logs no console errors.
 
 Expected colours and theme names come from `src/theme/palette.ts` (`PALETTE`, `DEFAULT_THEME`,
 `THEME_NAMES`). `--theme-color` is an alias (`var(--theme-<name>)`); the script resolves the used
@@ -46,7 +49,8 @@ colour and compares it to `PALETTE`, so palette changes need no script edits.
 
 ## Evidence
 
-`$VERIFY_OUT/*.png` (one per page plus `home-theme-<name>.png`) and `summary.json` with every
+`$VERIFY_OUT/*.png` (one per page, `home-theme-<name>.png`, and a full-page
+`diagrams-<post>-390.png` per diagram post) and `summary.json` with every
 check. They survive cleanup. Look at the screenshots before claiming a visual change works: the
 script proves pages render and themes switch, not that a layout looks right.
 
@@ -65,11 +69,13 @@ screenshots. It is a suggestion: copy it to `.github/workflows/verify.yml` to tu
 
 - Visual judgment of new layouts or styles at mobile widths (`<1024px` switches to the mobile
   sidebar and its own ThemePicker).
-- Blog diagrams at 390px and 1280px: look at every diagram and check there's no sideways scroll.
-  Steps in [features/blog-diagrams.md](features/blog-diagrams.md).
+- Blog diagrams: the script proves they load and fit, not that they read well. Look at every
+  changed diagram at 390px and 1280px. Steps in
+  [features/blog-diagrams.md](features/blog-diagrams.md).
 - Audio player on a post with narration (needs R2 audio, not exercised here).
 - `bun run dev`-only content such as drafts (`draft: true` is omitted from builds).
 - External links (paper URLs, social links) are not fetched.
 
 Add a check to `scripts/verify.ts` rather than a step here when it can be scripted. Keep the
-feature map current with `/maintain-verification-skill`.
+feature map current with `/maintain-verification-skill`. After changing this skill, run an eval
+with [evals.md](evals.md).

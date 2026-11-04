@@ -24,7 +24,9 @@ Preconditions: `bun install`, a Playwright Chromium, fresh `bun run build`, `bun
 
 - **Edit a diagram.** Change the `.excalidraw` source, run `bun run diagrams -- <post>`, and commit
   both files. A label that doesn't fit its shape fails the script.
-- **Check it.** Screenshot each post above at 390px and 1280px and look at every diagram: labels
+- **Check it.** `bun run verify:site` checks every source has an SVG, and that each diagram post
+  loads all its diagrams at 390px with no sideways scroll (evidence in
+  `verify-artifacts/diagrams-<post>-390.png`). Then screenshot each post above at 390px and 1280px and look at every diagram: labels
   readable, no overlap, text inside shapes, arrows connected, nothing cut off. On the phone,
   `document.documentElement.scrollWidth` must be 390 or less. Rendered label px is
   `16 * img.clientWidth / img.naturalWidth`.

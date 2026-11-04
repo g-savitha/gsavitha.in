@@ -46,6 +46,19 @@ Navigation and social links live in `src/consts.ts` (`NAV_LINKS`, rendered by `S
 - Blog diagrams: Excalidraw sources in `diagrams/src/`, SVGs in `public/diagrams/`, re-rendered
   with `bun run diagrams`. See [Blog diagrams](./blog-diagrams.md).
 
+## Driving the UI
+
+- Find elements by role and ARIA label first (`Theme picker`, `Select <name> theme`, `Open menu`,
+  `Playback speed`), then by data attributes (`html[data-theme]`, `data-swatch`). Class names
+  (`.mindmap__canvas`, `.prose`) are a fallback, because they change with styling.
+- Wait for something a user would see, not a timeout: markmap nodes inside `.mindmap__canvas`, a
+  diagram `img` with `naturalWidth > 0` after you scroll it into view (images are lazy).
+- Read exact answers from the DOM (`--theme-color` resolved through a probe element,
+  `document.documentElement.scrollWidth`) and watch the console. `scripts/verify.ts` fails on any
+  console error.
+- New interactive UI needs an accessible name, plus a `data-*` attribute that says what it does when
+  no ARIA label fits.
+
 ## Data fetched at build time
 
 - GitHub contributions (`src/utils/githubContributions.ts`): needs `GITHUB_TOKEN`; missing token or

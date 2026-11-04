@@ -5,8 +5,9 @@
  * when `dist/` is already fresh. Evidence (screenshots + summary.json) goes to `VERIFY_OUT`
  * (default `verify-artifacts/`, gitignored). Exits 1 when any check fails.
  *
- * Steps: static checks on dist/ (newest papers, goodies, newest posts, internal links), then
- * `astro preview` + system Chrome via playwright-core (key pages, console errors, theme picker).
+ * Steps: static checks on dist/ (newest papers, goodies, newest posts, internal links, diagram
+ * SVGs), then `astro preview` + system Chrome via playwright-core (key pages, console errors, theme
+ * picker, blog diagrams at phone width).
  */
 import { spawn, type ChildProcess } from 'node:child_process';
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -22,6 +23,7 @@ const CHROME = process.env.CHROME_PATH ?? '/usr/bin/google-chrome';
 const PORT = Number(process.env.VERIFY_PORT ?? 4329);
 const ORIGIN = `http://127.0.0.1:${PORT}`;
 const NEWEST = 3;
+const PHONE_WIDTH = 390;
 
 type Result = { name: string; ok: boolean; detail: string };
 const results: Result[] = [];
@@ -80,6 +82,15 @@ function htmlFiles(dir: string): string[] {
   });
 }
 
+/** Built posts that embed at least one Excalidraw diagram from public/diagrams/. */
+function postsWithDiagrams(): string[] {
+  const blogDir = path.join(DIST, 'blog');
+  return readdirSync(blogDir).filter((slug) => {
+    const page = path.join(blogDir, slug, 'index.html');
+    return existsSync(page) && readFileSync(page, 'utf8').includes('src="/diagrams/');
+  });
+}
+
 function resolvesInDist(urlPath: string): boolean {
   const clean = decodeURIComponent(urlPath.split(/[?#]/)[0]).replace(/^\/+/, '');
   const target = path.join(DIST, clean);
@@ -121,6 +132,20 @@ function staticChecks(): void {
     check(`writings: /blog/${post.id}/ built`, existsSync(distPage(`/blog/${post.id}`)));
     check(`writings: "${title}" listed on /blog`, blogText.includes(title));
   }
+
+  // The build never renders diagrams, so a source without its SVG ships nothing.
+  const sources = readdirSync(path.join(ROOT, 'diagrams/src'), { recursive: true })
+    .map(String)
+    .filter((file) => file.endsWith('.excalidraw'));
+  const unrendered = sources.filter(
+    (file) =>
+      !existsSync(path.join(ROOT, 'public/diagrams', file.replace(/\.excalidraw$/, '.svg'))),
+  );
+  check(
+    `diagrams: ${sources.length} Excalidraw sources each have an SVG in public/diagrams/`,
+    unrendered.length === 0,
+    unrendered.length ? `run \`bun run diagrams\` for ${unrendered.slice(0, 5).join(', ')}` : '',
+  );
 
   const broken = new Map<string, Set<string>>();
   const files = htmlFiles(DIST);
@@ -171,8 +196,12 @@ function stopPreview(child: ChildProcess): void {
 }
 
 /** Opens a route and records console errors, uncaught exceptions, and failed same-origin requests. */
-async function visit(browser: Browser, route: string): Promise<{ page: Page; errors: string[] }> {
-  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+async function visit(
+  browser: Browser,
+  route: string,
+  width = 1280,
+): Promise<{ page: Page; errors: string[] }> {
+  const page = await browser.newPage({ viewport: { width, height: 900 } });
   const errors: string[] = [];
   page.on('console', (msg) => msg.type() === 'error' && errors.push(`console: ${msg.text()}`));
   page.on('pageerror', (error) => errors.push(`pageerror: ${error.message}`));
@@ -295,6 +324,46 @@ async function browserChecks(browser: Browser): Promise<void> {
   await page.close();
 }
 
+/** Every diagram loads and no post scrolls sideways on a phone. Looking at them is still manual. */
+async function diagramChecks(browser: Browser): Promise<void> {
+  for (const slug of postsWithDiagrams()) {
+    const route = `/blog/${slug}/`;
+    const { page, errors } = await visit(browser, route, PHONE_WIDTH);
+    const diagrams = page.locator('.prose img[src^="/diagrams/"]');
+    const count = await diagrams.count();
+    // Images are lazy, so bring each one on screen before asking whether it loaded.
+    for (let i = 0; i < count; i++) await diagrams.nth(i).scrollIntoViewIfNeeded();
+    const unloaded = await page.evaluate(async () => {
+      const images = [
+        ...document.querySelectorAll<HTMLImageElement>('.prose img[src^="/diagrams/"]'),
+      ];
+      await Promise.all(images.map((image) => image.decode().catch(() => undefined)));
+      return images
+        .filter((image) => !image.naturalWidth)
+        .map((image) => image.getAttribute('src'));
+    });
+    const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+    check(
+      `diagrams: ${count} on ${route} load at ${PHONE_WIDTH}px`,
+      count > 0 && unloaded.length === 0,
+      unloaded.join(', '),
+    );
+    check(
+      `diagrams: ${route} has no sideways scroll at ${PHONE_WIDTH}px`,
+      scrollWidth <= PHONE_WIDTH,
+      `scrollWidth ${scrollWidth}`,
+    );
+    check(`console: no errors on ${route}`, errors.length === 0, errors.slice(0, 5).join(' | '));
+    await page.evaluate(() => document.fonts.ready);
+    await page.screenshot({
+      path: path.join(OUT, `diagrams-${slug}-${PHONE_WIDTH}.png`),
+      fullPage: true,
+      animations: 'disabled',
+    });
+    await page.close();
+  }
+}
+
 // ---------- main ----------
 
 mkdirSync(OUT, { recursive: true });
@@ -314,6 +383,7 @@ let browser: Browser | undefined;
 try {
   browser = await chromium.launch({ executablePath: CHROME, args: ['--no-sandbox'] });
   await browserChecks(browser);
+  await diagramChecks(browser);
 } catch (error) {
   check('browser run completed', false, error instanceof Error ? error.message : String(error));
 } finally {
