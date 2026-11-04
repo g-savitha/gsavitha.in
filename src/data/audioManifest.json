@@ -68,13 +68,13 @@
     "en": {
       "label": "English",
       "language": "en",
-      "duration": 948.35,
-      "bytes": 7587264,
-      "hash": "7245d0ab6c061d3a5a495c916aa130d13495884096f1e390d5477babbbfdb1c0",
+      "duration": 951.87,
+      "bytes": 7615488,
+      "hash": "6e78758c7cc431a7221618e6446b2bff864664eeae8b6d96f1d0e47c55a26ef4",
       "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
       "voice": "af_heart",
-      "generatedAt": "2026-11-02T17:19:51.967Z",
-      "url": "https://audio.gsavitha.in/audio/blog/making-coding-agents-trustworthy/7245d0ab6c061d3a5a495c916aa130d13495884096f1e390d5477babbbfdb1c0/en.mp3"
+      "generatedAt": "2026-11-04T04:44:39.184Z",
+      "url": "https://audio.gsavitha.in/audio/blog/making-coding-agents-trustworthy/6e78758c7cc431a7221618e6446b2bff864664eeae8b6d96f1d0e47c55a26ef4/en.mp3"
     }
   },
   "prompt-caching": {
@@ -354,13 +354,13 @@
     "en": {
       "label": "English",
       "language": "en",
-      "duration": 941.88,
-      "bytes": 7535040,
-      "hash": "eea3d5664bcdec404f145dd38c27cf4050c4bad7b92044eae232421f9ca192c7",
+      "duration": 942.64,
+      "bytes": 7541568,
+      "hash": "8b00d6ffaeeb589319948e0fe29f9039973d8283e94d6cba514905223e2c93dd",
       "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
       "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:24:19.856Z",
-      "url": "https://audio.gsavitha.in/audio/blog/thundering-herd/eea3d5664bcdec404f145dd38c27cf4050c4bad7b92044eae232421f9ca192c7/en.mp3"
+      "generatedAt": "2026-11-04T04:58:37.691Z",
+      "url": "https://audio.gsavitha.in/audio/blog/thundering-herd/8b00d6ffaeeb589319948e0fe29f9039973d8283e94d6cba514905223e2c93dd/en.mp3"
     }
   },
   "data-normalization": {
