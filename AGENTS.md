@@ -7,6 +7,8 @@ repository. Preserve existing behavior unless a change is explicitly requested.
 
 - Work incrementally: complete, verify, and present one step for review before starting the next.
 - Keep each approved step in its own focused commit. Do not mix unrelated cleanup into a commit.
+- Split unrelated changes into separate PRs. One change per PR, with a title that names that one
+  change.
 - Before editing, inspect the working tree and staged changes. Preserve user-authored changes and
   avoid overwriting or reformatting unrelated files.
 - Reuse and improve existing code before introducing new abstractions or dependencies.
@@ -127,9 +129,9 @@ repository. Preserve existing behavior unless a change is explicitly requested.
 
 ## Verification
 
-- For page, component, style, or content changes, run `bun run verify:site` and follow
-  `.cursor/skills/verify-gsavitha-in/SKILL.md`. The site layout and where to add content are in
-  `.cursor/skills/verify-gsavitha-in/features/README.md`.
+- For page, component, style, or content changes, run `bun run verify:site` before you say you're
+  done, and follow `.cursor/skills/verify-gsavitha-in/SKILL.md`. The site layout and where to add
+  content are in `.cursor/skills/verify-gsavitha-in/features/README.md`.
 - Run the smallest relevant checks while developing, then run the broader project checks before a
   step is committed.
 - For source changes, normally run `bun run format:check`, `bunx astro check`, and `bun run build`.
@@ -137,6 +139,8 @@ repository. Preserve existing behavior unless a change is explicitly requested.
   as required checks. Do not claim a check passed when its tool or script is not yet configured.
 - Run relevant focused tests when changing tested functionality, and add tests for non-trivial logic
   or regressions when practical.
+- When you report back, show what you ran and what you saw (the command, its result, the
+  screenshots you looked at). Don't say "this should work".
 - Report checks that could not be run and any known risk or follow-up work.
 
 ## Diagrams
