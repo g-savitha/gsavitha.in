@@ -58,17 +58,20 @@ This doesn't scale. And it definitely doesn't survive production.
 Kafka puts a pipeline in the middle. Producers drop events into it. Consumers read from it. Nobody talks to each other directly.
 ```d2
 direction: down
-P: "Order Service\nProducer" {class: success}
+P: "Order Service · Producer" {class: success}
 K: Kafka {shape: cylinder; class: primary}
-C1: "Inventory Service" {class: info}
-C2: "Email Service" {class: info}
-C3: "Fraud Detection" {class: info}
-C4: Analytics {class: info}
+consumers: "Consumers" {
+  direction: down
+  C1: "Inventory Service" {class: info}
+  C2: "Email Service" {class: info}
+  C3: "Fraud Detection" {class: info}
+  C4: Analytics {class: info}
+}
 P -> K: "publishes events"
-K -> C1
-K -> C2
-K -> C3
-K -> C4
+K -> consumers.C1
+K -> consumers.C2
+K -> consumers.C3
+K -> consumers.C4
 ```
 The order service fires an event and moves on. It doesn't know — or care — who picks it up. You can add a fifth consumer tomorrow without touching the order service at all.
 
@@ -94,18 +97,22 @@ Producers write to a topic. Consumers subscribe to a topic. Multiple consumers c
 ```d2
 direction: down
 OS: "Order Service" {class: success}
-OT: "orders topic" {shape: package; class: accent}
-PT: "payments topic" {shape: package; class: accent}
-INV: "Inventory Service" {class: info}
-EMAIL: "Email Service" {class: info}
-BILL: "Billing Service" {class: info}
-FRAUD: "Fraud Detection" {class: info}
-OS -> OT: "order placed"
-OS -> PT: "payment done"
-OT -> INV
-OT -> EMAIL
-PT -> BILL
-PT -> FRAUD
+orders: "orders topic" {
+  shape: package
+  class: accent
+  direction: down
+  INV: "Inventory Service" {class: info}
+  EMAIL: "Email Service" {class: info}
+}
+payments: "payments topic" {
+  shape: package
+  class: accent
+  direction: down
+  BILL: "Billing Service" {class: info}
+  FRAUD: "Fraud Detection" {class: info}
+}
+OS -> orders: "order placed"
+OS -> payments: "payment done"
 ```
 Clean separation. Each topic is its own stream of events.
 
@@ -137,13 +144,14 @@ Each event in a partition gets a sequential number — its **offset**. Consumers
 One consumer reading a high-throughput topic won't keep up. Kafka lets you form a **consumer group** — multiple consumers splitting the partitions between them.
 ```d2
 direction: down
-GroupA: "Consumer Group A — Inventory" {
-  A1: "Consumer A1" {class: info}
-  A2: "Consumer A2" {class: info}
-}
 P0: "Partition 0" {class: secondary}
 P1: "Partition 1" {class: secondary}
 P2: "Partition 2" {class: secondary}
+GroupA: "Consumer Group A — Inventory" {
+  direction: down
+  A1: "Consumer A1" {class: info}
+  A2: "Consumer A2" {class: info}
+}
 P0 -> GroupA.A1
 P1 -> GroupA.A2
 P2 -> GroupA.A2
@@ -157,10 +165,12 @@ Different consumer groups are completely independent:
 direction: down
 T: "orders topic" {shape: package; class: accent}
 GroupA: "Consumer Group A — Inventory" {
+  direction: down
   A1: "Consumer A1" {class: info}
   A2: "Consumer A2" {class: info}
 }
 GroupB: "Consumer Group B — Analytics" {
+  direction: down
   B1: "Consumer B1" {class: info}
   B2: "Consumer B2" {class: info}
 }
@@ -194,11 +204,13 @@ This is why Kafka can comfortably handle millions of events per second on commod
 Every partition is replicated across multiple brokers. One broker is the **leader** — it handles all reads and writes for that partition. The others are **followers** — they replicate the leader's data continuously.
 ```d2
 direction: down
-P: "Partition 0\nLeader — Broker 1" {class: success}
-F1: "Follower — Broker 2" {class: info}
-F2: "Follower — Broker 3" {class: info}
-P -> F1: replicate
-P -> F2: replicate
+P: "Partition 0 · Leader — Broker 1" {class: success}
+followers: "Followers" {
+  direction: down
+  F1: "Follower — Broker 2" {class: info}
+  F2: "Follower — Broker 3" {class: info}
+}
+P -> followers: replicate
 ```
 If the leader goes down, a follower is automatically elected. No data loss. No manual intervention. Kafka keeps going.
 

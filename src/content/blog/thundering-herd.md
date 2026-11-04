@@ -102,11 +102,17 @@ Thousands of requests - all for the exact same data - hammer the database simult
 
 This is the distinction engineers miss most often. Both look like "elevated traffic" on a dashboard. They are completely different problems.
 
-```d2
-direction: down
-heading: "DB Queries/sec: Normal Traffic Spike vs Thundering Herd" {shape: text}
-normal: "Normal Traffic Spike\n-5m 1k · -4m 2k · -3m 6k · -2m 15k · -1m 28k · 0s 36k · +1m 30k · +2m 18k · +3m 8k" {class: primary}
-herd: "Thundering Herd\n-5m 1k · -4m 1k · -3m 1k · -2m 1k · -1m 1k · 0s 95k · +1m 80k · +2m 65k · +3m 40k" {class: success}
+```sketch-chart
+# alt: DB queries per second for a normal traffic spike versus a thundering herd over nine time points.
+title: "DB Queries/sec: Normal Traffic Spike vs Thundering Herd"
+yLabel: DB Queries/sec
+yMin: 0
+yMax: 100000
+x: [-5m, -4m, -3m, -2m, -1m, 0s, +1m, +2m, +3m]
+- name: Normal Traffic Spike
+  values: [1000, 2000, 6000, 15000, 28000, 36000, 30000, 18000, 8000]
+- name: Thundering Herd
+  values: [1000, 1000, 1000, 1000, 1000, 95000, 80000, 65000, 40000]
 ```
 A normal spike builds gradually. Your auto-scaler has time to react. Your cache is still serving most requests. The database sees incremental load it can manage.
 

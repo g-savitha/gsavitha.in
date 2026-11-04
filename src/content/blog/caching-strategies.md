@@ -125,14 +125,15 @@ Jitter spreads expiry across a population of keys. But what about a single very 
 Probabilistic early expiration solves this differently. Instead of waiting for the key to expire, some requests start recomputing it early. The closer the key is to expiring, the more likely any given request will trigger a background refresh.
 
 ```d2
+# alt: Timeline of early recomputation probability from cache set (0%) to key gone (must recompute).
 direction: down
-heading: "Probability of Early Recomputation Over Time" {shape: text}
-t0: "T=0\nCache set\n0% early" {class: neutral}
-t50: "T=50\nCloser\n~5%" {class: secondary}
-t75: "T=75\nHalfway\n~20%" {class: violet}
-t90: "T=90\nAlmost gone\n~40%" {class: teal}
-t99: "T=99\nNearly expired\n~90%" {class: amber}
-t100: "T=100\nKey gone\nmust recompute" {class: severity3}
+title: "Probability of Early Recomputation Over Time" {shape: text; near: top-center}
+t0: "T=0 · Cache set — 0% chance of early recompute" {class: neutral}
+t50: "T=50 · Getting closer — ~5% chance" {class: secondary}
+t75: "T=75 · Halfway through stale window — ~20% chance" {class: violet}
+t90: "T=90 · Almost expired — ~40% chance" {class: teal}
+t99: "T=99 · Basically expired — ~90% chance" {class: amber}
+t100: "T=100 · Key gone — must recompute" {class: severity3}
 t0 -> t50 -> t75 -> t90 -> t99 -> t100
 ```
 You do not need to understand the maths to use this pattern. The intuition is: the closer a key is to dying, the more aggressively the system tries to refresh it before it actually dies.

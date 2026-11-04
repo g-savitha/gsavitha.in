@@ -4,7 +4,7 @@ import { access, chmod, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { promisify } from 'node:util';
-import { DIAGRAM_FONT_SIZE, DIAGRAM_MAX_WIDTH, d2Preamble } from '../theme/diagram.ts';
+import { d2Preamble } from '../theme/diagram.ts';
 
 const execFileAsync = promisify(execFile);
 
@@ -99,59 +99,25 @@ function inlineSvg(svg: string): string {
 }
 
 /**
- * Keep label text near `DIAGRAM_FONT_SIZE` after the SVG is capped to `DIAGRAM_MAX_WIDTH`.
- * Wide diagrams get their font-size values boosted, then width/height are set so the browser
- * scales the whole drawing down — rendered text lands back around body size, with no
- * horizontal overflow on a phone column.
- *
- * D2 wraps the drawing in a nested `<svg class="d2-…">` that also carries width/height; both
- * the outer and inner boxes have to be capped or the inner one still overflows.
+ * Drop fixed pixel width/height so CSS can size the SVG to the article column from its
+ * viewBox. Outer gets width="100%"; nested D2 svg fills the outer box.
  */
-export function fitDiagramSvg(svg: string, maxWidth = DIAGRAM_MAX_WIDTH): string {
-  const root = svg.match(/^<svg\b[^>]*>/);
-  if (!root) return svg;
-
-  const viewBox = root[0].match(/\bviewBox="(?:[-0-9.]+\s+){2}([0-9.]+)\s+([0-9.]+)"/i);
-  const widthAttr = root[0].match(/\bwidth="([0-9.]+)"/i);
-  const heightAttr = root[0].match(/\bheight="([0-9.]+)"/i);
-  const width = Number(widthAttr?.[1] ?? viewBox?.[1]);
-  const height = Number(heightAttr?.[1] ?? viewBox?.[2]);
-  if (!Number.isFinite(width) || !Number.isFinite(height)) {
-    return svg;
-  }
-
-  // Even narrow diagrams can carry a D2 default larger than body text — normalise fonts.
-  if (width <= maxWidth) {
-    return svg.replace(/font-size:\s*[0-9.]+px/gi, `font-size: ${DIAGRAM_FONT_SIZE}px`);
-  }
-
-  const boost = width / maxWidth;
-  const fittedHeight = Number((height / boost).toFixed(3));
-  const widthToken = String(width);
-  const heightToken = heightAttr?.[1] ?? String(height);
-  // Force every label to the shared body size after scale-down, even if D2 left a
-  // default (e.g. 24px) on a container key.
-  const fittedFont = DIAGRAM_FONT_SIZE * boost;
-  const withFonts = svg.replace(
-    /font-size:\s*[0-9.]+px/gi,
-    `font-size: ${fittedFont.toFixed(3)}px`,
-  );
-
-  // Cap every svg box that still declares the unfitted pixel size (outer + D2 inner).
-  return withFonts
-    .replaceAll(`width="${widthToken}"`, `width="${maxWidth}"`)
-    .replaceAll(`height="${heightToken}"`, `height="${fittedHeight}"`);
+export function prepareDiagramSvg(svg: string): string {
+  let index = 0;
+  return svg.replace(/<svg\b([^>]*)>/gi, (_tag, attrs: string) => {
+    const isOuter = index === 0;
+    index += 1;
+    let next = attrs.replace(/\s*\bwidth="[^"]*"/gi, '').replace(/\s*\bheight="[^"]*"/gi, '');
+    next += isOuter ? ' width="100%"' : ' width="100%" height="100%"';
+    return `<svg${next}>`;
+  });
 }
 
 /** Render one author diagram. The shared preamble supplies colours, sketch, ELK, and animation. */
 export async function renderD2(authorSource: string): Promise<string> {
   const source = `${d2Preamble()}\n${authorSource.trim()}\n`;
   const dir = path.join(cacheDir(), 'svg');
-  // Cache key includes fit constants so bumping max width or font size busts stale SVGs.
-  const file = path.join(
-    dir,
-    `${cacheKey(`${source}\n#fit:${DIAGRAM_MAX_WIDTH}:${DIAGRAM_FONT_SIZE}`)}.svg`,
-  );
+  const file = path.join(dir, `${cacheKey(`${source}\n#prepare:v2`)}.svg`);
   try {
     return await readFile(file, 'utf8');
   } catch {
@@ -165,20 +131,15 @@ export async function renderD2(authorSource: string): Promise<string> {
   const output = path.join(work, 'diagram.svg');
   await writeFile(input, source);
   try {
-    // --scale 1 locks the SVG to content pixels before we fit it to the column.
-    await execFileAsync(
-      bin,
-      ['--layout', 'elk', '--scale', '1', '--timeout', '120', input, output],
-      {
-        maxBuffer: 16 * 1024 * 1024,
-      },
-    );
+    await execFileAsync(bin, ['--layout', 'elk', '--timeout', '120', input, output], {
+      maxBuffer: 16 * 1024 * 1024,
+    });
   } catch (error) {
     const stderr = error instanceof Error && 'stderr' in error ? String(error.stderr) : '';
     throw new Error(`D2 failed to render a diagram.\n${stderr || error}`);
   }
 
-  const svg = fitDiagramSvg(inlineSvg(await readFile(output, 'utf8')));
+  const svg = prepareDiagramSvg(inlineSvg(await readFile(output, 'utf8')));
   await rm(work, { recursive: true, force: true });
   if (!svg.startsWith('<svg')) throw new Error('D2 did not return an SVG.');
   await mkdir(dir, { recursive: true });

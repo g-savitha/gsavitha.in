@@ -105,19 +105,18 @@
   }
 
   /*
-   * D2 diagrams. The renderer fits each SVG to DIAGRAM_MAX_WIDTH and boosts font-size so
-   * labels stay near body text after the cap. Keep the SVG at its declared box — do not
-   * let a second CSS shrink pass crush the text.
+   * Diagrams fill the article column. SVG width/height attributes are normalised at render
+   * time so height follows the viewBox — no leftover blank gap under the drawing.
    */
   .diagram {
     margin-block: 1.5rem;
+    width: 100%;
     max-width: 100%;
-    overflow-x: auto;
   }
 
-  .diagram svg {
+  .diagram > svg {
     display: block;
-    width: auto;
+    width: 100%;
     max-width: 100%;
     height: auto;
   }

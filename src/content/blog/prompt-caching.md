@@ -68,19 +68,19 @@ Here's the idea in one picture. The first request computes everything. The secon
 ```d2
 direction: down
 R1: "Request 1: nothing cached yet" {
-  grid-columns: 4
-  A1: "System prompt\ncomputed" {class: miss}
-  A2: "Docs\ncomputed" {class: miss}
-  A3: "History\ncomputed" {class: miss}
-  A4: "Message A\ncomputed" {class: miss}
+  direction: down
+  A1: "System prompt · computed" {class: miss}
+  A2: "Docs · computed" {class: miss}
+  A3: "History · computed" {class: miss}
+  A4: "Message A · computed" {class: miss}
   A1 -> A2 -> A3 -> A4
 }
 R2: "Request 2: same start" {
-  grid-columns: 4
-  B1: "System prompt\nreused" {class: hit}
-  B2: "Docs\nreused" {class: hit}
-  B3: "History\nreused" {class: hit}
-  B4: "Message B\ncomputed" {class: miss}
+  direction: down
+  B1: "System prompt · reused" {class: hit}
+  B2: "Docs · reused" {class: hit}
+  B3: "History · reused" {class: hit}
+  B4: "Message B · computed" {class: miss}
   B1 -> B2 -> B3 -> B4
 }
 R1 -> R2: "start is saved"
@@ -102,7 +102,7 @@ It also means the same paragraph sitting at a different position isn't reused. T
 ```d2
 direction: down
 TOP: "Before the change: reused" {
-  grid-columns: 4
+  direction: down
   B1: "Block 1" {class: hit}
   B2: "Block 2" {class: hit}
   B3: "Block 3" {class: hit}
@@ -110,8 +110,8 @@ TOP: "Before the change: reused" {
   B1 -> B2 -> B3 -> B4
 }
 BOT: "From the change on: recomputed" {
-  grid-columns: 4
-  B5: "Block 5\nCHANGED" {class: miss}
+  direction: down
+  B5: "Block 5 · CHANGED" {class: miss}
   B6: "Block 6" {class: miss}
   B7: "Block 7" {class: miss}
   B8: "Block 8" {class: miss}

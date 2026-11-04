@@ -141,24 +141,28 @@ repository. Preserve existing behavior unless a change is explicitly requested.
 
 ## Diagrams
 
-Posts use `d2` fences, rendered to inline SVG at build time. Colours come from D2's Dark Mauve
-theme (200) via `src/theme/diagram.ts`, along with sketch mode, ELK, label size, container
-chrome, and edge animation. Do not put hex colours, `fill-pattern`, a font, or a theme id in
-the fence — the shared preamble owns those. A line break is `\n` inside quotes.
-`direction: down` when a diagram would be too wide to read on a ~390px phone; use
-`direction: right` only when it still fits. Sequence diagrams start with `shape: sequence_diagram`.
+Posts use `d2` fences (and `sketch-chart` for curve charts), rendered to inline SVG at build
+time. Colours come from the site diagram palette in `src/theme/diagram.ts` — no D2 built-in
+themes. The canvas fill is transparent so diagrams sit on the portfolio background. Sketch
+mode, ELK, and edge animation also come from the shared preamble. Name a class (`{class: hit}`).
+Do not put hex colours, `fill-pattern`, a font, or a theme id in the fence. A line break is
+`\n` inside quotes. Prefer `direction: down` (and fewer side-by-side nodes / shorter labels)
+when a diagram would be too crowded on a phone. Sequence diagrams start with
+`shape: sequence_diagram`.
 
 Animated edges: solid main-flow arrows animate; dashed edges (replies, side notes, async) stay
 still. Set `style.stroke-dash: 4` on those non-flow edges — the preamble turns their animation
-off. Containers/group boxes always get a transparent fill, no hatch, and a white outline from
-the preamble (not the site accent).
+off.
+
+Curve charts D2 cannot draw use a `sketch-chart` fence (same site palette, transparent
+background). Timelines can stay as vertical D2 flows.
 
 ````md
 ```d2
 direction: down
-Req: Request
-Cache: "In cache?" {shape: diamond}
-Hit: "Serve from cache"
+Req: Request {class: neutral}
+Cache: "In cache?" {shape: diamond; class: decision}
+Hit: "Serve from cache" {class: hit}
 Req -> Cache
 Cache -> Hit: yes
 Cache -> Req: miss {style.stroke-dash: 4}
@@ -166,10 +170,8 @@ Cache -> Req: miss {style.stroke-dash: 4}
 ````
 
 The build runs `scripts/d2/ensure.ts`, which downloads pinned D2 0.7.1 (ELK is inside the binary)
-into `.cache/d2`. That is what Vercel and GitHub Actions use. Don't pass a font to D2. Label
-text is sized in the preamble to match blog body text (about 16–17px). The renderer uses
-`--scale 1`, then `fitDiagramSvg` caps width to a phone column and boosts font-size so the
-rendered labels stay around that size on mobile and desktop.
+into `.cache/d2`. That is what Vercel and GitHub Actions use. Don't pass a font to D2. CSS sizes
+each diagram SVG to the full article column width (`height: auto` from the viewBox).
 
 ## Commit Discipline
 
