@@ -43,6 +43,8 @@ Navigation and social links live in `src/consts.ts` (`NAV_LINKS`, rendered by `S
 - `practice/ConsistencyHeatmap.tsx` and `practice/DsaProgress.tsx`: Home practice row.
 - `SearchableList.tsx`: client-side filter for `/papers`.
 - `blog/AudioPlayer.tsx`: narration player on posts with audio (`src/data/audioManifest.json`).
+- Blog diagrams: Excalidraw sources in `diagrams/src/`, SVGs in `public/diagrams/`, re-rendered
+  with `bun run diagrams`. See [Blog diagrams](./blog-diagrams.md).
 
 ## Data fetched at build time
 
@@ -65,3 +67,4 @@ Navigation and social links live in `src/consts.ts` (`NAV_LINKS`, rendered by `S
 - [Papershelf](./papershelf.md)
 - [Goodies and cheat sheets](./goodies.md)
 - [Theme picker](./theme-picker.md)
+- [Blog diagrams (Excalidraw)](./blog-diagrams.md)

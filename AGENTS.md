@@ -141,37 +141,42 @@ repository. Preserve existing behavior unless a change is explicitly requested.
 
 ## Diagrams
 
-Posts use `d2` fences (and `sketch-chart` for curve charts), rendered to inline SVG at build
-time. Colours come from the site diagram palette in `src/theme/diagram.ts` — no D2 built-in
-themes. The canvas fill is transparent so diagrams sit on the portfolio background. Sketch
-mode, ELK, and edge animation also come from the shared preamble. Name a class (`{class: hit}`).
-Do not put hex colours, `fill-pattern`, a font, or a theme id in the fence. A line break is
-`\n` inside quotes. Prefer `direction: down` (and fewer side-by-side nodes / shorter labels)
-when a diagram would be too crowded on a phone. Sequence diagrams start with
-`shape: sequence_diagram`.
+Blog diagrams are hand-drawn Excalidraw scenes, shipped as SVG images.
 
-Animated edges: solid main-flow arrows animate; dashed edges (replies, side notes, async) stay
-still. Set `style.stroke-dash: 4` on those non-flow edges — the preamble turns their animation
-off.
+- Sources: `diagrams/src/<post>/<name>.excalidraw`. Open and edit them in any Excalidraw editor
+  (the VS Code extension works). Don't share or upload them anywhere.
+- Output: `public/diagrams/<post>/<name>.svg`, committed. The site build never runs Chromium.
+- Re-render: `npm run diagrams` (or `bun run diagrams`), or `npm run diagrams -- kafka` for one post,
+  and `-- --png=/tmp/diagrams` for PNG previews. `scripts/diagrams/render.mjs` uses the real
+  `@excalidraw/excalidraw` export in headless Chromium, blocks all network, and fails when a label
+  doesn't fit its shape. It needs a Playwright Chromium (`bunx playwright-core install chromium`).
+- Icons: `diagrams/libraries/*.excalidrawlib`, public Excalidraw libraries (see the README there).
+- Embed: `![plain alt text that says what the diagram shows](/diagrams/<post>/<name>.svg)`. CSS in
+  `src/styles/global.css` keeps the natural width on desktop and shrinks it to fit on phones.
 
-Curve charts D2 cannot draw use a `sketch-chart` fence (same site palette, transparent
-background). Timelines can stay as vertical D2 flows.
+Rules:
 
-````md
-```d2
-direction: down
-Req: Request {class: neutral}
-Cache: "In cache?" {shape: diamond; class: decision}
-Hit: "Serve from cache" {class: hit}
-Req -> Cache
-Cache -> Hit: yes
-Cache -> Req: miss {style.stroke-dash: 4}
-```
-````
-
-The build runs `scripts/d2/ensure.ts`, which downloads pinned D2 0.7.1 (ELK is inside the binary)
-into `.cache/d2`. That is what Vercel and GitHub Actions use. Don't pass a font to D2. CSS sizes
-each diagram SVG to the full article column width (`height: auto` from the viewBox).
+- Keep every node and every relationship from the idea you're drawing. Never drop meaning to make it
+  fit. Redesign the layout instead.
+- Hand-drawn style: roughness 1, Virgil font (fontFamily 1). Transparent background.
+- Colours: bright strokes with dark fills of the same hue, so they read on the dark site
+  (`#18181b`). Text is light (`#e5e5e5`). Keep a colour meaning the same across a diagram (green is
+  good or done, red is failure or miss, amber is a decision).
+- Group containers: transparent fill, thin light outline, readable title. Don't let arrows cross
+  the title (put it at the bottom or right if they would).
+- Icons: use the shared libraries (database, cache, queue, Kafka, server, user, load balancer, CDN,
+  LLM model, robot for agents). Recolour them to the node's stroke colour and keep the label next
+  to the icon.
+- Labels: fontSize 16, secondary text 14 or 15 at minimum. Short and plain.
+- Size: design about 360 to 400 scene units wide, vertical and stacked. Rendered labels must be no
+  bigger than body text (16px) on desktop and around 13 to 15px on a 390px phone.
+- One diagram for both widths. No desktop/mobile variants, and never a horizontal scroll at 390px.
+- Sequence diagrams: up to 3 actors as vertical lanes, more as a numbered step list. Keep every
+  message.
+- Charts and timelines are fine. Draw curves with line elements and points.
+- Before merging a diagram change, build, open the posts at 390px and 1280px, and look at every
+  diagram: readable labels, no overlap, text inside shapes, arrows connected, nothing cut off, and
+  `document.documentElement.scrollWidth <= 390` on the phone.
 
 ## Commit Discipline
 

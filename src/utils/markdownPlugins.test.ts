@@ -68,16 +68,6 @@ test('renders code comments in italic', async () => {
   assert.equal(/font-style:\s*italic/i.test(html.split('const')[0] ?? ''), false);
 });
 
-test('renders d2 fences to inline svg and keeps the dash animation', async () => {
-  const html = await renderMarkdown(
-    '```d2\ndirection: right\nA: One {class: hit}\nB: Two {class: miss}\nA -> B: go\n```\n',
-  );
-  assert.match(html, /<figure class="diagram not-prose">/);
-  assert.match(html, /<svg[\s\S]*@keyframes dashdraw/);
-  assert.match(html, /animation: dashdraw/);
-  assert.equal(html.includes('katex'), false);
-});
-
 test('wraps tables in a focusable horizontal scroll region', async () => {
   const html = await renderMarkdown('| a | b |\n| --- | --- |\n| `x` | y |\n');
   assert.match(

@@ -65,50 +65,7 @@ That part is standard. Prompt caching takes one extra step: it keeps the prefix 
 
 Here's the idea in one picture. The first request computes everything. The second request starts the same way, so it reuses that start and only computes the new message.
 
-```d2
-@@@desktop
-direction: down
-R1: "Request 1: nothing cached yet" {
-  style.fill: "transparent"
-  grid-columns: 4
-  A1: "System prompt\ncomputed" {class: miss}
-  A2: "Docs\ncomputed" {class: miss}
-  A3: "History\ncomputed" {class: miss}
-  A4: "Message A\ncomputed" {class: miss}
-  A1 -> A2 -> A3 -> A4
-}
-R2: "Request 2: same start" {
-  style.fill: "transparent"
-  grid-columns: 4
-  B1: "System prompt\nreused" {class: hit}
-  B2: "Docs\nreused" {class: hit}
-  B3: "History\nreused" {class: hit}
-  B4: "Message B\ncomputed" {class: miss}
-  B1 -> B2 -> B3 -> B4
-}
-R1 -> R2: "start is saved"
-@@@mobile
-direction: down
-R1: "Request 1: nothing cached yet" {
-  style.fill: "transparent"
-  direction: down
-  A1: "System prompt\ncomputed" {class: miss}
-  A2: "Docs\ncomputed" {class: miss}
-  A3: "History\ncomputed" {class: miss}
-  A4: "Message A\ncomputed" {class: miss}
-  A1 -> A2 -> A3 -> A4
-}
-R2: "Request 2: same start" {
-  style.fill: "transparent"
-  direction: down
-  B1: "System prompt\nreused" {class: hit}
-  B2: "Docs\nreused" {class: hit}
-  B3: "History\nreused" {class: hit}
-  B4: "Message B\ncomputed" {class: miss}
-  B1 -> B2 -> B3 -> B4
-}
-R1 -> R2: "start is saved"
-```
+![Request 1 computes the system prompt, docs, history, and message A. Request 2 starts the same way, so it reuses those and only computes message B.](/diagrams/prompt-caching/two-requests.svg)
 ## Why only the start can be reused
 
 This is the key idea behind everything else in this post.
@@ -123,50 +80,7 @@ Put those together and you get one simple rule. If you change token 5, the value
 
 It also means the same paragraph sitting at a different position isn't reused. The position is different, and so is everything before it.
 
-```d2
-@@@desktop
-direction: down
-Before: "Before the change: reused" {
-  style.fill: "transparent"
-  grid-columns: 4
-  B1: "Block 1" {class: hit}
-  B2: "Block 2" {class: hit}
-  B3: "Block 3" {class: hit}
-  B4: "Block 4" {class: hit}
-  B1 -> B2 -> B3 -> B4
-}
-After: "From the change on: recomputed" {
-  style.fill: "transparent"
-  grid-columns: 4
-  B5: "Block 5\nCHANGED" {class: miss}
-  B6: "Block 6" {class: miss}
-  B7: "Block 7" {class: miss}
-  B8: "Block 8" {class: miss}
-  B5 -> B6 -> B7 -> B8
-}
-Before -> After
-@@@mobile
-direction: down
-Before: "Before the change: reused" {
-  style.fill: "transparent"
-  direction: down
-  B1: "Block 1" {class: hit}
-  B2: "Block 2" {class: hit}
-  B3: "Block 3" {class: hit}
-  B4: "Block 4" {class: hit}
-  B1 -> B2 -> B3 -> B4
-}
-After: "From the change on: recomputed" {
-  style.fill: "transparent"
-  direction: down
-  B5: "Block 5\nCHANGED" {class: miss}
-  B6: "Block 6" {class: miss}
-  B7: "Block 7" {class: miss}
-  B8: "Block 8" {class: miss}
-  B5 -> B6 -> B7 -> B8
-}
-Before -> After
-```
+![Blocks 1 to 4 before a change are reused. Block 5 changed, so blocks 5 to 8 are all recomputed.](/diagrams/prompt-caching/change-invalidates.svg)
 ## Blocks, hashes and routing
 
 So how does a provider actually find a matching prefix? The open-source inference engine vLLM documents one way to do it, and it's a good mental model.
@@ -235,34 +149,7 @@ Anthropic always builds the prefix as tools, then system, then messages. A chang
 
 The Claude Code team describes the same layering in their own product: static system prompt and tools first, then CLAUDE.md, then session context, then the conversation.
 
-```d2
-@@@desktop
-direction: down
-S1: "Stays the same" {shape: oval; class: hit}
-T: Tools {class: hit}
-S: "System prompt" {class: hit}
-D: "Docs and examples" {class: hit}
-BP: "Cache breakpoint" {shape: hexagon; class: neutral}
-H: "Conversation history" {class: neutral}
-M: "New message" {class: miss}
-S2: "Changes every time" {shape: oval; class: miss}
-S1 -> T: "" {style.opacity: 0; style.stroke-width: 0; style.animated: false}
-T -> S -> D -> BP -> H -> M
-M -> S2: "" {style.opacity: 0; style.stroke-width: 0; style.animated: false}
-@@@mobile
-direction: down
-S1: "Stays the same" {shape: oval; class: hit}
-T: Tools {class: hit}
-S: "System prompt" {class: hit}
-D: "Docs and examples" {class: hit}
-BP: "Cache breakpoint" {shape: hexagon; class: neutral}
-H: "Conversation history" {class: neutral}
-M: "New message" {class: miss}
-S2: "Changes every time" {shape: oval; class: miss}
-S1 -> T: "" {style.opacity: 0; style.stroke-width: 0; style.animated: false}
-T -> S -> D -> BP -> H -> M
-M -> S2: "" {style.opacity: 0; style.stroke-width: 0; style.animated: false}
-```
+![Prompt order from stays the same to changes every time: tools, system prompt, docs and examples, the cache breakpoint, conversation history, then the new message.](/diagrams/prompt-caching/prompt-order.svg)
 ## How to check that it's working
 
 You don't have to guess. Every provider reports cache activity in the `usage` part of the response.

@@ -56,35 +56,7 @@ This doesn't scale. And it definitely doesn't survive production.
 ## Kafka: A Central Message Pipeline
 
 Kafka puts a pipeline in the middle. Producers drop events into it. Consumers read from it. Nobody talks to each other directly.
-```d2
-@@@desktop
-direction: right
-P: "Order Service\nProducer" {class: success}
-K: Kafka {shape: cylinder; class: primary}
-C1: "Inventory Service" {class: info}
-C2: "Email Service" {class: info}
-C3: "Fraud Detection" {class: info}
-C4: Analytics {class: info}
-P -> K: "publishes events"
-K -> C1
-K -> C2
-K -> C3
-K -> C4
-@@@mobile
-direction: down
-P: "Order Service\nProducer" {class: success}
-K: Kafka {shape: cylinder; class: primary}
-consumers: Consumers {
-  style.fill: "transparent"
-  grid-columns: 1
-  C1: "Inventory Service" {class: info}
-  C2: "Email Service" {class: info}
-  C3: "Fraud Detection" {class: info}
-  C4: Analytics {class: info}
-}
-P -> K: "publishes events"
-K -> consumers
-```
+![The order service publishes events to Kafka, and Kafka feeds the inventory service, email service, fraud detection, and analytics.](/diagrams/kafka-explained-like-you-are-5/producer-consumers.svg)
 The order service fires an event and moves on. It doesn't know — or care — who picks it up. You can add a fifth consumer tomorrow without touching the order service at all.
 
 That's the core idea. Everything else builds on top of it.
@@ -106,36 +78,7 @@ Old events don't vanish when one consumer reads them. Another consumer can read 
 Kafka organises events into **topics**. A topic is just a named channel — `orders`, `payments`, `user-signups`.
 
 Producers write to a topic. Consumers subscribe to a topic. Multiple consumers can read the same topic independently without interfering with each other.
-```d2
-@@@desktop
-direction: right
-OS: "Order Service" {class: success}
-OT: "orders topic" {shape: package; class: accent}
-PT: "payments topic" {shape: package; class: accent}
-INV: "Inventory Service" {class: info}
-EMAIL: "Email Service" {class: info}
-BILL: "Billing Service" {class: info}
-FRAUD: "Fraud Detection" {class: info}
-OS -> OT: "order placed"
-OS -> PT: "payment done"
-OT -> INV
-OT -> EMAIL
-PT -> BILL
-PT -> FRAUD
-@@@mobile
-direction: down
-OS: "Order Service" {class: success}
-OT: orders {shape: package; class: accent}
-INV: Inventory {class: info}
-EMAIL: Email {class: info}
-PT: payments {shape: package; class: accent}
-BILL: Billing {class: info}
-FRAUD: Fraud {class: info}
-OS -> OT: "order placed"
-OT -> INV -> EMAIL
-OS -> PT: "payment done"
-PT -> BILL -> FRAUD
-```
+![The order service sends order placed to the orders topic and payment done to the payments topic. Inventory and email read orders. Billing and fraud detection read payments.](/diagrams/kafka-explained-like-you-are-5/topics.svg)
 Clean separation. Each topic is its own stream of events.
 
 ---
@@ -143,30 +86,7 @@ Clean separation. Each topic is its own stream of events.
 ## Partitions: How Kafka Handles Scale
 
 A single topic can receive millions of events per second. One machine can't handle that. So Kafka splits each topic into **partitions** — parallel lanes.
-```d2
-@@@desktop
-direction: right
-T: "orders topic" {shape: package; class: accent}
-parts: {
-  style.fill: "transparent"
-  direction: down
-  P0: "Partition 0\nevent 0 → event 1 → event 2" {class: secondary}
-  P1: "Partition 1\nevent 0 → event 1 → event 2" {class: secondary}
-  P2: "Partition 2\nevent 0 → event 1 → event 2" {class: secondary}
-}
-T -> parts
-@@@mobile
-direction: down
-T: "orders topic" {shape: package; class: accent}
-parts: Partitions {
-  style.fill: "transparent"
-  grid-columns: 1
-  P0: "Partition 0\ne0 → e1 → e2" {class: secondary}
-  P1: "Partition 1\ne0 → e1 → e2" {class: secondary}
-  P2: "Partition 2\ne0 → e1 → e2" {class: secondary}
-}
-T -> parts
-```
+![The orders topic split into three partitions, each holding its own ordered events 0, 1, 2.](/diagrams/kafka-explained-like-you-are-5/partitions.svg)
 Each partition is an ordered, append-only log. Events within a partition are strictly ordered. Kafka distributes partitions across multiple servers (brokers), so no single machine is a bottleneck.
 
 Each event in a partition gets a sequential number — its **offset**. Consumers track their own offset. This is what makes Kafka powerful: a slow consumer doesn't block a fast one, and any consumer can replay events from any point just by resetting its offset.
@@ -178,65 +98,13 @@ Each event in a partition gets a sequential number — its **offset**. Consumers
 ## Consumer Groups: Sharing the Work
 
 One consumer reading a high-throughput topic won't keep up. Kafka lets you form a **consumer group** — multiple consumers splitting the partitions between them.
-```d2
-@@@desktop
-direction: right
-GroupA: "Consumer Group A — Inventory" {
-  A1: "Consumer A1" {class: info}
-  A2: "Consumer A2" {class: info}
-}
-P0: "Partition 0" {class: secondary}
-P1: "Partition 1" {class: secondary}
-P2: "Partition 2" {class: secondary}
-P0 -> GroupA.A1
-P1 -> GroupA.A2
-P2 -> GroupA.A2
-@@@mobile
-direction: down
-P0: "Partition 0" {class: secondary}
-A1: "Consumer A1" {class: info}
-P1: "Partition 1" {class: secondary}
-P2: "Partition 2" {class: secondary}
-A2: "Consumer A2" {class: info}
-P0 -> A1
-P1 -> P2 -> A2
-```
+![Consumer group A for inventory: partition 0 goes to consumer A1, partitions 1 and 2 go to consumer A2.](/diagrams/kafka-explained-like-you-are-5/consumer-group.svg)
 Each partition is owned by exactly one consumer within the group. Add more consumers and Kafka rebalances automatically. Remove one and Kafka redistributes its partitions.
 
 **The ceiling:** you can never have more active consumers in a group than you have partitions. If you have 3 partitions and 5 consumers, 2 of them sit idle. This is why partition count matters when you're planning for scale.
 
 Different consumer groups are completely independent:
-```d2
-@@@desktop
-direction: right
-T: "orders topic" {shape: package; class: accent}
-GroupA: "Consumer Group A — Inventory" {
-  A1: "Consumer A1" {class: info}
-  A2: "Consumer A2" {class: info}
-}
-GroupB: "Consumer Group B — Analytics" {
-  B1: "Consumer B1" {class: info}
-  B2: "Consumer B2" {class: info}
-}
-T -> GroupA.A1
-T -> GroupA.A2
-T -> GroupB.B1
-T -> GroupB.B2
-@@@mobile
-direction: down
-T: "orders topic" {shape: package; class: accent}
-GroupA: "Group A — Inventory" {
-  grid-rows: 2
-  A1: "Consumer A1" {class: info}
-  A2: "Consumer A2" {class: info}
-}
-GroupB: "Group B — Analytics" {
-  grid-rows: 2
-  B1: "Consumer B1" {class: info}
-  B2: "Consumer B2" {class: info}
-}
-T -> GroupA -> GroupB
-```
+![The orders topic feeds two independent groups: group A for inventory with consumers A1 and A2, and group B for analytics with consumers B1 and B2.](/diagrams/kafka-explained-like-you-are-5/two-groups.svg)
 Group A and Group B both read the same topic — each with their own offsets, their own pace, zero interference. Neither group knows the other exists. Kafka doesn't delete messages when one group reads them. Both read the full stream.
 
 ---
@@ -260,21 +128,7 @@ This is why Kafka can comfortably handle millions of events per second on commod
 ## How Kafka Keeps Messages Safe
 
 Every partition is replicated across multiple brokers. One broker is the **leader** — it handles all reads and writes for that partition. The others are **followers** — they replicate the leader's data continuously.
-```d2
-@@@desktop
-direction: right
-P: "Partition 0\nLeader — Broker 1" {class: success}
-F1: "Follower — Broker 2" {class: info}
-F2: "Follower — Broker 3" {class: info}
-P -> F1: replicate
-P -> F2: replicate
-@@@mobile
-direction: down
-P: "Partition 0\nLeader — Broker 1" {class: success}
-F1: "Follower — Broker 2" {class: info}
-F2: "Follower — Broker 3" {class: info}
-P -> F1 -> F2
-```
+![Partition 0's leader on broker 1 replicates to followers on brokers 2 and 3.](/diagrams/kafka-explained-like-you-are-5/replication.svg)
 If the leader goes down, a follower is automatically elected. No data loss. No manual intervention. Kafka keeps going.
 
 Combined with configurable **retention** (7 days, 30 days, or forever), you get:
