@@ -58,20 +58,11 @@ This doesn't scale. And it definitely doesn't survive production.
 Kafka puts a pipeline in the middle. Producers drop events into it. Consumers read from it. Nobody talks to each other directly.
 ```d2
 direction: down
-P: "Order Service · Producer" {class: success}
+P: "Order Service\nProducer" {class: success}
 K: Kafka {shape: cylinder; class: primary}
-consumers: "Consumers" {
-  direction: down
-  C1: "Inventory Service" {class: info}
-  C2: "Email Service" {class: info}
-  C3: "Fraud Detection" {class: info}
-  C4: Analytics {class: info}
-}
-P -> K: "publishes events"
-K -> consumers.C1
-K -> consumers.C2
-K -> consumers.C3
-K -> consumers.C4
+C: "Consumers\nInventory, Email\nFraud, Analytics" {class: info}
+P -> K: publishes
+K -> C
 ```
 The order service fires an event and moves on. It doesn't know — or care — who picks it up. You can add a fifth consumer tomorrow without touching the order service at all.
 
@@ -97,22 +88,8 @@ Producers write to a topic. Consumers subscribe to a topic. Multiple consumers c
 ```d2
 direction: down
 OS: "Order Service" {class: success}
-orders: "orders topic" {
-  shape: package
-  class: accent
-  direction: down
-  INV: "Inventory Service" {class: info}
-  EMAIL: "Email Service" {class: info}
-}
-payments: "payments topic" {
-  shape: package
-  class: accent
-  direction: down
-  BILL: "Billing Service" {class: info}
-  FRAUD: "Fraud Detection" {class: info}
-}
-OS -> orders: "order placed"
-OS -> payments: "payment done"
+Topics: "Publishes to both topics\norders: Inventory, Email\npayments: Billing, Fraud" {class: accent}
+OS -> Topics
 ```
 Clean separation. Each topic is its own stream of events.
 
@@ -123,13 +100,9 @@ Clean separation. Each topic is its own stream of events.
 A single topic can receive millions of events per second. One machine can't handle that. So Kafka splits each topic into **partitions** — parallel lanes.
 ```d2
 direction: down
-T: "orders topic" {shape: package; class: accent}
-P0: "Partition 0\nevent 0 → event 1 → event 2" {class: secondary}
-P1: "Partition 1\nevent 0 → event 1 → event 2" {class: secondary}
-P2: "Partition 2\nevent 0 → event 1 → event 2" {class: secondary}
-T -> P0
-T -> P1
-T -> P2
+T: "orders topic" {class: accent}
+Parts: "Parallel partitions\nP0: e0 -> e1 -> e2\nP1: e0 -> e1 -> e2\nP2: e0 -> e1 -> e2" {class: secondary}
+T -> Parts
 ```
 Each partition is an ordered, append-only log. Events within a partition are strictly ordered. Kafka distributes partitions across multiple servers (brokers), so no single machine is a bottleneck.
 
@@ -144,17 +117,10 @@ Each event in a partition gets a sequential number — its **offset**. Consumers
 One consumer reading a high-throughput topic won't keep up. Kafka lets you form a **consumer group** — multiple consumers splitting the partitions between them.
 ```d2
 direction: down
-P0: "Partition 0" {class: secondary}
-P1: "Partition 1" {class: secondary}
-P2: "Partition 2" {class: secondary}
-GroupA: "Consumer Group A — Inventory" {
-  direction: down
-  A1: "Consumer A1" {class: info}
-  A2: "Consumer A2" {class: info}
-}
-P0 -> GroupA.A1
-P1 -> GroupA.A2
-P2 -> GroupA.A2
+G: "Group A - Inventory" {class: info}
+A1: "Consumer A1\nowns P0" {class: info}
+A2: "Consumer A2\nowns P1 + P2" {class: info}
+G -> A1 -> A2
 ```
 Each partition is owned by exactly one consumer within the group. Add more consumers and Kafka rebalances automatically. Remove one and Kafka redistributes its partitions.
 
@@ -163,21 +129,9 @@ Each partition is owned by exactly one consumer within the group. Add more consu
 Different consumer groups are completely independent:
 ```d2
 direction: down
-T: "orders topic" {shape: package; class: accent}
-GroupA: "Consumer Group A — Inventory" {
-  direction: down
-  A1: "Consumer A1" {class: info}
-  A2: "Consumer A2" {class: info}
-}
-GroupB: "Consumer Group B — Analytics" {
-  direction: down
-  B1: "Consumer B1" {class: info}
-  B2: "Consumer B2" {class: info}
-}
-T -> GroupA.A1
-T -> GroupA.A2
-T -> GroupB.B1
-T -> GroupB.B2
+T: "orders topic" {class: accent}
+Both: "Both groups read fully\nA: Inventory (A1, A2)\nB: Analytics (B1, B2)" {class: info}
+T -> Both
 ```
 Group A and Group B both read the same topic — each with their own offsets, their own pace, zero interference. Neither group knows the other exists. Kafka doesn't delete messages when one group reads them. Both read the full stream.
 
@@ -204,13 +158,9 @@ This is why Kafka can comfortably handle millions of events per second on commod
 Every partition is replicated across multiple brokers. One broker is the **leader** — it handles all reads and writes for that partition. The others are **followers** — they replicate the leader's data continuously.
 ```d2
 direction: down
-P: "Partition 0 · Leader — Broker 1" {class: success}
-followers: "Followers" {
-  direction: down
-  F1: "Follower — Broker 2" {class: info}
-  F2: "Follower — Broker 3" {class: info}
-}
-P -> followers: replicate
+P: "Partition 0\nLeader - Broker 1" {class: success}
+F: "Followers replicate\nBroker 2, Broker 3" {class: info}
+P -> F: replicate
 ```
 If the leader goes down, a follower is automatically elected. No data loss. No manual intervention. Kafka keeps going.
 

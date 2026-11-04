@@ -99,16 +99,32 @@ function inlineSvg(svg: string): string {
 }
 
 /**
- * Drop fixed pixel width/height so CSS can size the SVG to the article column from its
- * viewBox. Outer gets width="100%"; nested D2 svg fills the outer box.
+ * Keep the SVG at its natural viewBox size so 16px D2 labels stay 16px on screen.
+ * CSS applies max-width: 100% only as a safety cap — diagrams that would shrink must be
+ * re-laid out narrower in the markdown source instead.
  */
 export function prepareDiagramSvg(svg: string): string {
   let index = 0;
+  let outerViewBox: { w: number; h: number } | null = null;
+
   return svg.replace(/<svg\b([^>]*)>/gi, (_tag, attrs: string) => {
     const isOuter = index === 0;
     index += 1;
+
+    const vb = /\bviewBox="\s*([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s*"/.exec(attrs);
+    if (isOuter && vb) {
+      outerViewBox = { w: parseFloat(vb[3]), h: parseFloat(vb[4]) };
+    }
+
     let next = attrs.replace(/\s*\bwidth="[^"]*"/gi, '').replace(/\s*\bheight="[^"]*"/gi, '');
-    next += isOuter ? ' width="100%"' : ' width="100%" height="100%"';
+
+    if (isOuter && outerViewBox && outerViewBox.w > 0 && outerViewBox.h > 0) {
+      // Intrinsic CSS size = viewBox; never stretch to 100% (that shrinks or enlarges glyphs).
+      next += ` width="${outerViewBox.w}" height="${outerViewBox.h}"`;
+    } else if (!isOuter) {
+      next += ' width="100%" height="100%"';
+    }
+
     return `<svg${next}>`;
   });
 }
@@ -117,7 +133,7 @@ export function prepareDiagramSvg(svg: string): string {
 export async function renderD2(authorSource: string): Promise<string> {
   const source = `${d2Preamble()}\n${authorSource.trim()}\n`;
   const dir = path.join(cacheDir(), 'svg');
-  const file = path.join(dir, `${cacheKey(`${source}\n#prepare:v2`)}.svg`);
+  const file = path.join(dir, `${cacheKey(`${source}\n#prepare:v3-natural`)}.svg`);
   try {
     return await readFile(file, 'utf8');
   } catch {

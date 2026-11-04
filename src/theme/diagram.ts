@@ -96,12 +96,19 @@ export function sharedClassSwatch(name: SharedClassName): Swatch {
     : PALETTE[name as PaletteName];
 }
 
-/** D2 header prepended to every post diagram. No font flags: D2 keeps its default. */
+/**
+ * Body text on the site is 1rem (16px). Diagrams render at this font size and keep their
+ * natural width (see prepareDiagramSvg) so CSS never shrinks glyphs below body size.
+ * Keep `pad` tight — large padding forces wide viewBoxes that cannot fit a phone column.
+ */
+export const DIAGRAM_FONT_SIZE = 16;
+
+/** D2 header prepended to every post diagram. */
 export function d2Preamble(): string {
   const classes = SHARED_CLASS_NAMES.map((name) => {
     const { fill, border, borderWidth, text } = sharedClassSwatch(name);
     const width = borderWidth === '1px' ? 1 : 2;
-    return `  ${name}: {style: {fill: "${fill}"; stroke: "${border}"; stroke-width: ${width}; font-color: "${text}"}}`;
+    return `  ${name}: {style: {fill: "${fill}"; stroke: "${border}"; stroke-width: ${width}; font-color: "${text}"; font-size: ${DIAGRAM_FONT_SIZE}}}`;
   }).join('\n');
 
   const fallback = sharedClassSwatch('neutral');
@@ -109,7 +116,7 @@ export function d2Preamble(): string {
   return `vars: {
   d2-config: {
     sketch: true
-    pad: 40
+    pad: 8
     layout-engine: elk
   }
 }
@@ -119,11 +126,12 @@ style.fill: "transparent"
   style.stroke: "${fallback.border}"
   style.stroke-width: 2
   style.font-color: "${fallback.text}"
+  style.font-size: ${DIAGRAM_FONT_SIZE}
 }
 classes: {
 ${classes}
 }
-(* -> *)[*]: {style: {stroke: "${DIAGRAM_EDGE}"; stroke-width: 2; animated: true; font-color: "${DIAGRAM_EDGE}"; italic: false}}
+(* -> *)[*]: {style: {stroke: "${DIAGRAM_EDGE}"; stroke-width: 2; animated: true; font-color: "${DIAGRAM_EDGE}"; font-size: ${DIAGRAM_FONT_SIZE}; italic: false}}
 (* -> *)[*]: {
   &style.stroke-dash: *
   style.animated: false

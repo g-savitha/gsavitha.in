@@ -127,13 +127,12 @@ Probabilistic early expiration solves this differently. Instead of waiting for t
 ```d2
 # alt: Timeline of early recomputation probability from cache set (0%) to key gone (must recompute).
 direction: down
-title: "Probability of Early Recomputation Over Time" {shape: text; near: top-center}
-t0: "T=0 · Cache set — 0% chance of early recompute" {class: neutral}
-t50: "T=50 · Getting closer — ~5% chance" {class: secondary}
-t75: "T=75 · Halfway through stale window — ~20% chance" {class: violet}
-t90: "T=90 · Almost expired — ~40% chance" {class: teal}
-t99: "T=99 · Basically expired — ~90% chance" {class: amber}
-t100: "T=100 · Key gone — must recompute" {class: severity3}
+t0: "T=0 Cache set\n0% early recompute" {class: neutral}
+t50: "T=50 ~5%" {class: secondary}
+t75: "T=75 ~20%" {class: violet}
+t90: "T=90 ~40%" {class: teal}
+t99: "T=99 ~90%" {class: amber}
+t100: "T=100 key gone\nmust recompute" {class: severity3}
 t0 -> t50 -> t75 -> t90 -> t99 -> t100
 ```
 You do not need to understand the maths to use this pattern. The intuition is: the closer a key is to dying, the more aggressively the system tries to refresh it before it actually dies.
@@ -189,28 +188,20 @@ Mutex locking says: only one request is allowed to do the work. Everyone else wa
 
 ```d2
 direction: down
-R1: "Request 1"
-R2: "Request 2"
-R3: "Request 3"
-C: "Cache hit?" {shape: diamond}
-L: "Lock acquired?" {shape: diamond}
-DB: Database {shape: cylinder}
-W: "Wait..."
-S: "Set cache"
-RL: "Release lock"
-C2: "Cache populated now?" {shape: diamond}
-Resp: "Serve from cache"
-R1 -> C
-R2 -> C
-R3 -> C
-C -> L: Miss
+Reqs: "Requests 1-3" {class: primary}
+C: "Cache hit?" {shape: diamond; class: decision}
+Resp: "Serve from cache" {class: hit}
+L: "Lock?" {shape: diamond; class: decision}
+DB: Database {shape: cylinder; class: info}
+Wait: Waiters {class: secondary}
+S: "Set cache\nrelease lock" {class: success}
+Reqs -> C
 C -> Resp: Hit
-L -> DB: "Yes — Request 1 wins"
-L -> W: "No — Request 2 waits"
-L -> W: "No — Request 3 waits"
-DB -> S -> RL -> W
-W -> C2
-C2 -> Resp: Yes
+C -> L: Miss
+L -> DB: "R1 wins"
+L -> Wait: "others wait"
+DB -> S -> Wait
+Wait -> Resp
 ```
 Request 1 grabs the lock and does the work. Requests 2 through 5,000 wait patiently. When Request 1 finishes, it writes to cache and releases the lock. Everyone else reads from cache. Your database sees exactly one query instead of five thousand.
 
@@ -262,18 +253,17 @@ This is probably the most elegant strategy, and it is how CDNs have operated for
 The idea is beautifully simple: serve the old value immediately, then recompute in the background.
 
 ```d2
-shape: sequence_diagram
-User: User
-Cache: Cache
-Worker: "Background Worker"
-Database: Database
-User -> Cache: "Request data"
-Cache -> User: "Serve stale value right away (fast!)" {style.stroke-dash: 4}
-Cache -> Worker: "Go refresh this quietly"
-Worker -> Database: "Fetch fresh data"
-Database -> Worker: "Here you go" {style.stroke-dash: 4}
-Worker -> Cache: Updated
-User.note: "User got their response in ~1ms.\nNext request will get the fresh value."
+direction: down
+User: User {class: primary}
+Cache: "Cache\nstale OK" {class: accent}
+Worker: "Background worker" {class: info}
+DB: Database {shape: cylinder; class: secondary}
+User -> Cache: request
+Cache -> User: "stale ~1ms" {style.stroke-dash: 4}
+Cache -> Worker: refresh
+Worker -> DB: fetch
+DB -> Worker {style.stroke-dash: 4}
+Worker -> Cache: updated
 ```
 You define two TTLs. The "fresh" TTL is how long the data is considered current. After that, you enter a "stale" grace period: the data is old, but you still serve it while you refresh in the background. After the stale window ends, the key is truly gone and you fall back to a blocking fetch.
 
@@ -345,24 +335,12 @@ Cache warming is the practice of proactively populating the cache before traffic
 
 ```d2
 direction: down
-beforeTraffic: "Before Traffic Arrives" {
-  direction: down
-  W: "Warm-up Script"
-  DB: Database {shape: cylinder}
-  C: "Cache Layer"
-  W -> DB: "Fetch top products"
-  DB -> W
-  W -> C: "Pre-populate"
-}
-afterLaunch: "After Launch" {
-  direction: down
-  U: "User Requests"
-  C: "Cache Layer"
-  R: Response
-  U -> C
-  C -> R: "Hit — fast"
-  C -> beforeTraffic.DB: "Miss — rare" {style.stroke-dash: 4}
-}
+W: "Warm-up script" {class: primary}
+DB: "Fetch top products" {class: secondary}
+C: "Cache pre-populated" {class: success}
+U: "Launch traffic\nhits cache" {class: info}
+R: "Fast response" {class: hit}
+W -> DB -> C -> U -> R
 ```
 ```js
 // Run this as part of your deployment pipeline,
@@ -411,23 +389,13 @@ The challenge is knowing what to warm. Use your analytics. If you are warming 1,
 
 ```d2
 direction: down
-Start: "What problem are you solving?"
-A: "Many keys expiring at once?" {shape: diamond}
-J: "TTL Jitter — do this by default"
-B: "One hot key causing a stampede?" {shape: diamond}
-S: "Stale-While-Revalidate"
-M: "Mutex Locking"
-P: "Probabilistic Early Expiration"
-E: "Cold start or planned spike incoming?" {shape: diamond}
-W: "Cache Warming"
-Start -> A
-A -> J: Yes
-A -> B: No
-B -> S: "Yes, and latency is critical"
-B -> M: "Yes, and consistency matters"
-B -> P: "Want to prevent any miss window"
-Start -> E
-E -> W: Yes
+Start: "What problem?" {class: primary}
+A: "Many keys expire at once?\n-> TTL Jitter (default)" {class: success}
+B: "Hot key + latency critical?\n-> Stale-While-Revalidate" {class: info}
+C: "Hot key + consistency?\n-> Mutex Locking" {class: accent}
+D: "Prevent any miss window?\n-> Probabilistic Early Exp." {class: violet}
+E: "Cold start or spike?\n-> Cache Warming" {class: teal}
+Start -> A -> B -> C -> D -> E
 ```
 Quick rules of thumb:
 

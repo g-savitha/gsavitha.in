@@ -105,18 +105,20 @@
   }
 
   /*
-   * Diagrams fill the article column. SVG width/height attributes are normalised at render
-   * time so height follows the viewBox — no leftover blank gap under the drawing.
+   * Diagrams keep their natural viewBox size so body-sized labels stay body-sized.
+   * max-width: 100% only caps overflow — any diagram that would shrink under the column
+   * needs a narrower D2 layout, not CSS scale-down.
    */
   .diagram {
     margin-block: 1.5rem;
     width: 100%;
     max-width: 100%;
+    overflow-x: auto;
   }
 
   .diagram > svg {
     display: block;
-    width: 100%;
+    width: auto;
     max-width: 100%;
     height: auto;
   }

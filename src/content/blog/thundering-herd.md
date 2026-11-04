@@ -52,47 +52,27 @@ User → App Server → Cache (Redis) → Database (PostgreSQL)
 The cache is the middleman. It holds frequently-read data so the database barely gets touched. Here's the happy path:
 
 ```d2
-shape: sequence_diagram
-U: User
-App: "App Server"
-C: "Cache (Redis)"
-DB: Database
-U -> App: "GET /match/ind-pak/score"
-App -> C: "GET match:score"
-C -> App: "HIT - returned in ~1ms" {style.stroke-dash: 4}
-App -> U: "Response. DB never touched." {style.stroke-dash: 4}
+direction: down
+U: Users {class: primary}
+App: "App Server" {class: info}
+C: "Cache HIT ~1ms" {class: success}
+Out: "Response\nDB never touched" {class: hit}
+U -> App: "GET /score"
+App -> C
+C -> Out
 ```
 Clean. Whether there are 100 users or 10 million - if the cache holds, the database barely notices.
 
 Now here's what happens when that cache key expires under high traffic:
 
 ```d2
-shape: sequence_diagram
-U1: "User 1"
-U2: "User 2"
-UN: "User N (thousands)"
-App: "App Servers"
-C: "Cache (Redis)"
-DB: Database
-C.note: "TTL expires - key deleted"
-U1 -> App: "GET /match/score"
-U2 -> App: "GET /match/score"
-UN -> App: "GET /match/score"
-App -> C: "GET match:score"
-C -> App: MISS {style.stroke-dash: 4}
-App -> C: "GET match:score"
-C -> App: MISS {style.stroke-dash: 4}
-App -> C: "GET match:score"
-C -> App: MISS {style.stroke-dash: 4}
-App.note: "Every server. Every request. All miss simultaneously."
-App -> DB: "SELECT score FROM matches..."
-App -> DB: "SELECT score FROM matches..."
-App -> DB: "SELECT score FROM matches..."
-DB.note: "Connection pool full. CPU at 100%.\nTimeouts begin. Errors cascade."
-DB -> App: "ERROR: too many connections" {style.stroke-dash: 4}
-App -> U1: "503 Service Unavailable" {style.stroke-dash: 4}
-App -> U2: "503 Service Unavailable" {style.stroke-dash: 4}
-App -> UN: "503 Service Unavailable" {style.stroke-dash: 4}
+direction: down
+Users: "Users (thousands)" {class: primary}
+App: "App Servers" {class: info}
+Miss: "Cache MISS\nkey expired" {class: miss}
+DB: "DB overloaded\npool full" {class: severity3}
+Out: "503 Unavailable" {class: severity2}
+Users -> App -> Miss -> DB -> Out
 ```
 Thousands of requests - all for the exact same data - hammer the database simultaneously. The DB, built to handle a few hundred queries per second comfortably, gets thousands in a single instant. It buckles.
 
@@ -104,14 +84,14 @@ This is the distinction engineers miss most often. Both look like "elevated traf
 
 ```sketch-chart
 # alt: DB queries per second for a normal traffic spike versus a thundering herd over nine time points.
-title: "DB Queries/sec: Normal Traffic Spike vs Thundering Herd"
+title: "DB Queries/sec: Spike vs Herd"
 yLabel: DB Queries/sec
 yMin: 0
 yMax: 100000
 x: [-5m, -4m, -3m, -2m, -1m, 0s, +1m, +2m, +3m]
-- name: Normal Traffic Spike
+- name: Normal spike
   values: [1000, 2000, 6000, 15000, 28000, 36000, 30000, 18000, 8000]
-- name: Thundering Herd
+- name: Herd
   values: [1000, 1000, 1000, 1000, 1000, 95000, 80000, 65000, 40000]
 ```
 A normal spike builds gradually. Your auto-scaler has time to react. Your cache is still serving most requests. The database sees incremental load it can manage.
@@ -233,28 +213,13 @@ Jitter spreads expiries across different keys. But what about one very popular k
 The solution: when a key is missing, only let **one** request go to the database. Everyone else waits for that single result and shares it.
 
 ```d2
-shape: sequence_diagram
-R1: "Request 1"
-R2: "Request 2"
-R3: "Requests 3–50,000"
-Lock: "In-Flight Registry"
-DB: Database
-C: Cache
-C.note: "Cache miss - key expired"
-R1 -> Lock: "Is 'match:score' being fetched?"
-Lock -> R1: "No. You fetch it. Registering..." {style.stroke-dash: 4}
-R2 -> Lock: "Is 'match:score' being fetched?"
-Lock -> R2: "Yes. Wait for it." {style.stroke-dash: 4}
-R3 -> Lock: "Is 'match:score' being fetched?"
-Lock -> R3: "Yes. Wait for it." {style.stroke-dash: 4}
-R1 -> DB: "SELECT * FROM matches WHERE id='ind-pak'"
-DB.note: "1 query. Not 50,000."
-DB -> R1: "{score: India 287/4}" {style.stroke-dash: 4}
-R1 -> C: "SET match:score"
-R1 -> Lock: "Done. Broadcasting result."
-Lock -> R2: "Here's your result." {style.stroke-dash: 4}
-Lock -> R3: "Here's your result." {style.stroke-dash: 4}
-DB.note: "50,000 requests resolved.\nDatabase ran 1 query."
+direction: down
+Miss: "Cache miss" {class: miss}
+Lock: "In-Flight Registry" {class: accent}
+Fetch: "First request fetches\nothers wait" {class: primary}
+DB: "1 DB query" {class: success}
+Done: "Cache SET\nall waiters served" {class: hit}
+Miss -> Lock -> Fetch -> DB -> Done
 ```
 The mechanism is an in-flight registry - a simple map of `key → Promise`. When request 1 misses cache, it creates a Promise for the DB fetch and registers it. Requests 2 through 50,000 find that Promise in the registry and simply await it. The database gets exactly one query. When the result arrives, every waiting request resolves simultaneously.
 
@@ -293,19 +258,12 @@ Here's what happens. Your DB gets overwhelmed. Requests start timing out. Every 
 You didn't have one thundering herd. You accidentally scheduled ten of them back to back.
 
 ```d2
-shape: sequence_diagram
-C1: "Client 1"
-C2: "Client 2"
-CN: "Client N"
-DB: Database
-DB -> C1: "Timeout at T=0s" {style.stroke-dash: 4}
-DB -> C2: "Timeout at T=0s" {style.stroke-dash: 4}
-DB -> CN: "Timeout at T=0s" {style.stroke-dash: 4}
-C1.note: "Fixed retry: wait 1 second"
-C1 -> DB: "Retry at T=1s"
-C2 -> DB: "Retry at T=1s"
-CN -> DB: "Retry at T=1s"
-DB.note: "Second thundering herd. DB never recovers."
+direction: down
+Clients: Clients {class: primary}
+TO: "Timeout at T=0s" {class: severity2}
+Retry: "All retry at T=1s\nfixed delay" {class: warning}
+Herd: "Second herd\nDB never recovers" {class: severity3}
+Clients -> TO -> Retry -> Herd
 ```
 The fix has two parts working together.
 
@@ -349,16 +307,11 @@ When a thundering herd hits, your DB doesn't fail because the requests are illeg
 
 ```d2
 direction: down
-Users: "10,000 req/s\n(thundering herd)"
-LB: "Load Balancer\nRate Limiter" {class: cobalt}
-App: "App Servers"
-Drop: "Clients back off\nand retry with jitter" {class: maroon}
-Cache: "Cache (Redis)"
-DB: "Database\n(protected)" {class: forest}
-Users -> LB
-LB -> App: "500 req/s allowed"
-LB -> Drop: "9,500 req/s rejected\n429 Too Many Requests"
-App -> Cache -> DB
+Users: "10k req/s herd" {class: primary}
+LB: "Rate Limiter" {class: cobalt}
+Drop: "9.5k: 429 jitter" {class: maroon}
+Ok: "500: App, Cache, DB" {class: forest}
+Users -> LB -> Drop -> Ok
 ```
 **Rate limiting alone doesn't prevent the thundering herd** - it just caps the blast radius. The herd still arrives; you're turning it away at the door rather than letting it flood the DB. The clients that get rejected need exponential backoff with jitter (technique 3) so they don't immediately form another synchronized retry wave.
 
@@ -378,40 +331,23 @@ Without any mitigation, a cache miss under high traffic goes straight to DB stam
 
 ```d2
 direction: down
-Users: "Thousands\nof requests"
-App: "App Servers"
+Users: "Thousands\nof requests" {class: primary}
+App: "App Servers" {class: info}
 Cache: "Cache\n(expired)" {class: maroon}
 DB: "Database\n(overloaded)" {class: maroon}
-Users -> App
-App -> Cache: "All MISS"
-Cache -> DB
-App -> DB: "All hit DB directly"
+Users -> App -> Cache -> DB
 ```
 With techniques layered together:
 
 ```d2
 direction: down
-Users: "Thousands of requests"
-RL: "Rate Limiter\n(cap at threshold)" {class: cobalt}
-App: "App Servers"
-Backoff: "Clients back off\n(exponential + jitter)"
-Cache: "Cache hit?" {shape: diamond}
-Response: "Fast response" {class: forest}
-Flight: "Already\nfetching?" {shape: diamond}
-Wait: "Wait for\nshared result"
-DB: "Database\n(1 query only)" {class: forest}
-CacheWrite: "Cache repopulated\n(staggered expiry)"
-Broadcast: "All waiting\nrequests served"
-Users -> RL
-RL -> App: Allowed
-RL -> Backoff: "429 - retry with jitter"
-App -> Cache
-Cache -> Response: HIT
-Cache -> Flight: MISS
-Flight -> Wait: Yes
-Flight -> DB: "No - first miss"
-DB -> CacheWrite: "Result + TTL jitter"
-CacheWrite -> Broadcast
+Users: "Thousands of requests" {class: primary}
+RL: "Rate Limiter\n429 + jitter OR allow" {class: cobalt}
+App: "App Servers" {class: info}
+Cache: "Cache HIT?\nelse in-flight?" {class: decision}
+Path: "HIT: fast\nMISS first: 1 DB query\nMISS wait: shared" {class: forest}
+Done: "Cache + TTL jitter\nall served" {class: success}
+Users -> RL -> App -> Cache -> Path -> Done
 ```
 Every layer has a job. Rate limiter caps volume. Single-flight ensures one DB query per miss. Jitter prevents the next synchronized expiry. Backoff with jitter prevents retry storms from forming.
 

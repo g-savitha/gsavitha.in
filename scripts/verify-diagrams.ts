@@ -1,8 +1,9 @@
 /**
- * Real CDP checks for 2026 blog diagrams at ~390px (and optionally desktop).
- * - diagram rendered width ≈ article content width
+ * Real CDP checks for 2026 blog diagrams at 390px and 1280px.
+ * - diagram rendered width ≈ article content width (or natural width when narrower)
  * - no big blank gap under the SVG
  * - text bounding boxes inside each SVG don't overlap each other or overflow the figure
+ * - on-screen label size (after viewBox scale) is body text size up to +2px
  * - no D2 theme-id / Dark Mauve canvas in the markup; transparent root fill
  */
 import { spawn, type ChildProcess } from 'node:child_process';
@@ -24,6 +25,15 @@ const POSTS = [
 ];
 
 type Issue = { route: string; width: number; diagram: number; detail: string };
+
+type LabelReport = {
+  route: string;
+  width: number;
+  diagram: number;
+  bodyPx: number;
+  labelPx: number;
+  ok: boolean;
+};
 
 async function waitForPreview(preview: ChildProcess): Promise<void> {
   await new Promise<void>((resolve, reject) => {
@@ -58,6 +68,7 @@ async function main() {
   const browser = await chromium.launch({ executablePath: CHROME, args: ['--no-sandbox'] });
   const page = await browser.newPage();
   const issues: Issue[] = [];
+  const reports: LabelReport[] = [];
 
   try {
     for (const width of [390, 1280]) {
@@ -67,9 +78,29 @@ async function main() {
         const found = await page.evaluate(
           ({ routeName, viewportWidth }) => {
             const local: Issue[] = [];
+            const localReports: LabelReport[] = [];
             const article = document.querySelector('article');
             const contentWidth = article?.clientWidth ?? document.body.clientWidth;
+            const bodyP =
+              article?.querySelector('p') ?? document.querySelector('article p, .prose p, p');
+            const bodyPx = bodyP ? parseFloat(getComputedStyle(bodyP).fontSize) : 16;
             const figures = [...document.querySelectorAll<HTMLElement>('figure.diagram')];
+
+            const userFontSize = (el: Element): number | null => {
+              const styled = (el as SVGElement).style?.fontSize;
+              if (styled) {
+                const match = /([\d.]+)/.exec(styled);
+                if (match) return parseFloat(match[1]);
+              }
+              const attr = el.getAttribute('font-size');
+              if (attr) {
+                const match = /([\d.]+)/.exec(attr);
+                if (match) return parseFloat(match[1]);
+              }
+              const computed = getComputedStyle(el).fontSize;
+              const match = /([\d.]+)/.exec(computed);
+              return match ? parseFloat(match[1]) : null;
+            };
 
             figures.forEach((figure, index) => {
               const diagram = index + 1;
@@ -86,17 +117,17 @@ async function main() {
 
               const figBox = figure.getBoundingClientRect();
               const svgBox = svg.getBoundingClientRect();
-              // Should fill most of the article column (allow padding / scrollbars).
-              if (svgBox.width < contentWidth * 0.85) {
+              // Natural-size diagrams may be narrower than the column; they must not overflow it
+              // (max-width: 100% would shrink labels below body size).
+              if (svgBox.width > contentWidth + 2) {
                 local.push({
                   route: routeName,
                   width: viewportWidth,
                   diagram,
-                  detail: `svg width ${svgBox.width.toFixed(0)} << content ${contentWidth}`,
+                  detail: `svg width ${svgBox.width.toFixed(0)} overflows content ${contentWidth}`,
                 });
               }
 
-              // Blank gap: figure height should be close to the svg's rendered height.
               const gap = figBox.height - svgBox.height;
               if (gap > 48) {
                 local.push({
@@ -117,7 +148,15 @@ async function main() {
                 });
               }
 
-              const texts = [...svg.querySelectorAll('text')];
+              const vb = svg.viewBox.baseVal;
+              const scale = vb && vb.width > 0 ? svgBox.width / vb.width : svgBox.width > 0 ? 1 : 0;
+
+              // Prefer leaf tspans when present; otherwise the text node. Never both —
+              // a parent <text> and its <tspan> share the same glyphs and false-overlap.
+              const texts = [...svg.querySelectorAll('text')].flatMap((text) => {
+                const spans = [...text.querySelectorAll('tspan')];
+                return spans.length ? spans : [text];
+              });
               const boxes = texts
                 .map((text) => {
                   const box = text.getBoundingClientRect();
@@ -125,9 +164,50 @@ async function main() {
                 })
                 .filter(({ box }) => box.width > 1 && box.height > 1);
 
+              // On-screen label size: font-size in user units × screen/viewBox scale.
+              // Fall back to glyph box height when the attribute is missing.
+              const renderedSizes: number[] = [];
+              for (const { text, box } of boxes) {
+                const content = (text.textContent ?? '').trim();
+                if (!content) continue;
+                const user = userFontSize(text);
+                if (user != null && scale > 0) {
+                  renderedSizes.push(user * scale);
+                } else {
+                  // Single-line glyph box height ≈ rendered em size.
+                  renderedSizes.push(box.height);
+                }
+              }
+
+              if (renderedSizes.length) {
+                // Use the median node/edge label so one outlier annotation doesn't hide a shrink.
+                const sorted = [...renderedSizes].sort((a, b) => a - b);
+                const mid = Math.floor(sorted.length / 2);
+                const labelPx =
+                  sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
+                const minPx = sorted[0];
+                const maxPx = sorted[sorted.length - 1];
+                const ok = minPx >= bodyPx - 0.5 && maxPx <= bodyPx + 2.5;
+                localReports.push({
+                  route: routeName,
+                  width: viewportWidth,
+                  diagram,
+                  bodyPx,
+                  labelPx: Number(labelPx.toFixed(2)),
+                  ok,
+                });
+                if (!ok) {
+                  local.push({
+                    route: routeName,
+                    width: viewportWidth,
+                    diagram,
+                    detail: `label size ${minPx.toFixed(1)}–${maxPx.toFixed(1)}px (median ${labelPx.toFixed(1)}) vs body ${bodyPx.toFixed(1)}px (need body..body+2)`,
+                  });
+                }
+              }
+
               for (let i = 0; i < boxes.length; i += 1) {
                 const a = boxes[i].box;
-                // Overflow past the figure (clipped labels).
                 if (
                   a.left < figBox.left - 2 ||
                   a.right > figBox.right + 2 ||
@@ -146,36 +226,54 @@ async function main() {
                   const b = boxes[j].box;
                   const overlapX = Math.min(a.right, b.right) - Math.max(a.left, b.left);
                   const overlapY = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
-                  // Ignore tiny overlaps from shared baselines; require a real collision.
-                  if (overlapX > 4 && overlapY > 4) {
-                    local.push({
-                      route: routeName,
-                      width: viewportWidth,
-                      diagram,
-                      detail: `overlapping labels: "${(boxes[i].text.textContent ?? '').slice(0, 24)}" vs "${(boxes[j].text.textContent ?? '').slice(0, 24)}"`,
-                    });
-                    i = boxes.length;
-                    break;
-                  }
+                  if (overlapX <= 4 || overlapY <= 4) continue;
+                  // Sketch mode draws a second near-identical glyph; ignore near-duplicates.
+                  const acx = (a.left + a.right) / 2;
+                  const acy = (a.top + a.bottom) / 2;
+                  const bcx = (b.left + b.right) / 2;
+                  const bcy = (b.top + b.bottom) / 2;
+                  if (Math.hypot(acx - bcx, acy - bcy) < 8) continue;
+                  local.push({
+                    route: routeName,
+                    width: viewportWidth,
+                    diagram,
+                    detail: `overlapping labels: "${(boxes[i].text.textContent ?? '').slice(0, 24)}" vs "${(boxes[j].text.textContent ?? '').slice(0, 24)}"`,
+                  });
+                  i = boxes.length;
+                  break;
                 }
               }
             });
 
-            return local;
+            return { local, localReports };
           },
           { routeName: route, viewportWidth: width },
         );
 
-        issues.push(...found);
+        issues.push(...found.local);
+        reports.push(...found.localReports);
         console.log(
-          `${found.length ? 'FAIL' : 'PASS'}  ${width}px /blog/${route}/ (${found.length} issues)`,
+          `${found.local.length ? 'FAIL' : 'PASS'}  ${width}px /blog/${route}/ (${found.local.length} issues)`,
         );
-        for (const issue of found) console.log(`       diagram ${issue.diagram}: ${issue.detail}`);
+        for (const issue of found.local)
+          console.log(`       diagram ${issue.diagram}: ${issue.detail}`);
+        for (const report of found.localReports) {
+          console.log(
+            `       size  diagram ${report.diagram}: label ${report.labelPx}px / body ${report.bodyPx}px ${report.ok ? 'OK' : 'BAD'}`,
+          );
+        }
       }
     }
   } finally {
     await browser.close();
     preview?.kill('SIGTERM');
+  }
+
+  console.log('\n--- label size summary ---');
+  for (const report of reports) {
+    console.log(
+      `${report.ok ? 'OK' : 'BAD'} ${report.width}px ${report.route} #${report.diagram}: label ${report.labelPx}px body ${report.bodyPx}px`,
+    );
   }
 
   if (issues.length) {

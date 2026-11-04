@@ -65,39 +65,20 @@ Here's the full picture before we go through each piece.
 
 ```d2
 direction: down
-Authoring: "1 · Authoring" {
-  INPUT: "Markdown post\n+ audio frontmatter\n+ optional code summaries" {class: content}
-}
-Build: "2 · Audio pipeline · GitHub Actions" {
-  direction: down
-  EXTRACT: "Parse Markdown AST\ninto narration segments" {class: royal}
-  HASH: "Hash content +\nvoice settings" {class: royal}
-  CHANGED: "Audio already\npublished?" {shape: diamond; class: decision}
-  GENERATE: "Chunk text · reuse segment cache\nKokoro-82M synthesis · MP3 encoding" {class: violet}
-  UPLOAD: "Validate + upload\ncontent-addressed MP3" {class: violet}
-  EXTRACT -> HASH -> CHANGED
-  CHANGED -> GENERATE: "no · generate"
-  GENERATE -> UPLOAD
-}
-Contract: "3 · Published contract" {
-  MANIFEST: "Committed audio manifest\nslug → URL · label · duration" {class: emerald}
-  R2: "Cloudflare R2\nimmutable MP3s" {shape: cylinder; class: storage}
-}
-Delivery: "4 · Build and playback" {
-  direction: down
-  ASTRO: "Astro build\nresolve audio by slug" {class: royal}
-  PAGE: "Static blog page" {class: content}
-  PLAYER: "React audio player\nseek · speed · voice" {class: emerald}
-  PROGRESS: "localStorage\nplayback position" {shape: cylinder; class: storage}
-  ASTRO -> PAGE -> PLAYER
-  PLAYER <-> PROGRESS: "save / restore"
-}
-Authoring.INPUT -> Build.EXTRACT
-Build.UPLOAD -> Contract.R2
-Build.UPLOAD -> Contract.MANIFEST
-Build.CHANGED -> Contract.MANIFEST: "yes · reuse"
-Contract.MANIFEST -> Delivery.ASTRO
-Delivery.PLAYER -> Contract.R2: "stream MP3 from CDN"
+IN: "1 Authoring\nMarkdown + audio FM" {class: content}
+EX: "2 Parse AST" {class: royal}
+HASH: "Hash + voice" {class: royal}
+Q: "Published?" {shape: diamond; class: decision}
+GEN: "Generate MP3" {class: violet}
+UP: "Upload R2" {class: violet}
+MAN: "3 Manifest" {class: emerald}
+ASTRO: "4 Astro build" {class: royal}
+PLAYER: "React player" {class: emerald}
+IN -> EX -> HASH -> Q
+Q -> GEN: no
+GEN -> UP -> MAN
+Q -> MAN: yes
+MAN -> ASTRO -> PLAYER
 ```
 ---
 
@@ -149,18 +130,10 @@ The system handles code blocks in two ways. You can place an explicit `<!-- audi
 ```d2
 direction: down
 CB: "Code block" {class: content}
-EXPLICIT: "Explicit\naudio-summary?" {shape: diamond; class: amber}
+EX: "Explicit summary?\nyes -> use it" {class: amber}
+AN: "Else analyze context\nor section heading" {class: teal}
 OUT: "Narration text" {class: emerald}
-ANALYZE: "Contextual analysis\ncomments · semantic tags · selectors\ncommands · functions · classes" {class: teal}
-FOUND: "Useful context\nfound?" {shape: diamond; class: amber}
-FALLBACK: "Use section heading\nas fallback" {class: royal}
-CB -> EXPLICIT
-EXPLICIT -> OUT: yes
-EXPLICIT -> ANALYZE: no
-ANALYZE -> FOUND
-FOUND -> OUT: yes
-FOUND -> FALLBACK: no
-FALLBACK -> OUT
+CB -> EX -> AN -> OUT
 ```
 For each code block, the contextual engine looks for the most useful clue it can find: a leading comment, semantic structure, command names, selectors, or meaningful symbols. It skips generic names that do not help a listener and turns the useful parts into a short sentence:
 
@@ -223,13 +196,11 @@ Every decision in the pipeline — synthesize or skip, upload or skip, re-run or
 
 ```d2
 direction: down
-INPUTS: "Narration segments\n+ model · dtype · voice · speed" {class: content}
-HASH: "SHA-256\nnarration hash" {class: royal}
+IN: "Narration segments\n+ voice settings" {class: content}
+HASH: "SHA-256 hash" {class: royal}
 URL: "CDN path\nslug/hash/lang.mp3" {class: violet}
-ENTRY: "Manifest\nentry" {class: emerald}
-INPUTS -> HASH
-HASH -> URL
-HASH -> ENTRY
+ENTRY: "Manifest entry" {class: emerald}
+IN -> HASH -> URL -> ENTRY
 ```
 The hash goes into the storage key itself, not just the metadata:
 
@@ -285,18 +256,12 @@ Every synthesized chunk is stored as a raw `Float32LE` file on disk, keyed by a 
 
 ```d2
 direction: down
-CHUNK: "Speech chunk\n+ voice settings" {class: content}
-CHASH: "Chunk hash\nSHA-256" {class: royal}
-HIT: "Cached audio\non disk?" {shape: diamond; class: amber}
-READ: "Read Float32\nfrom disk" {class: emerald}
-TTS: "Run Kokoro\nTTS model" {class: violet}
-WRITE: "Write Float32\nto disk" {class: teal}
-ENCODE: "Stream into\nMP3 encoder" {class: royal}
-CHUNK -> CHASH -> HIT
-HIT -> READ: yes
-HIT -> TTS: no
-TTS -> WRITE -> ENCODE
-READ -> ENCODE
+CHUNK: "Speech chunk" {class: content}
+CHASH: "Chunk hash" {class: royal}
+HIT: "Disk cache?" {shape: diamond; class: amber}
+TTS: "TTS or read cache" {class: violet}
+ENCODE: "MP3 encode" {class: royal}
+CHUNK -> CHASH -> HIT -> TTS -> ENCODE
 ```
 The chunk hash covers the text, model, quantization dtype, voice, and speed — every input that affects the synthesized audio. That means the same paragraph text synthesized with two different voices produces two different cache keys, so changing a voice in frontmatter correctly triggers re-synthesis.
 
@@ -366,28 +331,12 @@ For a while, every push to main ran the whole thing — generate, upload, commit
 direction: down
 PUSH: "Push to main" {class: content}
 Q: "What changed?" {shape: diamond; class: amber}
-AUDIO: audio.yml {class: violet}
-DEPLOY: deploy.yml {class: royal}
-AudioJob: "audio.yml — its own concurrency group" {
-  direction: down
-  GEN: "Generate only\nchanged audio" {class: violet}
-  UP: "Upload to R2\n+ prune old files" {class: violet}
-  REC: "Reconcile manifest\nagainst R2" {class: teal}
-  COMMIT: "Commit manifest\nto main (rebase first)" {class: emerald}
-  GEN -> UP -> REC -> COMMIT
-}
-DeployJob: "deploy.yml — fast path" {
-  direction: down
-  BUILD: "Astro build\nreads committed manifest" {class: royal}
-  PAGES: "Deploy to Pages" {class: emerald}
-  BUILD -> PAGES
-}
+AUDIO: "audio.yml\ngenerate, upload,\nreconcile, commit" {class: violet}
+DEPLOY: "deploy.yml\nAstro build + Pages" {class: royal}
 PUSH -> Q
-Q -> AUDIO: "blog content or\naudio scripts"
+Q -> AUDIO: "blog/audio"
 Q -> DEPLOY: anything
-AUDIO -> AudioJob.GEN
-AudioJob.COMMIT -> DEPLOY: "triggers a deploy"
-DEPLOY -> DeployJob.BUILD
+AUDIO -> DEPLOY: "triggers deploy"
 ```
 `deploy.yml` builds and ships the site. It runs on every push to main, touches no audio at all, and simply trusts whatever is already committed in the manifest. Styling, logic, and prose changes go live in well under a minute.
 
@@ -407,24 +356,12 @@ The first version worked but was painfully slow — a single edit could trigger 
 
 ```d2
 direction: down
-POST: "Post + voice settings" {class: content}
-M: "Manifest hash\nmatches?" {shape: diamond; class: decision}
-SKIP: "Skip entirely\naudio already in R2" {class: emerald}
-WORKERS: "Parallel workers\nup to four posts at once" {class: violet}
-CHUNKS: "Build speech chunks\nfor this post only" {class: royal}
-CACHE: "Segment cache\nhit per chunk?" {shape: diamond; class: decision}
-ASSEMBLE: "Assemble from disk" {class: teal}
-TTS: "Synthesize\nthis chunk only" {class: violet}
-UPLOAD: "Validate + upload\nprune stale R2 objects" {class: royal}
-MANIFEST: "Update manifest" {class: emerald}
-POST -> M
-M -> SKIP: yes
-M -> WORKERS: no
-WORKERS -> CHUNKS -> CACHE
-CACHE -> ASSEMBLE: yes
-CACHE -> TTS: no
-TTS -> ASSEMBLE
-ASSEMBLE -> UPLOAD -> MANIFEST
+POST: "Post + voice" {class: content}
+M: "Manifest match?\nyes -> skip" {class: decision}
+WORK: "Workers: chunks" {class: violet}
+CACHE: "Cache or TTS" {class: royal}
+UP: "Upload + manifest" {class: emerald}
+POST -> M -> WORK -> CACHE -> UP
 ```
 **1. Parallel workers.** One post at a time wasted idle CPU cores. The orchestrator now fans out across up to four child processes; result files double as crash-recovery checkpoints.
 

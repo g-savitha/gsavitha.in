@@ -67,23 +67,19 @@ Here's the idea in one picture. The first request computes everything. The secon
 
 ```d2
 direction: down
-R1: "Request 1: nothing cached yet" {
-  direction: down
-  A1: "System prompt · computed" {class: miss}
-  A2: "Docs · computed" {class: miss}
-  A3: "History · computed" {class: miss}
-  A4: "Message A · computed" {class: miss}
-  A1 -> A2 -> A3 -> A4
-}
-R2: "Request 2: same start" {
-  direction: down
-  B1: "System prompt · reused" {class: hit}
-  B2: "Docs · reused" {class: hit}
-  B3: "History · reused" {class: hit}
-  B4: "Message B · computed" {class: miss}
-  B1 -> B2 -> B3 -> B4
-}
-R1 -> R2: "start is saved"
+R1: "Request 1\nnothing cached" {class: miss}
+A1: "System prompt" {class: miss}
+A2: Docs {class: miss}
+A3: History {class: miss}
+A4: "Message A" {class: miss}
+R2: "Request 2\nsame start reused" {class: hit}
+B1: "System prompt" {class: hit}
+B2: Docs {class: hit}
+B3: History {class: hit}
+B4: "Message B" {class: miss}
+R1 -> A1 -> A2 -> A3 -> A4
+A4 -> R2: "start saved"
+R2 -> B1 -> B2 -> B3 -> B4
 ```
 ## Why only the start can be reused
 

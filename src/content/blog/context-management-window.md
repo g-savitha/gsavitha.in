@@ -30,14 +30,14 @@ User → Server → POST /chat → LLM API
 ```
 
 ```d2
-shape: sequence_diagram
-Client: "User / Client"
-Server: Server
-LLM: "OpenAI / LLM API"
-Client -> Server: "Send message"
-Server -> LLM: "API Call (with message)"
-LLM -> Server: "Return response" {style.stroke-dash: 4}
-Server -> Client: "Return response" {style.stroke-dash: 4}
+direction: down
+Client: "User / Client" {class: success}
+Server: Server {class: primary}
+LLM: "OpenAI / LLM" {class: accent}
+Client -> Server: message
+Server -> LLM: "API call"
+LLM -> Server: response {style.stroke-dash: 4}
+Server -> Client {style.stroke-dash: 4}
 ```
 Now imagine this conversation:
 
@@ -121,10 +121,9 @@ Client: Client {shape: oval; class: success}
 Server: Server {class: primary}
 LLM: "OpenAI / LLM" {class: accent}
 Redis: "Redis Cache" {shape: cylinder; class: info}
-DB: "PostgreSQL / Persistent DB" {shape: cylinder; class: secondary}
+DB: PostgreSQL {shape: cylinder; class: secondary}
 Client -> Server -> LLM
-Server -> Redis
-Redis -> DB: "async cron job" {style.stroke-dash: 4}
+Server -> Redis -> DB
 ```
 **The write path**: New messages go to Redis immediately (microsecond writes). A background job (cron or a queue consumer) asynchronously flushes them to the persistent database.
 
@@ -190,18 +189,15 @@ These facts are not compressed — they are extracted, normalised, and stored as
 direction: down
 Client: Client {shape: oval; class: success}
 Server: Server {class: primary}
+Redis: Redis {shape: cylinder; class: info}
+Facts: "Facts DB" {shape: cylinder; class: secondary}
+PG: PostgreSQL {shape: cylinder; class: secondary}
+CB: "Context Builder" {class: warning}
 LLM: "OpenAI / LLM" {class: accent}
-Redis: "Redis Layer" {shape: cylinder; class: info}
-FactsDB: "Facts DB" {shape: cylinder; class: secondary}
-PostgreSQL: PostgreSQL {shape: cylinder; class: secondary}
-ContextBuilder: "Context Builder" {class: warning}
-Client -> Server -> LLM
-Server -> Redis
-Redis -> FactsDB: "extract facts async"
-Redis -> PostgreSQL: "cron job db sync"
-FactsDB -> ContextBuilder
-PostgreSQL -> ContextBuilder: summary
-ContextBuilder -> LLM
+Client -> Server -> Redis
+Redis -> Facts -> CB
+Redis -> PG -> CB
+CB -> LLM
 ```
 **The context sent to the LLM on each call** now looks like:
 
@@ -246,20 +242,14 @@ The **subconscious brain** pattern adds a reactive feedback loop:
 4. **Feedback to Redis**: The outcome is stored back in the cache layer so the correction informs future responses.
 
 ```d2
-shape: sequence_diagram
-User: User
-Server: Server
-Redis: Redis
-LLM: LLM
-Web: "Web Search / RAG"
-User -> Server: "That's wrong"
-Server -> Redis: "Fetch conversation + run sentiment analysis"
-Redis -> LLM: "Detected: user frustrated"
-LLM -> Web: "Trigger retrieval / web search"
-Web -> LLM: "Return enriched context" {style.stroke-dash: 4}
-LLM -> Server: "Corrected response" {style.stroke-dash: 4}
-Server -> Redis: "Store correction as feedback"
-Server -> User: "Corrected output" {style.stroke-dash: 4}
+direction: down
+User: "User: That's wrong" {class: success}
+Server: Server {class: primary}
+Sent: "Redis + sentiment\nuser frustrated" {class: danger}
+Web: "Web Search / RAG" {class: accent}
+LLM: "Corrected response" {class: accent}
+Fb: "Store feedback\nreturn to user" {class: info}
+User -> Server -> Sent -> Web -> LLM -> Fb
 ```
 This is analogous to how a skilled human expert behaves in conversation: they read your reaction, recognise when they've missed the mark, and proactively go look for better information rather than defending a wrong answer.
 
@@ -273,39 +263,12 @@ Bringing it all together:
 
 ```d2
 direction: down
-clientLayer: "Client Layer" {
-  User: User {class: success}
-}
-serverLayer: "Server Layer" {
-  API: "API Server - Stateless" {class: primary}
-  ContextBuilder: "Context Builder" {class: warning}
-  SentimentEngine: "Sentiment Engine" {class: danger}
-}
-cacheLayer: "Cache Layer" {
-  Redis: "Redis - Short-Term Memory" {shape: cylinder; class: info}
-}
-persistenceLayer: "Persistence Layer" {
-  FactsDB: "Facts DB - Long-Term Memory" {shape: cylinder; class: secondary}
-  SummaryDB: "Summary Store" {shape: cylinder; class: secondary}
-  PostgreSQL: "PostgreSQL - Full History" {shape: cylinder; class: secondary}
-}
-externalLayer: External {
-  LLM: "LLM API - OpenAI / Anthropic" {class: accent}
-  Web: "Web Search / RAG" {class: accent}
-}
-clientLayer.User -> serverLayer.API: message
-serverLayer.API -> serverLayer.ContextBuilder
-serverLayer.ContextBuilder -> externalLayer.LLM: "facts + summary + recent messages"
-externalLayer.LLM -> serverLayer.API: response
-serverLayer.API -> cacheLayer.Redis: "store message"
-cacheLayer.Redis -> persistenceLayer.PostgreSQL: "async - cron"
-cacheLayer.Redis -> persistenceLayer.FactsDB: "async - extract facts"
-cacheLayer.Redis -> persistenceLayer.SummaryDB: "async - summarise"
-serverLayer.API -> serverLayer.SentimentEngine: "sentiment check"
-serverLayer.SentimentEngine -> externalLayer.Web: "user unhappy"
-externalLayer.Web -> externalLayer.LLM
-externalLayer.LLM -> serverLayer.API: "corrected output"
-serverLayer.API -> clientLayer.User
+L1: "1 Client\nUser" {class: success}
+L2: "2 Server\nAPI + Context + Sentiment" {class: primary}
+L3: "3 Cache\nRedis short-term" {shape: cylinder; class: info}
+L4: "4 Persistence\nFacts, Summary, PG" {shape: cylinder; class: secondary}
+L5: "5 External\nLLM + Web/RAG" {class: accent}
+L1 -> L2 -> L3 -> L4 -> L5
 ```
 **Each component has a single responsibility:**
 
