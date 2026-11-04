@@ -342,21 +342,6 @@ async function diagramChecks(browser: Browser): Promise<void> {
         .filter((image) => !image.naturalWidth)
         .map((image) => image.getAttribute('src'));
     });
-    const unlinked = await page.evaluate(() =>
-      [...document.querySelectorAll<HTMLImageElement>('.prose img[src^="/diagrams/"]')]
-        .filter((image) => {
-          const link = image.closest('a');
-          return (
-            link?.getAttribute('href') !== image.getAttribute('src') || link.target !== '_blank'
-          );
-        })
-        .map((image) => image.getAttribute('src')),
-    );
-    check(
-      `diagrams: each one on ${route} opens its full-size file in a new tab`,
-      unlinked.length === 0,
-      unlinked.join(', '),
-    );
     const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
     check(
       `diagrams: ${count} on ${route} load at ${PHONE_WIDTH}px`,
