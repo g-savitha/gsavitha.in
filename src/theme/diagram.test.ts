@@ -111,6 +111,7 @@ test('d2 preamble uses site palette, transparent canvas, no built-in theme', () 
   assert.match(source, /#facc15/);
   assert.equal(source.includes('fill-pattern'), false);
   assert.equal(source.toLowerCase().includes('font-family'), false);
+  assert.match(source, /^  container: \{style: \{fill: "transparent"/m);
   for (const name of SHARED_CLASS_NAMES) assert.match(source, new RegExp(`^  ${name}: `, 'm'));
 });
 

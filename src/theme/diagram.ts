@@ -31,6 +31,13 @@ export const DIAGRAM_EDGE: Hex = '#cccccc';
 const THEME_BORDER: Hex = '#cccccc';
 
 /**
+ * Group/container chrome (parents that wrap other nodes). Transparent fill + no sketch
+ * hatch, with a light outline and body-sized label so titles stay readable on the dark site.
+ */
+export const DIAGRAM_CONTAINER_STROKE: Hex = DIAGRAM_EDGE;
+export const DIAGRAM_CONTAINER_LABEL: Hex = WHITE;
+
+/**
  * Every diagram colour, by name. Each name is also a D2 class.
  * Base set tracks the portfolio accents (pink / purple / yellow / green / blue / orange)
  * plus the extra hues posts already use for hits, storage, severity, and so on.
@@ -114,6 +121,9 @@ export function d2Preamble(): string {
   const fallback = sharedClassSwatch('neutral');
 
   // Do not set `*: style.fill` — in D2 that overrides `class:` fills and greys every node.
+  // Container chrome is finished in `styleDiagramContainers` after render: D2 sketch still
+  // paints a dark hatch on parents even when fill is transparent, and flattens children out
+  // of the parent `<g>`, so SVG post-process is what actually clears every container.
   return `vars: {
   d2-config: {
     sketch: true
@@ -128,6 +138,7 @@ style.fill: "transparent"
 }
 classes: {
 ${classes}
+  container: {style: {fill: "transparent"; stroke: "${DIAGRAM_CONTAINER_STROKE}"; stroke-width: 2; font-color: "${DIAGRAM_CONTAINER_LABEL}"; font-size: ${DIAGRAM_FONT_SIZE}}}
   unmarked: {style: {fill: "${fallback.fill}"; stroke: "${fallback.border}"; stroke-width: 2; font-color: "${fallback.text}"; font-size: ${DIAGRAM_FONT_SIZE}}}
 }
 (* -> *)[*]: {style: {stroke: "${DIAGRAM_EDGE}"; stroke-width: 2; animated: true; font-color: "${DIAGRAM_EDGE}"; font-size: ${DIAGRAM_FONT_SIZE}; italic: false}}

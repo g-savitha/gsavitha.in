@@ -24,6 +24,14 @@ const POSTS = [
   'making-coding-agents-trustworthy',
 ];
 
+/** Optional comma-separated `slug-n` keys (e.g. `kafka-explained-like-you-are-5-1`). */
+const ONLY = new Set(
+  (process.env.CAPTURE_ONLY ?? '')
+    .split(',')
+    .map((value) => value.trim())
+    .filter(Boolean),
+);
+
 async function waitForPreview(preview: ChildProcess): Promise<void> {
   await new Promise<void>((resolve, reject) => {
     const timer = setTimeout(() => reject(new Error('preview startup timed out')), 45000);
@@ -74,6 +82,8 @@ async function main() {
         await page.goto(`${ORIGIN}/blog/${slug}/`, { waitUntil: 'networkidle' });
         const count = await page.locator('figure.diagram').count();
         for (let i = 0; i < count; i += 1) {
+          const key = `${slug}-${i + 1}`;
+          if (ONLY.size > 0 && !ONLY.has(key)) continue;
           const figure = page.locator('figure.diagram').nth(i);
           await figure.scrollIntoViewIfNeeded();
           await page.waitForTimeout(100);
