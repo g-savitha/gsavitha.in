@@ -68,26 +68,26 @@
     "en": {
       "label": "English",
       "language": "en",
-      "duration": 951.87,
-      "bytes": 7615488,
-      "hash": "6e78758c7cc431a7221618e6446b2bff864664eeae8b6d96f1d0e47c55a26ef4",
+      "duration": 939.92,
+      "bytes": 7519872,
+      "hash": "f86b5208847717a8227f13bc8d720f49351cd90a6c70b2bb7fd34459982eaca0",
       "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
       "voice": "af_heart",
-      "generatedAt": "2026-11-04T04:44:39.184Z",
-      "url": "https://audio.gsavitha.in/audio/blog/making-coding-agents-trustworthy/6e78758c7cc431a7221618e6446b2bff864664eeae8b6d96f1d0e47c55a26ef4/en.mp3"
+      "generatedAt": "2026-11-04T20:39:28.183Z",
+      "url": "https://audio.gsavitha.in/audio/blog/making-coding-agents-trustworthy/f86b5208847717a8227f13bc8d720f49351cd90a6c70b2bb7fd34459982eaca0/en.mp3"
     }
   },
   "prompt-caching": {
     "en": {
       "label": "English",
       "language": "en",
-      "duration": 633.37,
-      "bytes": 5067456,
-      "hash": "813410d0b1c173aba686e84a6a5b762dce1368d4ec13ffd6f78fbf4757c309cf",
+      "duration": 622.42,
+      "bytes": 4979904,
+      "hash": "1976da8d9397da418827172879cd0d65edb3431a8ec505d1e4395b1c8f6e6d1b",
       "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
       "voice": "af_heart",
-      "generatedAt": "2026-10-20T15:58:45.902Z",
-      "url": "https://audio.gsavitha.in/audio/blog/prompt-caching/813410d0b1c173aba686e84a6a5b762dce1368d4ec13ffd6f78fbf4757c309cf/en.mp3"
+      "generatedAt": "2026-11-04T20:48:20.358Z",
+      "url": "https://audio.gsavitha.in/audio/blog/prompt-caching/1976da8d9397da418827172879cd0d65edb3431a8ec505d1e4395b1c8f6e6d1b/en.mp3"
     }
   },
   "promises-explained": {
@@ -263,13 +263,13 @@
     "en": {
       "label": "English",
       "language": "en",
-      "duration": 598.37,
-      "bytes": 4786944,
-      "hash": "31191cea07755b4a5da64545969ce52e01e0c55bb05ab745ed5573f42b29e762",
+      "duration": 576.24,
+      "bytes": 4610304,
+      "hash": "d9767a49660ef2a447dd12d22a02f10df15fdccc3ad29022071f40b5650cf417",
       "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
       "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:23:53.765Z",
-      "url": "https://audio.gsavitha.in/audio/blog/caching-strategies/31191cea07755b4a5da64545969ce52e01e0c55bb05ab745ed5573f42b29e762/en.mp3"
+      "generatedAt": "2026-11-04T20:49:28.328Z",
+      "url": "https://audio.gsavitha.in/audio/blog/caching-strategies/d9767a49660ef2a447dd12d22a02f10df15fdccc3ad29022071f40b5650cf417/en.mp3"
     }
   },
   "sync-fork-with-original-git": {
@@ -328,13 +328,13 @@
     "en": {
       "label": "English",
       "language": "en",
-      "duration": 452.93,
-      "bytes": 3623424,
-      "hash": "f7aa9ccfdfa751feb0e4dd98868a2c793f77f5f4518d557d7d06896b29047c05",
+      "duration": 432.78,
+      "bytes": 3462720,
+      "hash": "a580fa0916285757c19915bd06c61ce4df1154630d353ff1f046c443abdcb977",
       "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
       "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:24:05.321Z",
-      "url": "https://audio.gsavitha.in/audio/blog/kafka-explained-like-you-are-5/f7aa9ccfdfa751feb0e4dd98868a2c793f77f5f4518d557d7d06896b29047c05/en.mp3"
+      "generatedAt": "2026-11-04T20:55:45.491Z",
+      "url": "https://audio.gsavitha.in/audio/blog/kafka-explained-like-you-are-5/a580fa0916285757c19915bd06c61ce4df1154630d353ff1f046c443abdcb977/en.mp3"
     }
   },
   "recursion-simplified": {
@@ -354,13 +354,13 @@
     "en": {
       "label": "English",
       "language": "en",
-      "duration": 942.64,
-      "bytes": 7541568,
-      "hash": "8b00d6ffaeeb589319948e0fe29f9039973d8283e94d6cba514905223e2c93dd",
+      "duration": 900.9,
+      "bytes": 7207680,
+      "hash": "9a05d3a3a2ec51f7e4852cec2faf58c34fa8384d1ccaf2999133afee05389580",
       "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
       "voice": "af_heart",
-      "generatedAt": "2026-11-04T04:58:37.691Z",
-      "url": "https://audio.gsavitha.in/audio/blog/thundering-herd/8b00d6ffaeeb589319948e0fe29f9039973d8283e94d6cba514905223e2c93dd/en.mp3"
+      "generatedAt": "2026-11-04T20:52:43.973Z",
+      "url": "https://audio.gsavitha.in/audio/blog/thundering-herd/9a05d3a3a2ec51f7e4852cec2faf58c34fa8384d1ccaf2999133afee05389580/en.mp3"
     }
   },
   "data-normalization": {
@@ -380,13 +380,13 @@
     "en": {
       "label": "English",
       "language": "en",
-      "duration": 758.4,
-      "bytes": 6067200,
-      "hash": "61ec251bec4762acc71fee36785305b1c1cbe2e8f0d9c11501fb87fa98123a8d",
+      "duration": 730.22,
+      "bytes": 5842176,
+      "hash": "16e9082af5acd8acf1992051e752645f0d15ed440f6cb41d331a489f325114a3",
       "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
       "voice": "af_heart",
-      "generatedAt": "2026-06-20T22:23:55.916Z",
-      "url": "https://audio.gsavitha.in/audio/blog/context-management-window/61ec251bec4762acc71fee36785305b1c1cbe2e8f0d9c11501fb87fa98123a8d/en.mp3"
+      "generatedAt": "2026-11-04T21:05:23.805Z",
+      "url": "https://audio.gsavitha.in/audio/blog/context-management-window/16e9082af5acd8acf1992051e752645f0d15ed440f6cb41d331a489f325114a3/en.mp3"
     }
   },
   "return-multiple-jsx-elements": {
@@ -419,13 +419,13 @@
     "en": {
       "label": "English",
       "language": "en",
-      "duration": 1257.58,
-      "bytes": 10061184,
-      "hash": "5930ac90002a9b7c4911e2f0a27f0c242840ed8a7405444969c2b83c2e4f49a0",
+      "duration": 1233.43,
+      "bytes": 9867840,
+      "hash": "1d757dda1a7f074ca4ad0daaa744e51ca560582df4635355f81fdf7ac25441ca",
       "model": "onnx-community/Kokoro-82M-v1.0-ONNX",
       "voice": "af_heart",
-      "generatedAt": "2026-06-21T08:32:42.184Z",
-      "url": "https://audio.gsavitha.in/audio/blog/blog-audio-player/5930ac90002a9b7c4911e2f0a27f0c242840ed8a7405444969c2b83c2e4f49a0/en.mp3"
+      "generatedAt": "2026-11-04T21:13:09.486Z",
+      "url": "https://audio.gsavitha.in/audio/blog/blog-audio-player/1d757dda1a7f074ca4ad0daaa744e51ca560582df4635355f81fdf7ac25441ca/en.mp3"
     }
   },
   "rbac-node": {
