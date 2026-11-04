@@ -125,8 +125,19 @@ Jitter spreads expiry across a population of keys. But what about a single very 
 Probabilistic early expiration solves this differently. Instead of waiting for the key to expire, some requests start recomputing it early. The closer the key is to expiring, the more likely any given request will trigger a background refresh.
 
 ```d2
-direction: down
+# alt: Timeline of early recomputation probability from cache set (0%) to key gone (must recompute).
+@@@desktop
+direction: right
 heading: "Probability of Early Recomputation Over Time" {shape: text}
+t0: "T=0\nCache set\n0% early" {class: neutral}
+t50: "T=50\nCloser\n~5%" {class: secondary}
+t75: "T=75\nHalfway\n~20%" {class: violet}
+t90: "T=90\nAlmost gone\n~40%" {class: teal}
+t99: "T=99\nNearly expired\n~90%" {class: amber}
+t100: "T=100\nKey gone\nmust recompute" {class: severity3}
+t0 -> t50 -> t75 -> t90 -> t99 -> t100
+@@@mobile
+direction: down
 t0: "T=0\nCache set\n0% early" {class: neutral}
 t50: "T=50\nCloser\n~5%" {class: secondary}
 t75: "T=75\nHalfway\n~20%" {class: violet}
@@ -187,29 +198,53 @@ Here is the scenario: one key expires. It is a popular key. In the gap between "
 Mutex locking says: only one request is allowed to do the work. Everyone else waits.
 
 ```d2
+@@@desktop
 direction: down
-R1: "Request 1"
-R2: "Request 2"
-R3: "Request 3"
-C: "Cache hit?" {shape: diamond}
-L: "Lock acquired?" {shape: diamond}
-DB: Database {shape: cylinder}
-W: "Wait..."
-S: "Set cache"
-RL: "Release lock"
-C2: "Cache populated now?" {shape: diamond}
-Resp: "Serve from cache"
+R1: "Request 1" {class: primary}
+R2: "Request 2" {class: primary}
+R3: "Request 3" {class: primary}
+C: "Cache hit?" {shape: diamond; class: decision}
+L: "Lock acquired?" {shape: diamond; class: decision}
+DB: Database {shape: cylinder; class: info}
+W: "Wait..." {class: secondary}
+S: "Set cache" {class: success}
+RL: "Release lock" {class: success}
+C2: "Cache populated now?" {shape: diamond; class: decision}
+Resp: "Serve from cache" {class: hit}
 R1 -> C
 R2 -> C
 R3 -> C
 C -> L: Miss
 C -> Resp: Hit
 L -> DB: "Yes — Request 1 wins"
-L -> W: "No — Request 2 waits"
-L -> W: "No — Request 3 waits"
+L -> W: "No — others wait"
 DB -> S -> RL -> W
 W -> C2
 C2 -> Resp: Yes
+@@@mobile
+direction: down
+reqs: {
+  style.fill: "transparent"
+  grid-columns: 1
+  R1: "Req 1" {class: primary}
+  R2: "Req 2" {class: primary}
+  R3: "Req 3" {class: primary}
+}
+C: "Cache hit?" {shape: diamond; class: decision}
+Resp: "Serve cache" {class: hit}
+L: "Lock?" {shape: diamond; class: decision}
+DB: Database {shape: cylinder; class: info}
+W: Waiters {class: secondary}
+S: "Set cache" {class: success}
+RL: "Release lock" {class: success}
+C2: "Populated?" {shape: diamond; class: decision}
+reqs -> C
+C -> Resp: Hit
+C -> L: Miss
+L -> DB: "R1 wins"
+L -> W: wait
+DB -> S -> RL -> W
+W -> C2 -> Resp
 ```
 Request 1 grabs the lock and does the work. Requests 2 through 5,000 wait patiently. When Request 1 finishes, it writes to cache and releases the lock. Everyone else reads from cache. Your database sees exactly one query instead of five thousand.
 
@@ -261,11 +296,25 @@ This is probably the most elegant strategy, and it is how CDNs have operated for
 The idea is beautifully simple: serve the old value immediately, then recompute in the background.
 
 ```d2
+@@@desktop
 shape: sequence_diagram
-User: User
-Cache: Cache
-Worker: "Background Worker"
-Database: Database
+User: User {class: primary}
+Cache: Cache {class: accent}
+Worker: "Background Worker" {class: info}
+Database: Database {class: secondary}
+User -> Cache: "Request data"
+Cache -> User: "Serve stale value right away (fast!)" {style.stroke-dash: 4}
+Cache -> Worker: "Go refresh this quietly"
+Worker -> Database: "Fetch fresh data"
+Database -> Worker: "Here you go" {style.stroke-dash: 4}
+Worker -> Cache: Updated
+User.note: "User got their response in ~1ms.\nNext request will get the fresh value."
+@@@mobile
+shape: sequence_diagram
+User: User {class: primary}
+Cache: Cache {class: accent}
+Worker: "Background Worker" {class: info}
+Database: Database {class: secondary}
 User -> Cache: "Request data"
 Cache -> User: "Serve stale value right away (fast!)" {style.stroke-dash: 4}
 Cache -> Worker: "Go refresh this quietly"
@@ -343,25 +392,42 @@ Or you run a planned maintenance window. Cache gets flushed. Traffic resumes bef
 Cache warming is the practice of proactively populating the cache before traffic arrives.
 
 ```d2
-direction: down
-beforeTraffic: "Before Traffic Arrives" {
+@@@desktop
+direction: right
+Before: "Before Traffic Arrives" {
+  style.fill: "transparent"
   direction: down
-  W: "Warm-up Script"
-  DB: Database {shape: cylinder}
-  C: "Cache Layer"
+  W: "Warm-up Script" {class: primary}
+  DB: Database {shape: cylinder; class: secondary}
+  C: "Cache Layer" {class: success}
   W -> DB: "Fetch top products"
   DB -> W
   W -> C: "Pre-populate"
 }
-afterLaunch: "After Launch" {
+After: "After Launch" {
+  style.fill: "transparent"
   direction: down
-  U: "User Requests"
-  C: "Cache Layer"
-  R: Response
-  U -> C
-  C -> R: "Hit — fast"
-  C -> beforeTraffic.DB: "Miss — rare" {style.stroke-dash: 4}
+  U: "User Requests" {class: info}
+  C2: "Cache Layer" {class: success}
+  R: Response {class: hit}
+  DB2: Database {shape: cylinder; class: secondary}
+  U -> C2
+  C2 -> R: "Hit — fast"
+  C2 -> DB2: "Miss — rare" {style.stroke-dash: 4}
 }
+@@@mobile
+direction: down
+W: "Warm-up\nScript" {class: primary}
+DB: Database {shape: cylinder; class: secondary}
+C: "Cache\nLayer" {class: success}
+U: "User\nRequests" {class: info}
+R: "Hit\nfast" {class: hit}
+W -> DB: fetch
+DB -> W
+W -> C: fill
+U -> C
+C -> R
+C -> DB: miss {style.stroke-dash: 4}
 ```
 ```js
 // Run this as part of your deployment pipeline,
@@ -409,16 +475,17 @@ The challenge is knowing what to warm. Use your analytics. If you are warming 1,
 ## When to Reach for What
 
 ```d2
+@@@desktop
 direction: down
-Start: "What problem are you solving?"
-A: "Many keys expiring at once?" {shape: diamond}
-J: "TTL Jitter — do this by default"
-B: "One hot key causing a stampede?" {shape: diamond}
-S: "Stale-While-Revalidate"
-M: "Mutex Locking"
-P: "Probabilistic Early Expiration"
-E: "Cold start or planned spike incoming?" {shape: diamond}
-W: "Cache Warming"
+Start: "What problem are you solving?" {class: primary}
+A: "Many keys expiring at once?" {shape: diamond; class: decision}
+J: "TTL Jitter — do this by default" {class: success}
+B: "One hot key causing a stampede?" {shape: diamond; class: decision}
+S: "Stale-While-Revalidate" {class: info}
+M: "Mutex Locking" {class: accent}
+P: "Probabilistic Early Expiration" {class: violet}
+E: "Cold start or planned spike incoming?" {shape: diamond; class: decision}
+W: "Cache Warming" {class: teal}
 Start -> A
 A -> J: Yes
 A -> B: No
@@ -427,6 +494,19 @@ B -> M: "Yes, and consistency matters"
 B -> P: "Want to prevent any miss window"
 Start -> E
 E -> W: Yes
+@@@mobile
+direction: down
+Start: "What problem?" {class: primary}
+A: "Many keys?" {shape: diamond; class: decision}
+J: "TTL Jitter" {class: success}
+B: "Hot key?" {shape: diamond; class: decision}
+S: SWR {class: info}
+M: Mutex {class: accent}
+P: "Early Exp." {class: violet}
+E: Cold? {shape: diamond; class: decision}
+W: Warming {class: teal}
+Start -> A -> J
+A -> B -> S -> M -> P -> E -> W
 ```
 Quick rules of thumb:
 

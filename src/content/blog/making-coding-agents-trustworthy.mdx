@@ -41,21 +41,15 @@ Think about a new engineer joining your team. At first, you review everything th
 
 The talk draws this as a curve. The more you trust your agents, the more of them you can run in parallel. The chart below is an illustration of that idea, not real data.
 
-```d2
+```sketch-chart
 # alt: Illustration of the trust curve: as you go from 1 agent to 1k+ agents, the trust you need climbs from low to high. Not real data.
-title: "Illustration: trust vs agents" {
-  shape: text
-  near: top-center
-}
-grid-rows: 6
-grid-columns: 1
-grid-gap: 10
-one: "1 · trust 1" {width: 48; height: 36}
-few: "1-5 · trust 4" {width: 120; height: 36}
-mid: "5-10 · trust 6" {width: 168; height: 36}
-more: "10-20 · trust 7.5" {width: 204; height: 36}
-hundreds: "100s · trust 8.5" {width: 228; height: 36}
-thousand: "1k+ · trust 9" {width: 252; height: 36}
+title: Illustration: trust vs agents
+xLabel: Agents you can run
+yLabel: Trust (low to high)
+yMin: 0
+yMax: 10
+x: [1, 1-5, 5-10, 10-20, 100s, 1k+]
+- values: [1, 4, 6, 7.5, 8.5, 9]
 ```
 
 There's no shortcut along this curve. If you jump straight to thousands of cloud agents without trust, you mostly burn tokens, because nobody can tell which outputs are good.
@@ -182,6 +176,15 @@ The talk puts these in five layers, from strongest to weakest:
 
 ```d2
 # alt: The five layers from strongest to weakest: codebase, static analysis, rules and Bugbot, skills, style guide. Codebase and static analysis are hard guardrails. The other three are soft.
+@@@desktop
+direction: right
+A: Codebase {class: success}
+B: "Static analysis" {class: success}
+C: "Rules and Bugbot" {class: warning}
+D: Skills {class: warning}
+E: "Style guide" {class: warning}
+A -> B -> C -> D -> E
+@@@mobile
 direction: down
 A: Codebase {class: success}
 B: "Static analysis" {class: success}

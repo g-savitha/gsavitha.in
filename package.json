@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "bun scripts/d2/ensure.ts && bun run audio:check && astro build",
+    "build": "bun scripts/d2/ensure.ts && bun run audio:check && bun scripts/clear-content-cache.ts && astro build",
     "preview": "astro preview",
     "astro": "astro",
     "new": "node scripts/new.js",

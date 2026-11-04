@@ -64,6 +64,7 @@ I wanted the stack to be reliable and maintainable, not fancy. If I come back to
 Here's the full picture before we go through each piece. 
 
 ```d2
+@@@desktop
 direction: down
 Authoring: "1 · Authoring" {
   INPUT: "Markdown post\n+ audio frontmatter\n+ optional code summaries" {class: content}
@@ -98,6 +99,42 @@ Build.UPLOAD -> Contract.MANIFEST
 Build.CHANGED -> Contract.MANIFEST: "yes · reuse"
 Contract.MANIFEST -> Delivery.ASTRO
 Delivery.PLAYER -> Contract.R2: "stream MP3 from CDN"
+@@@mobile
+direction: down
+Authoring: "1 · Authoring" {
+  INPUT: "Markdown +\naudio FM" {class: content}
+}
+Build: "2 · Pipeline" {
+  direction: down
+  EXTRACT: "Parse AST →\nsegments" {class: royal}
+  HASH: "Hash +\nvoice" {class: royal}
+  CHANGED: "Published?" {shape: diamond; class: decision}
+  GENERATE: "Chunk · Kokoro\n· MP3" {class: violet}
+  UPLOAD: "Validate +\nupload" {class: violet}
+  EXTRACT -> HASH -> CHANGED
+  CHANGED -> GENERATE: no
+  GENERATE -> UPLOAD
+}
+Contract: "3 · Contract" {
+  direction: down
+  MANIFEST: "Manifest\nslug → URL" {class: emerald}
+  R2: "R2 immutable" {shape: cylinder; class: storage}
+}
+Delivery: "4 · Delivery" {
+  direction: down
+  ASTRO: "Astro build" {class: royal}
+  PAGE: "Static page" {class: content}
+  PLAYER: "React player" {class: emerald}
+  PROGRESS: "localStorage" {shape: cylinder; class: storage}
+  ASTRO -> PAGE -> PLAYER
+  PLAYER <-> PROGRESS: save
+}
+Authoring.INPUT -> Build.EXTRACT
+Build.UPLOAD -> Contract.R2
+Build.UPLOAD -> Contract.MANIFEST
+Build.CHANGED -> Contract.MANIFEST: yes
+Contract.MANIFEST -> Delivery.ASTRO
+Delivery.PLAYER -> Contract.R2: stream
 ```
 ---
 
@@ -147,6 +184,7 @@ Code is valuable on screen and terrible when read aloud verbatim. No listener wa
 The system handles code blocks in two ways. You can place an explicit `<!-- audio-summary: ... -->` HTML comment directly before a code fence, and that text is used verbatim. Or you can set `codeSummaryMode: contextual` in the post's frontmatter, and the extractor derives a useful description from the code itself.
 
 ```d2
+@@@desktop
 direction: down
 CB: "Code block" {class: content}
 EXPLICIT: "Explicit\naudio-summary?" {shape: diamond; class: amber}
@@ -154,6 +192,21 @@ OUT: "Narration text" {class: emerald}
 ANALYZE: "Contextual analysis\ncomments · semantic tags · selectors\ncommands · functions · classes" {class: teal}
 FOUND: "Useful context\nfound?" {shape: diamond; class: amber}
 FALLBACK: "Use section heading\nas fallback" {class: royal}
+CB -> EXPLICIT
+EXPLICIT -> OUT: yes
+EXPLICIT -> ANALYZE: no
+ANALYZE -> FOUND
+FOUND -> OUT: yes
+FOUND -> FALLBACK: no
+FALLBACK -> OUT
+@@@mobile
+direction: down
+CB: "Code block" {class: content}
+EXPLICIT: "Explicit\nsummary?" {shape: diamond; class: amber}
+OUT: "Narration text" {class: emerald}
+ANALYZE: "Analyze context\ncomments · tags\ncommands · funcs" {class: teal}
+FOUND: "Useful\ncontext?" {shape: diamond; class: amber}
+FALLBACK: "Section heading\nfallback" {class: royal}
 CB -> EXPLICIT
 EXPLICIT -> OUT: yes
 EXPLICIT -> ANALYZE: no
@@ -222,10 +275,20 @@ Each voice gets its own hash, its own MP3, and its own manifest entry. Voice, mo
 Every decision in the pipeline — synthesize or skip, upload or skip, re-run or not — comes down to a single SHA-256 hash computed from the narration segments and the voice settings.
 
 ```d2
+@@@desktop
 direction: down
 INPUTS: "Narration segments\n+ model · dtype · voice · speed" {class: content}
 HASH: "SHA-256\nnarration hash" {class: royal}
 URL: "CDN path\nslug/hash/lang.mp3" {class: violet}
+ENTRY: "Manifest\nentry" {class: emerald}
+INPUTS -> HASH
+HASH -> URL
+HASH -> ENTRY
+@@@mobile
+direction: down
+INPUTS: "Segments +\nvoice settings" {class: content}
+HASH: "SHA-256\nhash" {class: royal}
+URL: "CDN path\nhash/lang.mp3" {class: violet}
 ENTRY: "Manifest\nentry" {class: emerald}
 INPUTS -> HASH
 HASH -> URL
@@ -284,6 +347,7 @@ Text-to-speech generation is CPU-intensive, but most edits to a blog post are sm
 Every synthesized chunk is stored as a raw `Float32LE` file on disk, keyed by a SHA-256 of the chunk text and the voice settings. On the next run, the generator checks the cache before calling the TTS model:
 
 ```d2
+@@@desktop
 direction: down
 CHUNK: "Speech chunk\n+ voice settings" {class: content}
 CHASH: "Chunk hash\nSHA-256" {class: royal}
@@ -292,6 +356,20 @@ READ: "Read Float32\nfrom disk" {class: emerald}
 TTS: "Run Kokoro\nTTS model" {class: violet}
 WRITE: "Write Float32\nto disk" {class: teal}
 ENCODE: "Stream into\nMP3 encoder" {class: royal}
+CHUNK -> CHASH -> HIT
+HIT -> READ: yes
+HIT -> TTS: no
+TTS -> WRITE -> ENCODE
+READ -> ENCODE
+@@@mobile
+direction: down
+CHUNK: "Speech chunk" {class: content}
+CHASH: "Chunk hash" {class: royal}
+HIT: "Hit?" {shape: diamond; class: amber}
+READ: "Read .f32" {class: emerald}
+TTS: "Kokoro TTS" {class: violet}
+WRITE: "Write .f32" {class: teal}
+ENCODE: "MP3 encode" {class: royal}
 CHUNK -> CHASH -> HIT
 HIT -> READ: yes
 HIT -> TTS: no
@@ -309,11 +387,21 @@ Cleanup is automatic. After a full run, the generator computes the live set of c
 With one post to generate, running serially is fine. With dozens, it wastes the CPU cores sitting idle while one post synthesizes at a time. When the orchestrator has multiple posts to process and enough cores available, it fans out work across up to four child processes:
 
 ```d2
+@@@desktop
 direction: down
 ORCH: Orchestrator {class: royal}
 QUEUE: "Pending posts" {class: content}
 WORKERS: "Up to four isolated workers\none post per worker" {class: violet}
 RESULTS: "Validated result files\nserve as recovery checkpoints" {class: teal}
+MERGE: "Merge results" {class: emerald}
+INDEX: "Generated index" {class: emerald}
+ORCH -> QUEUE -> WORKERS -> RESULTS -> MERGE -> INDEX
+@@@mobile
+direction: down
+ORCH: Orchestrator {class: royal}
+QUEUE: "Pending posts" {class: content}
+WORKERS: "Up to four workers\none post each" {class: violet}
+RESULTS: "Result files =\nrecovery checkpoints" {class: teal}
 MERGE: "Merge results" {class: emerald}
 INDEX: "Generated index" {class: emerald}
 ORCH -> QUEUE -> WORKERS -> RESULTS -> MERGE -> INDEX
@@ -363,6 +451,7 @@ Because the storage key is content-addressed, editing a post produces a brand-ne
 For a while, every push to main ran the whole thing — generate, upload, commit, build — as one workflow. That was a mistake. A pure styling tweak shouldn't wait behind a multi-hour synthesis run, and a run that got cancelled by my next push could drop the manifest commit entirely, which sent the *following* run off regenerating everything from scratch. So I split it into two pipelines.
 
 ```d2
+@@@desktop
 direction: down
 PUSH: "Push to main" {class: content}
 Q: "What changed?" {shape: diamond; class: amber}
@@ -388,6 +477,24 @@ Q -> DEPLOY: anything
 AUDIO -> AudioJob.GEN
 AudioJob.COMMIT -> DEPLOY: "triggers a deploy"
 DEPLOY -> DeployJob.BUILD
+@@@mobile
+direction: down
+PUSH: "Push to main" {class: content}
+Q: "What\nchanged?" {shape: diamond; class: amber}
+AUDIO: audio.yml {class: violet}
+DEPLOY: deploy.yml {class: royal}
+GEN: "Generate only\nchanged audio" {class: violet}
+UP: "Upload to R2\n+ prune old" {class: violet}
+REC: "Reconcile\nmanifest vs R2" {class: teal}
+COMMIT: "Commit manifest\n(rebase first)" {class: emerald}
+BUILD: "Astro build\nreads manifest" {class: royal}
+PAGES: "Deploy to\nPages" {class: emerald}
+PUSH -> Q
+Q -> AUDIO: "blog/audio"
+Q -> DEPLOY: anything
+AUDIO -> GEN -> UP -> REC -> COMMIT
+COMMIT -> DEPLOY: triggers
+DEPLOY -> BUILD -> PAGES
 ```
 `deploy.yml` builds and ships the site. It runs on every push to main, touches no audio at all, and simply trusts whatever is already committed in the manifest. Styling, logic, and prose changes go live in well under a minute.
 
@@ -406,6 +513,7 @@ After upload, a reconcile step rebuilds the manifest from what's genuinely publi
 The first version worked but was painfully slow — a single edit could trigger a multi-hour run re-synthesizing audio R2 already had. Each improvement below solved one bottleneck; together they turned a brute-force generator into something that usually finishes in seconds.
 
 ```d2
+@@@desktop
 direction: down
 POST: "Post + voice settings" {class: content}
 M: "Manifest hash\nmatches?" {shape: diamond; class: decision}
@@ -417,6 +525,26 @@ ASSEMBLE: "Assemble from disk" {class: teal}
 TTS: "Synthesize\nthis chunk only" {class: violet}
 UPLOAD: "Validate + upload\nprune stale R2 objects" {class: royal}
 MANIFEST: "Update manifest" {class: emerald}
+POST -> M
+M -> SKIP: yes
+M -> WORKERS: no
+WORKERS -> CHUNKS -> CACHE
+CACHE -> ASSEMBLE: yes
+CACHE -> TTS: no
+TTS -> ASSEMBLE
+ASSEMBLE -> UPLOAD -> MANIFEST
+@@@mobile
+direction: down
+POST: "Post + voice" {class: content}
+M: "Match?" {shape: diamond; class: decision}
+SKIP: "Skip — R2" {class: emerald}
+WORKERS: "Workers" {class: violet}
+CHUNKS: "Chunks" {class: royal}
+CACHE: "Hit?" {shape: diamond; class: decision}
+ASSEMBLE: "Assemble" {class: teal}
+TTS: "Synthesize" {class: violet}
+UPLOAD: "Upload" {class: royal}
+MANIFEST: "Manifest" {class: emerald}
 POST -> M
 M -> SKIP: yes
 M -> WORKERS: no

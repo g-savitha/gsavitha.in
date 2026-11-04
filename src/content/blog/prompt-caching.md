@@ -66,8 +66,10 @@ That part is standard. Prompt caching takes one extra step: it keeps the prefix 
 Here's the idea in one picture. The first request computes everything. The second request starts the same way, so it reuses that start and only computes the new message.
 
 ```d2
+@@@desktop
 direction: down
 R1: "Request 1: nothing cached yet" {
+  style.fill: "transparent"
   grid-columns: 4
   A1: "System prompt\ncomputed" {class: miss}
   A2: "Docs\ncomputed" {class: miss}
@@ -76,7 +78,29 @@ R1: "Request 1: nothing cached yet" {
   A1 -> A2 -> A3 -> A4
 }
 R2: "Request 2: same start" {
+  style.fill: "transparent"
   grid-columns: 4
+  B1: "System prompt\nreused" {class: hit}
+  B2: "Docs\nreused" {class: hit}
+  B3: "History\nreused" {class: hit}
+  B4: "Message B\ncomputed" {class: miss}
+  B1 -> B2 -> B3 -> B4
+}
+R1 -> R2: "start is saved"
+@@@mobile
+direction: down
+R1: "Request 1: nothing cached yet" {
+  style.fill: "transparent"
+  direction: down
+  A1: "System prompt\ncomputed" {class: miss}
+  A2: "Docs\ncomputed" {class: miss}
+  A3: "History\ncomputed" {class: miss}
+  A4: "Message A\ncomputed" {class: miss}
+  A1 -> A2 -> A3 -> A4
+}
+R2: "Request 2: same start" {
+  style.fill: "transparent"
+  direction: down
   B1: "System prompt\nreused" {class: hit}
   B2: "Docs\nreused" {class: hit}
   B3: "History\nreused" {class: hit}
@@ -100,8 +124,10 @@ Put those together and you get one simple rule. If you change token 5, the value
 It also means the same paragraph sitting at a different position isn't reused. The position is different, and so is everything before it.
 
 ```d2
+@@@desktop
 direction: down
-TOP: "Before the change: reused" {
+Before: "Before the change: reused" {
+  style.fill: "transparent"
   grid-columns: 4
   B1: "Block 1" {class: hit}
   B2: "Block 2" {class: hit}
@@ -109,7 +135,8 @@ TOP: "Before the change: reused" {
   B4: "Block 4" {class: hit}
   B1 -> B2 -> B3 -> B4
 }
-BOT: "From the change on: recomputed" {
+After: "From the change on: recomputed" {
+  style.fill: "transparent"
   grid-columns: 4
   B5: "Block 5\nCHANGED" {class: miss}
   B6: "Block 6" {class: miss}
@@ -117,7 +144,28 @@ BOT: "From the change on: recomputed" {
   B8: "Block 8" {class: miss}
   B5 -> B6 -> B7 -> B8
 }
-TOP -> BOT
+Before -> After
+@@@mobile
+direction: down
+Before: "Before the change: reused" {
+  style.fill: "transparent"
+  direction: down
+  B1: "Block 1" {class: hit}
+  B2: "Block 2" {class: hit}
+  B3: "Block 3" {class: hit}
+  B4: "Block 4" {class: hit}
+  B1 -> B2 -> B3 -> B4
+}
+After: "From the change on: recomputed" {
+  style.fill: "transparent"
+  direction: down
+  B5: "Block 5\nCHANGED" {class: miss}
+  B6: "Block 6" {class: miss}
+  B7: "Block 7" {class: miss}
+  B8: "Block 8" {class: miss}
+  B5 -> B6 -> B7 -> B8
+}
+Before -> After
 ```
 ## Blocks, hashes and routing
 
@@ -188,15 +236,29 @@ Anthropic always builds the prefix as tools, then system, then messages. A chang
 The Claude Code team describes the same layering in their own product: static system prompt and tools first, then CLAUDE.md, then session context, then the conversation.
 
 ```d2
+@@@desktop
 direction: down
-S1: "Stays the same" {shape: oval}
+S1: "Stays the same" {shape: oval; class: hit}
 T: Tools {class: hit}
 S: "System prompt" {class: hit}
 D: "Docs and examples" {class: hit}
 BP: "Cache breakpoint" {shape: hexagon; class: neutral}
 H: "Conversation history" {class: neutral}
 M: "New message" {class: miss}
-S2: "Changes every time" {shape: oval}
+S2: "Changes every time" {shape: oval; class: miss}
+S1 -> T: "" {style.opacity: 0; style.stroke-width: 0; style.animated: false}
+T -> S -> D -> BP -> H -> M
+M -> S2: "" {style.opacity: 0; style.stroke-width: 0; style.animated: false}
+@@@mobile
+direction: down
+S1: "Stays the same" {shape: oval; class: hit}
+T: Tools {class: hit}
+S: "System prompt" {class: hit}
+D: "Docs and examples" {class: hit}
+BP: "Cache breakpoint" {shape: hexagon; class: neutral}
+H: "Conversation history" {class: neutral}
+M: "New message" {class: miss}
+S2: "Changes every time" {shape: oval; class: miss}
 S1 -> T: "" {style.opacity: 0; style.stroke-width: 0; style.animated: false}
 T -> S -> D -> BP -> H -> M
 M -> S2: "" {style.opacity: 0; style.stroke-width: 0; style.animated: false}

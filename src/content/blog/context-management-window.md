@@ -30,6 +30,16 @@ User → Server → POST /chat → LLM API
 ```
 
 ```d2
+@@@desktop
+shape: sequence_diagram
+Client: "User / Client"
+Server: Server
+LLM: "OpenAI / LLM API"
+Client -> Server: "Send message"
+Server -> LLM: "API Call (with message)"
+LLM -> Server: "Return response" {style.stroke-dash: 4}
+Server -> Client: "Return response" {style.stroke-dash: 4}
+@@@mobile
 shape: sequence_diagram
 Client: "User / Client"
 Server: Server
@@ -91,6 +101,15 @@ The server should be **stateless**. Persistence belongs in a persistence layer.
 ## The Correct Foundation: Persist to a Database
 
 ```d2
+@@@desktop
+direction: right
+Client: Client {shape: oval; class: success}
+Server: Server {class: primary}
+LLM: "OpenAI / LLM" {class: accent}
+DB: Database {shape: cylinder; class: info}
+Client -> Server -> LLM
+Server -> DB
+@@@mobile
 direction: down
 Client: Client {shape: oval; class: success}
 Server: Server {class: primary}
@@ -116,7 +135,8 @@ These aren't deal-breakers — they're trade-offs that demand a smarter approach
 The fix for the latency problem is to stop writing to your database on the hot path. Instead, buffer recent messages in **Redis** — an in-memory data store designed for exactly this use case.
 
 ```d2
-direction: down
+@@@desktop
+direction: right
 Client: Client {shape: oval; class: success}
 Server: Server {class: primary}
 LLM: "OpenAI / LLM" {class: accent}
@@ -125,6 +145,16 @@ DB: "PostgreSQL / Persistent DB" {shape: cylinder; class: secondary}
 Client -> Server -> LLM
 Server -> Redis
 Redis -> DB: "async cron job" {style.stroke-dash: 4}
+@@@mobile
+direction: down
+Client: Client {shape: oval; class: success}
+Server: Server {class: primary}
+LLM: "OpenAI / LLM" {class: accent}
+Redis: "Redis Cache" {shape: cylinder; class: info}
+DB: PostgreSQL {shape: cylinder; class: secondary}
+Client -> Server -> LLM
+Server -> Redis
+Redis -> DB: "async cron" {style.stroke-dash: 4}
 ```
 **The write path**: New messages go to Redis immediately (microsecond writes). A background job (cron or a queue consumer) asynchronously flushes them to the persistent database.
 
@@ -187,6 +217,7 @@ hobbies: ['coding', 'cycling', 'photography']
 These facts are not compressed — they are extracted, normalised, and stored as structured key-value pairs. On every subsequent LLM call, you inject the relevant facts directly into the system prompt, regardless of how far back in the conversation they were mentioned.
 
 ```d2
+@@@desktop
 direction: down
 Client: Client {shape: oval; class: success}
 Server: Server {class: primary}
@@ -199,6 +230,22 @@ Client -> Server -> LLM
 Server -> Redis
 Redis -> FactsDB: "extract facts async"
 Redis -> PostgreSQL: "cron job db sync"
+FactsDB -> ContextBuilder
+PostgreSQL -> ContextBuilder: summary
+ContextBuilder -> LLM
+@@@mobile
+direction: down
+Client: Client {shape: oval; class: success}
+Server: Server {class: primary}
+LLM: "OpenAI / LLM" {class: accent}
+Redis: "Redis Layer" {shape: cylinder; class: info}
+FactsDB: "Facts DB" {shape: cylinder; class: secondary}
+PostgreSQL: PostgreSQL {shape: cylinder; class: secondary}
+ContextBuilder: "Context Builder" {class: warning}
+Client -> Server -> Redis
+Server -> LLM
+Redis -> FactsDB: extract
+Redis -> PostgreSQL: sync
 FactsDB -> ContextBuilder
 PostgreSQL -> ContextBuilder: summary
 ContextBuilder -> LLM
@@ -246,6 +293,22 @@ The **subconscious brain** pattern adds a reactive feedback loop:
 4. **Feedback to Redis**: The outcome is stored back in the cache layer so the correction informs future responses.
 
 ```d2
+@@@desktop
+shape: sequence_diagram
+User: User
+Server: Server
+Redis: Redis
+LLM: LLM
+Web: "Web Search / RAG"
+User -> Server: "That's wrong"
+Server -> Redis: "Fetch conversation + run sentiment analysis"
+Redis -> LLM: "Detected: user frustrated"
+LLM -> Web: "Trigger retrieval / web search"
+Web -> LLM: "Return enriched context" {style.stroke-dash: 4}
+LLM -> Server: "Corrected response" {style.stroke-dash: 4}
+Server -> Redis: "Store correction as feedback"
+Server -> User: "Corrected output" {style.stroke-dash: 4}
+@@@mobile
 shape: sequence_diagram
 User: User
 Server: Server
@@ -272,24 +335,30 @@ In production systems (Perplexity, Cursor, Claude), this pattern is more sophist
 Bringing it all together:
 
 ```d2
+@@@desktop
 direction: down
 clientLayer: "Client Layer" {
+  style.fill: "transparent"
   User: User {class: success}
 }
 serverLayer: "Server Layer" {
+  style.fill: "transparent"
   API: "API Server - Stateless" {class: primary}
   ContextBuilder: "Context Builder" {class: warning}
   SentimentEngine: "Sentiment Engine" {class: danger}
 }
 cacheLayer: "Cache Layer" {
+  style.fill: "transparent"
   Redis: "Redis - Short-Term Memory" {shape: cylinder; class: info}
 }
 persistenceLayer: "Persistence Layer" {
+  style.fill: "transparent"
   FactsDB: "Facts DB - Long-Term Memory" {shape: cylinder; class: secondary}
   SummaryDB: "Summary Store" {shape: cylinder; class: secondary}
   PostgreSQL: "PostgreSQL - Full History" {shape: cylinder; class: secondary}
 }
 externalLayer: External {
+  style.fill: "transparent"
   LLM: "LLM API - OpenAI / Anthropic" {class: accent}
   Web: "Web Search / RAG" {class: accent}
 }
@@ -306,6 +375,38 @@ serverLayer.SentimentEngine -> externalLayer.Web: "user unhappy"
 externalLayer.Web -> externalLayer.LLM
 externalLayer.LLM -> serverLayer.API: "corrected output"
 serverLayer.API -> clientLayer.User
+@@@mobile
+direction: down
+CL: "Client Layer" {
+  style.fill: "transparent"
+  User: User {class: success}
+}
+SL: "Server Layer" {
+  style.fill: "transparent"
+  grid-rows: 3
+  API: API {class: primary}
+  CB: Context {class: warning}
+  SE: Sentiment {class: danger}
+}
+Cache: "Cache Layer" {
+  style.fill: "transparent"
+  Redis: Redis {shape: cylinder; class: info}
+}
+PL: "Persist Layer" {
+  style.fill: "transparent"
+  grid-rows: 3
+  Facts: Facts {shape: cylinder; class: secondary}
+  Sum: Summary {shape: cylinder; class: secondary}
+  PG: PG {shape: cylinder; class: secondary}
+}
+EL: External {
+  style.fill: "transparent"
+  grid-rows: 2
+  LLM: LLM {class: accent}
+  Web: Web {class: accent}
+}
+CL -> SL -> Cache -> PL -> EL
+EL -> SL -> CL
 ```
 **Each component has a single responsibility:**
 
