@@ -21,7 +21,7 @@ audio:
   codeSummaryMode: contextual
 ```
 
-Code blocks are never read aloud. Every code block that isn't a `d2` diagram, in an
+Code blocks are never read aloud. Every code block in an
 audio-enabled post using `codeSummaryMode: required`, must have a reviewed summary
 immediately before it:
 
@@ -103,49 +103,11 @@ Export the five R2 configuration values above before running it locally.
 
 ## Diagrams
 
-Diagrams are [D2](https://d2lang.com) fences. The build renders them to inline SVG (sketch mode,
-ELK, animated edges, D2's own font). Colours live in [`src/theme/diagram.ts`](src/theme/diagram.ts).
-Posts name a class and do not include hex values. The build downloads a pinned D2 binary into
-`.cache/d2` so GitHub Pages and Vercel can render without a system install. ELK ships inside that
-binary.
-
-| Class                                   | Use for                                 |
-| --------------------------------------- | --------------------------------------- |
-| `hit` / `success`                       | good path, cache hit, done (green)      |
-| `miss` / `danger`                       | failure, cache miss, rejected (rose)    |
-| `warning`                               | caution (orange)                        |
-| `decision`                              | decision points (amber)                 |
-| `neutral` / `secondary`                 | plain inputs, background steps (grey)   |
-| `content`                               | authored content (slate)                |
-| `accent`                                | the thing the diagram is about (yellow) |
-| `primary`                               | main services, key steps (blue)         |
-| `info`                                  | services, caches (cyan)                 |
-| `storage`                               | stores, buckets (teal)                  |
-| `severity1` / `severity2` / `severity3` | rising severity (peach, rose, maroon)   |
-
-Palette entry names (`royal`, `violet`, `emerald`, `teal`, `amber`, `cobalt`, `forest`, `maroon`)
-are classes too. Dark fills use white text and light fills use black text. `src/theme/diagram.test.ts`
-checks that, and fails if a D2 block contains a hex colour or an unknown class.
-
-````md
-```d2
-direction: right
-Req: Request {class: neutral}
-Cache: "In cache?" {shape: diamond; class: decision}
-Hit: "Serve from cache" {class: hit}
-Miss: "Query database" {class: miss}
-Req -> Cache
-Cache -> Hit: yes
-Cache -> Miss: no
-```
-````
-
-`direction: down` is top to bottom. A line break inside a label is `\n` in a quoted string.
-Sequence diagrams start with `shape: sequence_diagram`. A dashed reply is
-`A -> B: label {style.stroke-dash: 4}`. Containers are `Name: "Title" { ... }`.
-
-Sketch hatching is D2's. Don't set `fill-pattern` or a font. Edges are already animated and
-`#cccccc`. `prefers-reduced-motion` pauses the dashes.
+Diagrams are hand-drawn [Excalidraw](https://excalidraw.com) scenes. Sources live in
+`diagrams/src/<post>/`, the rendered SVGs in `public/diagrams/<post>/`, and posts embed them as
+images. Edit a source, then run `bun run diagrams` to re-render (it uses headless Chromium, so it
+stays out of the site build). Icons come from public Excalidraw libraries in `diagrams/libraries/`.
+The drawing rules are in [AGENTS.md](AGENTS.md#diagrams).
 
 ## Math
 

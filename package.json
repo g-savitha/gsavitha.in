@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "bun scripts/d2/ensure.ts && bun run audio:check && bun scripts/clear-content-cache.ts && astro build",
+    "build": "bun run audio:check && astro build",
     "preview": "astro preview",
     "astro": "astro",
     "new": "node scripts/new.js",
@@ -30,7 +30,8 @@
     "verify": "bun run verify:fast && bun run build && bun run test:browser",
     "verify:site": "bun run build && node --experimental-strip-types scripts/verify.ts",
     "prepare": "git config core.hooksPath .githooks || true",
-    "test:browser": "node --experimental-strip-types --test \"tests/browser/*.browser.ts\""
+    "test:browser": "node --experimental-strip-types --test \"tests/browser/*.browser.ts\"",
+    "diagrams": "node scripts/diagrams/render.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",
@@ -68,7 +69,9 @@
     "yaml": "^2.9.0"
   },
   "devDependencies": {
+    "@excalidraw/excalidraw": "0.18.0",
     "@types/node": "^26.0.0",
+    "esbuild": "^0.28.2",
     "playwright-core": "1",
     "prettier": "^3.8.4",
     "prettier-plugin-astro": "^0.14.1"

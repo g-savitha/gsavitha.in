@@ -65,6 +65,8 @@ screenshots. It is a suggestion: copy it to `.github/workflows/verify.yml` to tu
 
 - Visual judgment of new layouts or styles at mobile widths (`<1024px` switches to the mobile
   sidebar and its own ThemePicker).
+- Blog diagrams at 390px and 1280px: look at every diagram and check there's no sideways scroll.
+  Steps in [features/blog-diagrams.md](features/blog-diagrams.md).
 - Audio player on a post with narration (needs R2 audio, not exercised here).
 - `bun run dev`-only content such as drafts (`draft: true` is omitted from builds).
 - External links (paper URLs, social links) are not fetched.
