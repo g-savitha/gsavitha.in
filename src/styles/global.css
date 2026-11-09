@@ -323,9 +323,9 @@
     @apply mb-0 flex-1 text-lg line-clamp-2;
   }
 
-  /* Home shelf: full titles wrap; short mono dates; optional tag chips */
+  /* Home shelf rows: full titles wrap; short mono dates; tags */
   .list-row__link--shelf {
-    @apply sm:items-start;
+    @apply sm:items-center sm:gap-5;
   }
 
   .list-row__link--shelf .list-row__chevron {
@@ -333,7 +333,7 @@
   }
 
   .list-row__date--short {
-    @apply w-14 font-mono text-sm text-zinc-500 sm:w-16 sm:pt-1;
+    @apply w-14 font-mono text-sm text-zinc-500 sm:w-[4.5rem];
   }
 
   .list-row__link:hover .list-row__date--short {
@@ -342,6 +342,15 @@
 
   .list-row__title--shelf {
     @apply mb-0 block text-lg leading-snug;
+  }
+
+  /* Mobile: below title (flex-col order). Desktop: right of title. */
+  .list-row__tags {
+    @apply flex flex-wrap gap-1.5 sm:max-w-[40%] sm:shrink-0 sm:justify-end;
+  }
+
+  .list-row__tag {
+    @apply inline-flex items-center rounded-full border border-zinc-800 bg-zinc-900/50 px-2 py-0.5 font-mono text-xs text-zinc-400;
   }
 
   .list-row__description {
@@ -994,13 +1003,23 @@
     }
   }
 
-  /* Homepage practice + shelf rows */
+  /* Homepage practice + shelf rows (stacked by default) */
   .home-row {
-    @apply mb-16 flex flex-col gap-6 lg:flex-row lg:items-stretch;
+    @apply mb-16 flex flex-col gap-6;
   }
 
+  /* Consistency + DSA stay side by side on desktop */
   .home-row--practice {
-    @apply mb-20;
+    @apply mb-20 lg:flex-row lg:items-stretch;
+  }
+
+  /* Writings then Papershelf, capped so title lines stay readable */
+  .home-row--shelves {
+    @apply gap-14;
+  }
+
+  .home-row--shelves .home-shelf {
+    @apply w-full max-w-3xl;
   }
 
   .home-row__col {
