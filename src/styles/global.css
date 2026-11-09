@@ -344,14 +344,6 @@
     @apply mb-0 block text-lg leading-snug;
   }
 
-  .list-row__tags {
-    @apply mt-1.5 flex flex-wrap gap-1.5;
-  }
-
-  .list-row__tag {
-    @apply inline-flex items-center rounded-full border border-zinc-800 bg-zinc-900/50 px-2 py-0.5 font-mono text-xs text-zinc-400;
-  }
-
   .list-row__description {
     @apply max-w-2xl text-base leading-relaxed text-zinc-400 line-clamp-2 transition-colors;
   }

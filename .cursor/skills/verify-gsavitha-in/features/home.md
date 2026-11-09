@@ -4,8 +4,8 @@ The second row on `/` shows the 5 newest posts and 5 newest papers side by side.
 
 ## Sub-features
 
-- `home-writings` 5 newest non-draft posts with short date (`Oct 21`), full wrapping title, up
-  to 2 `#tag` chips, and an `All posts` pill linking to `/blog`.
+- `home-writings` 5 newest non-draft posts with short date (`Oct 21`), full wrapping title, and
+  an `All posts` pill linking to `/blog`.
 - `home-papers` 5 newest papers with short date, full wrapping title, external-link icon, and an
   `All papers` pill linking to `/papers`. No tags on the Home shelf.
 - `home-shelf-layout` heading + pill on one row, blurb under; columns stack below `lg` with no
@@ -30,6 +30,4 @@ Preconditions: fresh `bun run build`.
   still show the year.
 - Titles on Home must not use `list-row__title--compact` (that class clamps to 2 lines). Use
   `list-row__title--shelf`.
-- Tag chips on Writings are plain spans inside the post link (no nested anchors). They show the
-  first 2 of `post.data.tags` with a `#` prefix.
 - `PillLink.astro` + `.pill-link` is the shared pill; keep the zinc border look.

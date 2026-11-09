@@ -134,31 +134,21 @@ const practice = await fetchPracticeSnapshot();
 
       <ul class="list-rows">
         {
-          posts.map((post) => {
-            const tags = (post.data.tags ?? []).slice(0, 2);
-            return (
-              <li class="list-row">
-                <a href={`/blog/${post.id}`} class="list-row__link list-row__link--shelf">
-                  <span class="list-row__date list-row__date--short">
-                    <FormattedDate date={post.data.date} format="short" />
-                  </span>
-                  <div class="list-row__body">
-                    <span class="list-row__title list-row__title--shelf">{post.data.title}</span>
-                    {tags.length > 0 && (
-                      <div class="list-row__tags">
-                        {tags.map((tag) => (
-                          <span class="list-row__tag">#{tag}</span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <div class="list-row__chevron">
-                    <ChevronRight class="w-5 h-5" aria-hidden="true" />
-                  </div>
-                </a>
-              </li>
-            );
-          })
+          posts.map((post) => (
+            <li class="list-row">
+              <a href={`/blog/${post.id}`} class="list-row__link list-row__link--shelf">
+                <span class="list-row__date list-row__date--short">
+                  <FormattedDate date={post.data.date} format="short" />
+                </span>
+                <div class="list-row__body">
+                  <span class="list-row__title list-row__title--shelf">{post.data.title}</span>
+                </div>
+                <div class="list-row__chevron">
+                  <ChevronRight class="w-5 h-5" aria-hidden="true" />
+                </div>
+              </a>
+            </li>
+          ))
         }
       </ul>
     </section>
