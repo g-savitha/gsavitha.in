@@ -8,7 +8,7 @@ Astro 6 static site (React islands for interactive parts), dark-first, deployed 
 
 | Route                                     | File                                        | Notes                                                               |
 | ----------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------- |
-| `/`                                       | `index.astro`                               | Hero, 5 newest posts, 5 newest papers, practice row (heatmap + DSA) |
+| `/`                                       | `index.astro`                               | Hero, practice row, stacked Writings then Papershelf (pills + tags) |
 | `/blog`, `/blog/<id>`                     | `blog/index.astro`, `blog/[...slug].astro`  | "Writings"; nav label is `Blog`                                     |
 | `/papers`                                 | `papers/index.astro`                        | Papershelf, a `SearchableList` of external links                    |
 | `/goodies`                                | `goodies/index.astro`                       | Lists the `goodies` collection                                      |
@@ -41,6 +41,7 @@ Navigation and social links live in `src/consts.ts` (`NAV_LINKS`, rendered by `S
 - `goodies/MindMapSection.astro` + `MindMap.tsx`: Markdown nested list to markmap SVG
   (`.mindmap__canvas`, `client:visible`), with a text-outline fallback. See README "Mind maps".
 - `practice/ConsistencyHeatmap.tsx` and `practice/DsaProgress.tsx`: Home practice row.
+- `PillLink.astro`: compact zinc pill used by Home shelves (`All posts` / `All papers`).
 - `SearchableList.tsx`: client-side filter for `/papers`.
 - `blog/AudioPlayer.tsx`: narration player on posts with audio (`src/data/audioManifest.json`).
 - Blog diagrams: Excalidraw sources in `diagrams/src/`, SVGs in `public/diagrams/`, re-rendered
@@ -80,4 +81,5 @@ Navigation and social links live in `src/consts.ts` (`NAV_LINKS`, rendered by `S
 - [Papershelf](./papershelf.md)
 - [Goodies and cheat sheets](./goodies.md)
 - [Theme picker](./theme-picker.md)
+- [Home shelves (Writings + Papershelf)](./home.md)
 - [Blog diagrams (Excalidraw)](./blog-diagrams.md)

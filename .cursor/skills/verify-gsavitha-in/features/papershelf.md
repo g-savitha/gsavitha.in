@@ -6,7 +6,7 @@ appear on Home.
 ## Sub-features
 
 - `papers-list` every entry in `src/content/papers` renders with title, date, and tags.
-- `papers-home` the 5 newest by `date` appear on Home.
+- `papers-home` the 5 newest by `date` appear on Home with an `All papers` pill to `/papers`.
 - `papers-search` typing in the list's search box filters titles.
 
 ## How to get to it (user POV)

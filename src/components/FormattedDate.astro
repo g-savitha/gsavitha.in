@@ -1,21 +1,22 @@
 ---
 /**
- * FormattedDate component takes a Date object and renders it in a human-readable format.
- * It also includes a machine-readable datetime attribute for SEO/accessibility.
+ * FormattedDate renders a Date in a human-readable form, with a machine-readable
+ * datetime attribute for SEO/accessibility. Default keeps the year; `short` drops it.
  */
 interface Props {
   date: Date;
+  /** `full` → "Oct 21, 2026" (default). `short` → "Oct 21" (Home shelf). */
+  format?: 'full' | 'short';
 }
 
-const { date } = Astro.props;
+const { date, format = 'full' } = Astro.props;
+
+const options: Intl.DateTimeFormatOptions =
+  format === 'short'
+    ? { month: 'short', day: 'numeric' }
+    : { year: 'numeric', month: 'short', day: 'numeric' };
 ---
 
 <time datetime={date.toISOString()}>
-  {
-    date.toLocaleDateString('en-us', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    })
-  }
+  {date.toLocaleDateString('en-us', options)}
 </time>
