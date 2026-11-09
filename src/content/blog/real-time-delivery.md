@@ -7,7 +7,7 @@ audio:
   voice: af_heart
   codeSummaryMode: contextual
 heroImage: ../../assets/zomato-delivery.png
-tags: ["system design", "distributed systems", "message queues", "kafka", "sqs", "bullmq" ,"websockets", "producer-consumer pattern", "architecture"]
+tags: ["system design", "architecture", "distributed systems", "message queues", "kafka", "sqs", "bullmq", "websockets", "producer-consumer pattern"]
 categories: ["system design", "distributed systems", "architecture", "backend"]
 ---
 

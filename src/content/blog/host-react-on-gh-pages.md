@@ -8,7 +8,7 @@ audio:
   codeSummaryMode: contextual
 featured: false # feature a post in homepage
 tableofcontents: true # whether to generate ToC
-tags: [ci-cd, ghpages, react]
+tags: [react, ghpages, ci-cd]
 categories: [devops]
 hideToc: false
 enableToc: true

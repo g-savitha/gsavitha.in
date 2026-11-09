@@ -2,7 +2,7 @@
 title: "Prompt caching: what the model keeps between your requests"
 description: "What prompt caching is, what happens inside the model, how five providers do it, and how to structure prompts so the cache actually works."
 date: 2026-10-19
-tags: ["llm", "prompt-caching", "ai-engineering", "backend"]
+tags: ["prompt-caching", "llm", "ai-engineering", "backend"]
 draft: false
 heroImage: "../../assets/prompt-caching-hero.jpg"
 audio:

@@ -11,9 +11,10 @@ hideToc: false
 enableToc: true
 enableTocContent: true
 tags:
+  - tts
+  - ai
   - astro
   - react
-  - tts
   - cloudflare
   - devops
 categories:
