@@ -4,6 +4,7 @@ import PageLayout from '../layouts/PageLayout.astro';
 import { Image } from 'astro:assets';
 import ProfileImage from '../assets/image.png';
 import FormattedDate from '../components/FormattedDate.astro';
+import PillLink from '../components/PillLink.astro';
 import ConsistencyHeatmap from '../components/practice/ConsistencyHeatmap';
 import DsaProgress from '../components/practice/DsaProgress';
 import { ChevronRight, ExternalLink, FileText, PenBox, User } from 'lucide-astro';
@@ -120,40 +121,58 @@ const practice = await fetchPracticeSnapshot();
   <div class="home-row">
     <section class="home-row__col home-shelf">
       <div class="home-shelf__header">
-        <a href="/blog" class="home-shelf__title-link hover-lift">
-          <h2 class="home-shelf__title">
-            <PenBox class="home-shelf__title-icon" aria-hidden="true" /> Writings
-          </h2>
-        </a>
+        <div class="home-shelf__heading-row">
+          <a href="/blog" class="home-shelf__title-link hover-lift">
+            <h2 class="home-shelf__title">
+              <PenBox class="home-shelf__title-icon" aria-hidden="true" /> Writings
+            </h2>
+          </a>
+          <PillLink href="/blog" label="All posts" />
+        </div>
         <p class="home-shelf__blurb">Things that I've written recently</p>
       </div>
 
       <ul class="list-rows">
         {
-          posts.map((post) => (
-            <li class="list-row">
-              <a href={`/blog/${post.id}`} class="list-row__link">
-                <span class="list-row__date">
-                  <FormattedDate date={post.data.date} />
-                </span>
-                <span class="list-row__title list-row__title--compact">{post.data.title}</span>
-                <div class="list-row__chevron">
-                  <ChevronRight class="w-5 h-5" aria-hidden="true" />
-                </div>
-              </a>
-            </li>
-          ))
+          posts.map((post) => {
+            const tags = (post.data.tags ?? []).slice(0, 2);
+            return (
+              <li class="list-row">
+                <a href={`/blog/${post.id}`} class="list-row__link list-row__link--shelf">
+                  <span class="list-row__date list-row__date--short">
+                    <FormattedDate date={post.data.date} format="short" />
+                  </span>
+                  <div class="list-row__body">
+                    <span class="list-row__title list-row__title--shelf">{post.data.title}</span>
+                    {tags.length > 0 && (
+                      <div class="list-row__tags">
+                        {tags.map((tag) => (
+                          <span class="list-row__tag">#{tag}</span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <div class="list-row__chevron">
+                    <ChevronRight class="w-5 h-5" aria-hidden="true" />
+                  </div>
+                </a>
+              </li>
+            );
+          })
         }
       </ul>
     </section>
 
     <section class="home-row__col home-shelf">
       <div class="home-shelf__header">
-        <a href="/papers" class="home-shelf__title-link hover-lift">
-          <h2 class="home-shelf__title">
-            <FileText class="home-shelf__title-icon" aria-hidden="true" /> Papershelf
-          </h2>
-        </a>
+        <div class="home-shelf__heading-row">
+          <a href="/papers" class="home-shelf__title-link hover-lift">
+            <h2 class="home-shelf__title">
+              <FileText class="home-shelf__title-icon" aria-hidden="true" /> Papershelf
+            </h2>
+          </a>
+          <PillLink href="/papers" label="All papers" />
+        </div>
         <p class="home-shelf__blurb">Things that I've read recently</p>
       </div>
 
@@ -165,12 +184,18 @@ const practice = await fetchPracticeSnapshot();
                 href={paper.data.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="list-row__link"
+                class="list-row__link list-row__link--shelf"
               >
-                <span class="list-row__date">
-                  {paper.data.date ? <FormattedDate date={paper.data.date} /> : 'Recent'}
+                <span class="list-row__date list-row__date--short">
+                  {paper.data.date ? (
+                    <FormattedDate date={paper.data.date} format="short" />
+                  ) : (
+                    'Recent'
+                  )}
                 </span>
-                <span class="list-row__title list-row__title--compact">{paper.data.title}</span>
+                <div class="list-row__body">
+                  <span class="list-row__title list-row__title--shelf">{paper.data.title}</span>
+                </div>
                 <div class="list-row__chevron">
                   <ExternalLink class="w-4 h-4" aria-hidden="true" />
                 </div>

@@ -6,18 +6,18 @@ Astro 6 static site (React islands for interactive parts), dark-first, deployed 
 
 ## Pages and routes (`src/pages/`)
 
-| Route                                     | File                                        | Notes                                                               |
-| ----------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------- |
-| `/`                                       | `index.astro`                               | Hero, 5 newest posts, 5 newest papers, practice row (heatmap + DSA) |
-| `/blog`, `/blog/<id>`                     | `blog/index.astro`, `blog/[...slug].astro`  | "Writings"; nav label is `Blog`                                     |
-| `/papers`                                 | `papers/index.astro`                        | Papershelf, a `SearchableList` of external links                    |
-| `/goodies`                                | `goodies/index.astro`                       | Lists the `goodies` collection                                      |
-| `/goodies/gcp-ace-cheatsheet`             | `goodies/gcp-ace-cheatsheet/index.astro`    | PDF links + `MindMapSection`                                        |
-| `/goodies/pstack-cheatsheet`              | `goodies/pstack-cheatsheet/index.astro`     | Markdown body in `.prose`                                           |
-| `/projects`                               | `projects/index.astro`                      | Data from `src/data/projectsList.ts` + GitHub API                   |
-| `/certifications`, `/about`               | `certifications/index.astro`, `about.astro` |                                                                     |
-| `/tags`, `/tags/<tag>`, `/categories/<c>` | `tags/`, `categories/`                      | Built from post tags/categories                                     |
-| `/rss.xml`                                | `rss.xml.js`                                |                                                                     |
+| Route                                     | File                                        | Notes                                                                              |
+| ----------------------------------------- | ------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `/`                                       | `index.astro`                               | Hero, practice row, Writings/Papershelf shelves (`All posts` / `All papers` pills) |
+| `/blog`, `/blog/<id>`                     | `blog/index.astro`, `blog/[...slug].astro`  | "Writings"; nav label is `Blog`                                                    |
+| `/papers`                                 | `papers/index.astro`                        | Papershelf, a `SearchableList` of external links                                   |
+| `/goodies`                                | `goodies/index.astro`                       | Lists the `goodies` collection                                                     |
+| `/goodies/gcp-ace-cheatsheet`             | `goodies/gcp-ace-cheatsheet/index.astro`    | PDF links + `MindMapSection`                                                       |
+| `/goodies/pstack-cheatsheet`              | `goodies/pstack-cheatsheet/index.astro`     | Markdown body in `.prose`                                                          |
+| `/projects`                               | `projects/index.astro`                      | Data from `src/data/projectsList.ts` + GitHub API                                  |
+| `/certifications`, `/about`               | `certifications/index.astro`, `about.astro` |                                                                                    |
+| `/tags`, `/tags/<tag>`, `/categories/<c>` | `tags/`, `categories/`                      | Built from post tags/categories                                                    |
+| `/rss.xml`                                | `rss.xml.js`                                |                                                                                    |
 
 Navigation and social links live in `src/consts.ts` (`NAV_LINKS`, rendered by `Sidebar.astro` via
 `NavigationLinks.astro`; `SOCIAL_LINKS`, icon row in `Footer.astro` on small screens via
@@ -41,6 +41,7 @@ Navigation and social links live in `src/consts.ts` (`NAV_LINKS`, rendered by `S
 - `goodies/MindMapSection.astro` + `MindMap.tsx`: Markdown nested list to markmap SVG
   (`.mindmap__canvas`, `client:visible`), with a text-outline fallback. See README "Mind maps".
 - `practice/ConsistencyHeatmap.tsx` and `practice/DsaProgress.tsx`: Home practice row.
+- `PillLink.astro`: compact zinc pill used by Home shelves (`All posts` / `All papers`).
 - `SearchableList.tsx`: client-side filter for `/papers`.
 - `blog/AudioPlayer.tsx`: narration player on posts with audio (`src/data/audioManifest.json`).
 - Blog diagrams: Excalidraw sources in `diagrams/src/`, SVGs in `public/diagrams/`, re-rendered
@@ -80,4 +81,5 @@ Navigation and social links live in `src/consts.ts` (`NAV_LINKS`, rendered by `S
 - [Papershelf](./papershelf.md)
 - [Goodies and cheat sheets](./goodies.md)
 - [Theme picker](./theme-picker.md)
+- [Home shelves (Writings + Papershelf)](./home.md)
 - [Blog diagrams (Excalidraw)](./blog-diagrams.md)
