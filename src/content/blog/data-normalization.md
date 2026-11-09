@@ -11,9 +11,9 @@ enableToc: true
 pinned: false
 enableTocContent: true
 tags:
-  - design-patterns
-  - react
   - redux
+  - react
+  - design-patterns
   - frontend
 categories:
   - frontend

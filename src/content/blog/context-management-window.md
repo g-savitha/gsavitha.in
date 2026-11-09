@@ -7,7 +7,7 @@ audio:
   voice: af_heart
   codeSummaryMode: contextual
 heroImage: "../../assets/context-window-hero.png"
-tags: [system-design, ai, llm, agent, memory]
+tags: [ai, memory, llm, agent, system-design]
 categories: [ai, system-design]
 ---
 

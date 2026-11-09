@@ -325,11 +325,17 @@
 
   /* Home shelf rows: full titles wrap; short mono dates; tags */
   .list-row__link--shelf {
-    @apply sm:items-center sm:gap-5;
+    /* Drop the shared -mx/px so tags line up with the All posts pill edge */
+    @apply relative mx-0 px-0 sm:items-center sm:gap-5;
   }
 
+  .list-row__link--shelf .list-row__body {
+    @apply min-w-0;
+  }
+
+  /* Absolute so it does not push tags left of the pill edge */
   .list-row__link--shelf .list-row__chevron {
-    @apply sm:self-center;
+    @apply absolute right-0 top-1/2 -translate-y-1/2;
   }
 
   .list-row__date--short {
@@ -344,9 +350,9 @@
     @apply mb-0 block text-lg leading-snug;
   }
 
-  /* Mobile: below title (flex-col order). Desktop: right of title. */
+  /* Mobile: under title. Desktop: right column, chip right edges share one line. */
   .list-row__tags {
-    @apply flex flex-wrap gap-1.5 sm:max-w-[40%] sm:shrink-0 sm:justify-end;
+    @apply flex flex-wrap gap-1.5 sm:ml-auto sm:shrink-0 sm:justify-end;
   }
 
   .list-row__tag {
@@ -1013,13 +1019,9 @@
     @apply mb-20 lg:flex-row lg:items-stretch;
   }
 
-  /* Writings then Papershelf, capped so title lines stay readable */
+  /* Writings then Papershelf: same full content width as the practice row */
   .home-row--shelves {
     @apply gap-14;
-  }
-
-  .home-row--shelves .home-shelf {
-    @apply w-full max-w-3xl;
   }
 
   .home-row__col {

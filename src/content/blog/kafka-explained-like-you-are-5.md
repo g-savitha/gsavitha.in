@@ -7,7 +7,7 @@ audio:
   voice: af_heart
   codeSummaryMode: contextual
 heroImage: ../../assets/kafka_producer_consumer_flow.png
-tags: ["system design", "distributed systems", "message queues", "kafka", "producer-consumer", "scaling"]
+tags: ["kafka", "system design", "distributed systems", "message queues", "producer-consumer", "scaling"]
 categories: ["system design", "distributed systems", "architecture", "backend"]
 ---
 
